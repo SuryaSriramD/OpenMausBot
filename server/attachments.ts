@@ -12,13 +12,12 @@ import {
 import { link, open, unlink } from "node:fs/promises";
 import { join, extname } from "node:path";
 import { DATA_DIR } from "./config.ts";
+import { ATTACHMENT_LIMITS } from "./attachment-limits.ts";
 
 export const ATTACHMENTS_DIR = join(DATA_DIR, "attachments");
 
-export const IMAGE_MAX_BYTES = 10 * 1024 * 1024;
-
-/** Below Cloudflare's transport ceiling; a local inbox, not unbounded storage. */
-export const FILE_MAX_BYTES = 25 * 1024 * 1024;
+export const IMAGE_MAX_BYTES = ATTACHMENT_LIMITS.imageMaxBytes;
+export const FILE_MAX_BYTES = ATTACHMENT_LIMITS.fileMaxBytes;
 
 /** Never evict: prompts refer to attachment paths, so at this ceiling a new upload gets an explicit 507. */
 export const ATTACHMENTS_MAX_BYTES = 512 * 1024 * 1024;

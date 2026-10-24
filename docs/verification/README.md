@@ -30,6 +30,9 @@ exception: `OMB_OPENAI_LIVE_URL` crosses when it is a loopback
 and `OMB_OPENAI_LIVE_KEY` crosses only with it, so that key can only ever
 reach the fake. `OMB_PRO_PLAN` crosses only as `1`: Live calls from a phone need a Pro plan,
 and that is how a server the desktop app did not start says so.
+`OMB_ATTACHMENT_MAX_MB` also crosses when explicitly set, so attachment fixtures
+can exercise an operator-selected file cap. The child server validates it as an
+integer from 10 to 512 MiB; the image and total storage caps stay unchanged.
 
 Pass the printed URL explicitly from a second terminal:
 
@@ -46,6 +49,7 @@ Use only mapped, tested commands:
 
 - [The headless command line](headless-cli.md)
 - [Chat turns](chat-turns.md)
+- [Configurable attachment limits](attachment-limits.md)
 - [Conversation context compaction](context-compaction.md)
 - [Work summaries and engine hooks](digests.md)
 - [OpenAI-compatible structured tools](openai-tools.md)

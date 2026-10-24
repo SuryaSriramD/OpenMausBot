@@ -9,6 +9,7 @@ import {
   type ReactNode,
 } from "react";
 import { flushSync } from "react-dom";
+import { setAttachmentLimits } from "@/lib/attachment-limits";
 import type { BotVisibility, CardAnswerer, CloudBackend, ConnectorToolGrant, EffortLevel, InstalledPackageMetadata, LiveCallState, ServerFrame, GroupThreadUsage, SteerQueueReason, WireGroup, OptionCardData as WireOptionCard } from "../../shared/wire";
 import { movesThreadToTop } from "../../shared/wire";
 import { DATA_ROUTES, type DataSheet, type DataTable } from "../../shared/data-surface";
@@ -445,11 +446,12 @@ export type { BrowserEngineSummary, BrowserProfile, ConfigStatus, ManagedPolicyS
 // A section left out here is wiped from state.config whenever a config frame lands.
 export type ConfigStatusFrame = Pick<
   ConfigStatus,
-  "xai" | "mistral" | "cerebras" | "groq" | "meta" | "anthropic" | "openai" | "openrouter" | "openaiCompat" | "fleet" | "composio" | "box" | "vps" | "rooms" | "mcp" | "threads" | "automaticRecovery" | "cacheKeepWarm" | "localVm" | "opencodeGo" | "tts" | "decider" | "imageGen" | "live" | "profile" | "language" | "features" | "onboarding" | "browserEngine" | "browserProfiles" | "edition" | "budgets" | "billing" | "managedPolicy" | "cloudHome"
+  "attachmentLimits" | "xai" | "mistral" | "cerebras" | "groq" | "meta" | "anthropic" | "openai" | "openrouter" | "openaiCompat" | "fleet" | "composio" | "box" | "vps" | "rooms" | "mcp" | "threads" | "automaticRecovery" | "cacheKeepWarm" | "localVm" | "opencodeGo" | "tts" | "decider" | "imageGen" | "live" | "profile" | "language" | "features" | "onboarding" | "browserEngine" | "browserProfiles" | "edition" | "budgets" | "billing" | "managedPolicy" | "cloudHome"
 >;
 
 export function configStatusFromFrame(frame: ConfigStatusFrame): ConfigStatus {
   return {
+    attachmentLimits: frame.attachmentLimits,
     xai: frame.xai,
     mistral: frame.mistral,
     cerebras: frame.cerebras,
@@ -3235,7 +3237,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         key: "config",
         request: async () => {
           const config = await api("/api/config");
-          return () => rawDispatch({ type: "configStatus", config });
+          return () => {
+            setAttachmentLimits(config.attachmentLimits);
+            rawDispatch({ type: "configStatus", config });
+          };
         },
       },
       {
@@ -3507,6 +3512,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           break;
         }
         case "config":
+          setAttachmentLimits((frame as unknown as ConfigStatusFrame).attachmentLimits);
           rawDispatch({
             type: "configStatus",
             config: configStatusFromFrame(frame as unknown as ConfigStatusFrame),

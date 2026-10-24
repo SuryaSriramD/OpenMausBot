@@ -2,12 +2,16 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { FILE_MAX_BYTES } from "@/lib/composer-attachments";
+import { setAttachmentLimits } from "@/lib/attachment-limits";
 import { AttachmentGallery, collectMessageFiles, isAudioAttachment, isVideoAttachment, loadMessageAudio, loadMessageVideo, MessageAttachmentGallery, splitMessageAttachments } from "./AttachmentGallery";
 
 const message = { threadId: "thread/one", messageId: "message two" };
 const file = { path: "/workspace/demo.mp4", name: "demo.mp4", linked: true };
 const image = { path: "/store/123e4567-e89b-42d3-a456-426614174000.png", name: "Overview.png", private: true };
-afterEach(() => vi.unstubAllGlobals());
+afterEach(() => {
+  vi.unstubAllGlobals();
+  setAttachmentLimits(undefined);
+});
 
 describe("bot-attached files", () => {
   const attachments = [
@@ -47,6 +51,18 @@ describe("bot-attached files", () => {
 
 describe("audio attachments", () => {
   const clip = { path: "/store/song.mp3", name: "song.mp3", private: true };
+
+  it("uses the server limit for preview reads and their size errors", async () => {
+    setAttachmentLimits({ fileMaxBytes: 250 * 1024 * 1024, imageMaxBytes: 10 * 1024 * 1024 });
+    vi.stubGlobal("fetch", vi.fn(async () => new Response("audio", {
+      headers: { "content-type": "audio/mpeg", "content-length": String(26 * 1024 * 1024) },
+    })));
+    await expect(loadMessageAudio(clip, message, new AbortController().signal)).resolves.toBeInstanceOf(Blob);
+    vi.stubGlobal("fetch", vi.fn(async () => new Response("audio", {
+      headers: { "content-type": "audio/mpeg", "content-length": String(FILE_MAX_BYTES + 1) },
+    })));
+    await expect(loadMessageAudio(clip, message, new AbortController().signal)).rejects.toThrow("250 MB");
+  });
 
   it("recognizes audio by suffix only", () => {
     for (const name of ["a.mp3", "a.M4A", "a.wav", "a.ogg", "a.opus", "a.flac", "a.aac"]) expect(isAudioAttachment(`/store/${name}`)).toBe(true);

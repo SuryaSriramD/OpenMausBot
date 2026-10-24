@@ -2474,6 +2474,11 @@ describe("live config frames", () => {
     localVm: { mode: "shared", maxInstances: 1 },
   };
 
+  it("keeps the server's attachment limits through live config refreshes", () => {
+    const attachmentLimits = { fileMaxBytes: 250 * 1024 * 1024, imageMaxBytes: 10 * 1024 * 1024 };
+    expect(configStatusFromFrame({ ...baseFrame, attachmentLimits }).attachmentLimits).toEqual(attachmentLimits);
+  });
+
   it("keeps automatic recovery and its backup through live config refreshes", () => {
     const automaticRecovery = { enabled: true, backup: { instanceId: "backup", model: "fixture-model" } };
     expect(configStatusFromFrame({ ...baseFrame, automaticRecovery }).automaticRecovery).toEqual(automaticRecovery);

@@ -20,6 +20,15 @@ describe("the fixture's fake engine knobs", () => {
   });
 });
 
+describe("the fixture's attachment limit", () => {
+  it("passes only an explicit operator limit through for server validation", () => {
+    expect(childEnv({})).not.toHaveProperty("OMB_ATTACHMENT_MAX_MB");
+    for (const value of ["250", "", "invalid"]) {
+      expect(childEnv({ OMB_ATTACHMENT_MAX_MB: value })).toHaveProperty("OMB_ATTACHMENT_MAX_MB", value);
+    }
+  });
+});
+
 describe("the fixture's Live call environment", () => {
   it("passes a loopback fake GPT-Live and its key through", () => {
     expect(childEnv({ OMB_OPENAI_LIVE_URL: " http://127.0.0.1:4100 ", OMB_OPENAI_LIVE_KEY: "sk-fake" }))

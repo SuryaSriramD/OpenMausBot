@@ -179,6 +179,7 @@ export function verificationServerEnvironment(parentEnv: NodeJS.ProcessEnv, data
   }
   // Live calls need Pro; without it the fixture refuses a call with 402 needsPro.
   if (parentEnv.OMB_PRO_PLAN?.trim() === "1") childEnv.OMB_PRO_PLAN = "1";
+  if (parentEnv.OMB_ATTACHMENT_MAX_MB !== undefined) childEnv.OMB_ATTACHMENT_MAX_MB = parentEnv.OMB_ATTACHMENT_MAX_MB;
   // Arms the one-shot audio-append failure inside the fixture server.
   if (parentEnv.OMB_TEST_FAIL_AUDIO_APPEND_ONCE) {
     childEnv.OMB_TEST_FAIL_AUDIO_APPEND_ONCE = parentEnv.OMB_TEST_FAIL_AUDIO_APPEND_ONCE;

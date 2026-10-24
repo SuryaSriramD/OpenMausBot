@@ -139,7 +139,7 @@ export async function loadMessageVideo(
   const declared = Number(response.headers.get("content-length"));
   if (declared > FILE_MAX_BYTES) {
     await response.body?.cancel();
-    throw new Error(t("attach.fileTooLarge"));
+    throw new Error(t("attach.fileTooLarge", { maxMb: FILE_MAX_BYTES / (1024 * 1024) }));
   }
   // Keep this bounded even if a reverse proxy omits Content-Length.
   const reader = response.body?.getReader();
@@ -152,7 +152,7 @@ export async function loadMessageVideo(
       const { value, done } = await reader.read();
       if (done) break;
       size += value.byteLength;
-      if (size > FILE_MAX_BYTES) throw new Error(t("attach.fileTooLarge"));
+      if (size > FILE_MAX_BYTES) throw new Error(t("attach.fileTooLarge", { maxMb: FILE_MAX_BYTES / (1024 * 1024) }));
       chunks.push(new Uint8Array(value));
     }
   } finally {
@@ -227,7 +227,7 @@ function VideoAttachment({ file, message }: { file: GalleryFile; message: Messag
           >
             {loading ? <LoaderCircle size={24} className="animate-spin" /> : <Play size={24} />}
             <span className="text-[12px]">{loading ? t("attach.videoLoading") : error ? t("chat.retry") : t("attach.loadVideo")}</span>
-            {!error && !loading && <span className="text-[10.5px]">{t("attach.videoHint")}</span>}
+            {!error && !loading && <span className="text-[10.5px]">{t("attach.videoHint", { maxMb: FILE_MAX_BYTES / (1024 * 1024) })}</span>}
           </button>
         )}
         {(preview || loading || error) && (
@@ -259,7 +259,7 @@ export async function loadMessageAudio(
   const declared = Number(response.headers.get("content-length"));
   if (declared > FILE_MAX_BYTES) {
     await response.body?.cancel();
-    throw new Error(t("attach.fileTooLarge"));
+    throw new Error(t("attach.fileTooLarge", { maxMb: FILE_MAX_BYTES / (1024 * 1024) }));
   }
   const reader = response.body?.getReader();
   if (!reader) throw new Error(t("attach.audioUnavailable"));
@@ -271,7 +271,7 @@ export async function loadMessageAudio(
       const { value, done } = await reader.read();
       if (done) break;
       size += value.byteLength;
-      if (size > FILE_MAX_BYTES) throw new Error(t("attach.fileTooLarge"));
+      if (size > FILE_MAX_BYTES) throw new Error(t("attach.fileTooLarge", { maxMb: FILE_MAX_BYTES / (1024 * 1024) }));
       chunks.push(new Uint8Array(value));
     }
   } finally {

@@ -1,4 +1,6 @@
 import { isCitationAttachment, serializeCitation, type CitationAttachment } from "./citations.ts";
+import { FILE_MAX_BYTES } from "./attachment-limits.ts";
+export { FILE_MAX_BYTES } from "./attachment-limits.ts";
 export { dataContextFor, type DataContext, type DataViewContext } from "../../shared/data-context.ts";
 
 export type PasteAttachment = {
@@ -104,7 +106,6 @@ export function fileAttachment(name: string, path: string, size: number): FileAt
 
 /** Must match the server's IMAGE_MAX_BYTES. */
 export const IMAGE_MAX_BYTES = 10 * 1024 * 1024;
-export const FILE_MAX_BYTES = 25 * 1024 * 1024;
 
 const DOCUMENT_MIMES: Readonly<Record<string, string>> = {
   txt: "text/plain",
@@ -312,7 +313,7 @@ export async function fileAttachmentFromFile(file: File): Promise<FileAttachment
     (ACCEPTED_AUDIO_MIMES.has(declared) ? declared : AUDIO_MIMES_BY_EXTENSION[extension]);
   if (!mime) return null;
   if (file.size > FILE_MAX_BYTES) {
-    throw Object.assign(new Error(`${file.name} exceeds 25 MB`), { status: 413 });
+    throw Object.assign(new Error(`${file.name} exceeds ${FILE_MAX_BYTES / (1024 * 1024)} MB`), { status: 413 });
   }
   const uploadId = newUploadId();
   const saved = await uploadWithRetry<{ path: string; name: string; bytes: number }>(

@@ -1,0 +1,2317 @@
+{
+  "copiedOn": "2026-10-23",
+  "source": "Local Codex system skills and plugin cache",
+  "skillCount": 40,
+  "importedFileCount": 386,
+  "existingFilesVerifiedUnchanged": 412,
+  "automaticUpdates": false,
+  "liveActivation": false,
+  "skills": [
+    {
+      "name": "visualize",
+      "originalFolder": "visualize",
+      "source": "C:/Users/surya/.codex/plugins/cache/openai-bundled/visualize/1.0.55/skills/visualize",
+      "description": "Create visualizations and interactive tools directly in conversation. Proactively use to show how something works; explore 'what happens when', 'what changes', or 'help me understand'; compare or inspect; create simulations, maps, charts, graphs, and mockups. Use standard tools for static scientific figures.",
+      "changes": [],
+      "files": [
+        {
+          "path": "agents/openai.yaml",
+          "sourceSha256": "6882440afd1978a5324ea7adc5c3c62ed1efa11caabd1b97f58e8be721e89c2f",
+          "sha256": "6882440afd1978a5324ea7adc5c3c62ed1efa11caabd1b97f58e8be721e89c2f"
+        },
+        {
+          "path": "assets/calendar.js",
+          "sourceSha256": "f6517bf5584f34b36ae024188b2c93715e8e4e86869afdbe0fe7a8265b0fa74e",
+          "sha256": "f6517bf5584f34b36ae024188b2c93715e8e4e86869afdbe0fe7a8265b0fa74e"
+        },
+        {
+          "path": "assets/share-shell.css",
+          "sourceSha256": "4a657cf0d1d12b62451941879fdead0bad0063ce0ac015c86e479ecfa6af2a67",
+          "sha256": "4a657cf0d1d12b62451941879fdead0bad0063ce0ac015c86e479ecfa6af2a67"
+        },
+        {
+          "path": "assets/share-shell.js",
+          "sourceSha256": "860b8a19b2f9513d7a173c316b7fe3cd9ed319fbd7e6f7f307621eba98d2d79f",
+          "sha256": "860b8a19b2f9513d7a173c316b7fe3cd9ed319fbd7e6f7f307621eba98d2d79f"
+        },
+        {
+          "path": "assets/standalone-host-bridge.js",
+          "sourceSha256": "0b19685a4a762846461f42ee0f7af67b86a35df7d93eee0c057ebf6e8d291bed",
+          "sha256": "0b19685a4a762846461f42ee0f7af67b86a35df7d93eee0c057ebf6e8d291bed"
+        },
+        {
+          "path": "assets/standalone-shell.js",
+          "sourceSha256": "88374bdc364ec6be0375aa87567ac684988ae1da0167653ce083cbd7ac28869e",
+          "sha256": "88374bdc364ec6be0375aa87567ac684988ae1da0167653ce083cbd7ac28869e"
+        },
+        {
+          "path": "assets/visualize.css",
+          "sourceSha256": "038fc5e0e41de359ab0873b63dd5c2c70e1eed0e01735233b885abd4a9c6d1a0",
+          "sha256": "038fc5e0e41de359ab0873b63dd5c2c70e1eed0e01735233b885abd4a9c6d1a0"
+        },
+        {
+          "path": "assets/visualize.html",
+          "sourceSha256": "3b25c0d80c2880eab8b69e52ed7361aa4f6a6acfba27b1d29758326458429234",
+          "sha256": "3b25c0d80c2880eab8b69e52ed7361aa4f6a6acfba27b1d29758326458429234"
+        },
+        {
+          "path": "examples/calendar.html",
+          "sourceSha256": "6c5bed2bb9a94b915a8fb7f14642540ce9a1096eed74b57c01fda353d8a9b8a3",
+          "sha256": "6c5bed2bb9a94b915a8fb7f14642540ce9a1096eed74b57c01fda353d8a9b8a3"
+        },
+        {
+          "path": "scripts/render.py",
+          "sourceSha256": "26233f0378d1fb6d2306e3227f7415f43843c73aedb95755e34b299d753914a4",
+          "sha256": "26233f0378d1fb6d2306e3227f7415f43843c73aedb95755e34b299d753914a4"
+        },
+        {
+          "path": "SKILL.md",
+          "sourceSha256": "e99b3dbd273d81a42ba20ed4b6e574435bdfa8ef4782f71f177a02fbe3871309",
+          "sha256": "e99b3dbd273d81a42ba20ed4b6e574435bdfa8ef4782f71f177a02fbe3871309"
+        },
+        {
+          "path": "tweak.md",
+          "sourceSha256": "197aae99fc9d4d263fece0eacc81117be12a7f1ae18b75afe916aae015dd177c",
+          "sha256": "197aae99fc9d4d263fece0eacc81117be12a7f1ae18b75afe916aae015dd177c"
+        },
+        {
+          "path": "widgets/calendar.md",
+          "sourceSha256": "28543248b92c1f4916f81ba2ff232178f9d2e8915fe78b6c05cf24f97885db9f",
+          "sha256": "28543248b92c1f4916f81ba2ff232178f9d2e8915fe78b6c05cf24f97885db9f"
+        }
+      ]
+    },
+    {
+      "name": "artifact-template-analytics-dashboard",
+      "originalFolder": "artifact-template-analytics-dashboard",
+      "source": "C:/Users/surya/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-analytics-dashboard",
+      "description": "Create a spreadsheet using the Analytics Dashboard template and its retained reference file. Use when the user selects or names Analytics Dashboard. Monitor acquisition, engagement, retention, revenue, and conversion funnel KPIs with charts.",
+      "changes": [],
+      "files": [
+        {
+          "path": "agents/openai.yaml",
+          "sourceSha256": "392f620a50c2a39bb3b3e80e376a27385d312ba7a8abf14cfabb7f02f761a273",
+          "sha256": "392f620a50c2a39bb3b3e80e376a27385d312ba7a8abf14cfabb7f02f761a273"
+        },
+        {
+          "path": "artifact-template.json",
+          "sourceSha256": "7aea630ddafb1add3869c6c046e2b8c83464771a29f7e47a59d482480d13d0be",
+          "sha256": "7aea630ddafb1add3869c6c046e2b8c83464771a29f7e47a59d482480d13d0be"
+        },
+        {
+          "path": "assets/preview.png",
+          "sourceSha256": "b5c458e744d46ef4211d167d3451864148853aa73708323068504da956ce03b3",
+          "sha256": "b5c458e744d46ef4211d167d3451864148853aa73708323068504da956ce03b3"
+        },
+        {
+          "path": "assets/reference.xlsx",
+          "sourceSha256": "ab655c867ea1c9eed617ec0eeec643946c1e49e9d5227e9db740c95daba26e46",
+          "sha256": "ab655c867ea1c9eed617ec0eeec643946c1e49e9d5227e9db740c95daba26e46"
+        },
+        {
+          "path": "SKILL.md",
+          "sourceSha256": "cf5360fd8b197673bb237c52c603c97fa319c875c3dfa2cd8efff52d4422f513",
+          "sha256": "cf5360fd8b197673bb237c52c603c97fa319c875c3dfa2cd8efff52d4422f513"
+        }
+      ]
+    },
+    {
+      "name": "artifact-template-business-review",
+      "originalFolder": "artifact-template-business-review",
+      "source": "C:/Users/surya/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-business-review",
+      "description": "Create a presentation using the Business Review template and its retained reference file. Use when the user selects or names Business Review. Review business performance, KPIs, segment results, strategic priorities, decisions, and outlook.",
+      "changes": [],
+      "files": [
+        {
+          "path": "agents/openai.yaml",
+          "sourceSha256": "cde1beac06ca33c9a0a12c1cbf2b5834dd208a5f732069fd790d7bf9483bcbdd",
+          "sha256": "cde1beac06ca33c9a0a12c1cbf2b5834dd208a5f732069fd790d7bf9483bcbdd"
+        },
+        {
+          "path": "artifact-template.json",
+          "sourceSha256": "809c64b42be1f603434873698306295e5344a7871d8a173d6665b89470f62b78",
+          "sha256": "809c64b42be1f603434873698306295e5344a7871d8a173d6665b89470f62b78"
+        },
+        {
+          "path": "assets/preview.png",
+          "sourceSha256": "af6b092987472013920bb251e0e9d60b97fdb02cc1fd3109abf2b0951bc6aa3c",
+          "sha256": "af6b092987472013920bb251e0e9d60b97fdb02cc1fd3109abf2b0951bc6aa3c"
+        },
+        {
+          "path": "assets/reference.pptx",
+          "sourceSha256": "595b9a314c7e8e9b5f22180e7c7db167afba2437c8623d57e3f9dbc20af392c1",
+          "sha256": "595b9a314c7e8e9b5f22180e7c7db167afba2437c8623d57e3f9dbc20af392c1"
+        },
+        {
+          "path": "SKILL.md",
+          "sourceSha256": "27721fc1d67d1b41949caa75ac8f94f81952ff124406878af6524047929e60d2",
+          "sha256": "27721fc1d67d1b41949caa75ac8f94f81952ff124406878af6524047929e60d2"
+        }
+      ]
+    },
+    {
+      "name": "artifact-template-design-report",
+      "originalFolder": "artifact-template-design-report",
+      "source": "C:/Users/surya/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-design-report",
+      "description": "Create a document using the Design Report template and its retained reference file. Use when the user selects or names Design Report. Produce design reports with an executive summary, key findings, implications, recommendations, and appendix.",
+      "changes": [],
+      "files": [
+        {
+          "path": "agents/openai.yaml",
+          "sourceSha256": "bd8e8ba79937d8fc087ced20bab5f25fa9a160303762f7567ef2bdcb739d3f9a",
+          "sha256": "bd8e8ba79937d8fc087ced20bab5f25fa9a160303762f7567ef2bdcb739d3f9a"
+        },
+        {
+          "path": "artifact-template.json",
+          "sourceSha256": "54586c722449d873eb16ed211e8591a179f31da5e245dcc82800df649380b127",
+          "sha256": "54586c722449d873eb16ed211e8591a179f31da5e245dcc82800df649380b127"
+        },
+        {
+          "path": "assets/preview.png",
+          "sourceSha256": "19cd1f36fbc8d7efbf27a674004f2c22145514e77bee3459fb8cc4a89caf870d",
+          "sha256": "19cd1f36fbc8d7efbf27a674004f2c22145514e77bee3459fb8cc4a89caf870d"
+        },
+        {
+          "path": "assets/reference.docx",
+          "sourceSha256": "ba1e11258ff52659318a321462a5e598c7bed33cf991329eb91150788fcd1a7b",
+          "sha256": "ba1e11258ff52659318a321462a5e598c7bed33cf991329eb91150788fcd1a7b"
+        },
+        {
+          "path": "SKILL.md",
+          "sourceSha256": "563722f53854e606f8a9f87e37e72d7ef70a22d46d5836b8e4d6abfb1b79e9e0",
+          "sha256": "563722f53854e606f8a9f87e37e72d7ef70a22d46d5836b8e4d6abfb1b79e9e0"
+        }
+      ]
+    },
+    {
+      "name": "artifact-template-experiment-analysis",
+      "originalFolder": "artifact-template-experiment-analysis",
+      "source": "C:/Users/surya/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-experiment-analysis",
+      "description": "Create a document using the Experiment Analysis template and its retained reference file. Use when the user selects or names Experiment Analysis. Analyze experiments with hypotheses, methodology, results, interpretation, limitations, and next steps.",
+      "changes": [],
+      "files": [
+        {
+          "path": "agents/openai.yaml",
+          "sourceSha256": "861a34c68d0d899bb17029316ca8a3d3951a20c206cb8c1890652c2ff06ca626",
+          "sha256": "861a34c68d0d899bb17029316ca8a3d3951a20c206cb8c1890652c2ff06ca626"
+        },
+        {
+          "path": "artifact-template.json",
+          "sourceSha256": "54586c722449d873eb16ed211e8591a179f31da5e245dcc82800df649380b127",
+          "sha256": "54586c722449d873eb16ed211e8591a179f31da5e245dcc82800df649380b127"
+        },
+        {
+          "path": "assets/preview.png",
+          "sourceSha256": "847743ae181c5547e9244823c236408765cff5038e2264e3d72c9e958d30929c",
+          "sha256": "847743ae181c5547e9244823c236408765cff5038e2264e3d72c9e958d30929c"
+        },
+        {
+          "path": "assets/reference.docx",
+          "sourceSha256": "d823cd0115186b34c01c6e4b4da3be28b64ee73cac849dbd62d6f4bb6385b0fb",
+          "sha256": "d823cd0115186b34c01c6e4b4da3be28b64ee73cac849dbd62d6f4bb6385b0fb"
+        },
+        {
+          "path": "SKILL.md",
+          "sourceSha256": "0b05effc47df0a14f8e0c3e3597e6722224747435546385d38a2cae279bd20b9",
+          "sha256": "0b05effc47df0a14f8e0c3e3597e6722224747435546385d38a2cae279bd20b9"
+        }
+      ]
+    },
+    {
+      "name": "artifact-template-financial-budget",
+      "originalFolder": "artifact-template-financial-budget",
+      "source": "C:/Users/surya/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-financial-budget",
+      "description": "Create a spreadsheet using the Financial Budget template and its retained reference file. Use when the user selects or names Financial Budget. Model actuals, budget and scenario forecasts, variances, cash runway, and departmental plans.",
+      "changes": [],
+      "files": [
+        {
+          "path": "agents/openai.yaml",
+          "sourceSha256": "ac5c29e75dc2e335aa4cab9999d291c081cb07b3eaab6eaaae7f6e6068aba2a4",
+          "sha256": "ac5c29e75dc2e335aa4cab9999d291c081cb07b3eaab6eaaae7f6e6068aba2a4"
+        },
+        {
+          "path": "artifact-template.json",
+          "sourceSha256": "7aea630ddafb1add3869c6c046e2b8c83464771a29f7e47a59d482480d13d0be",
+          "sha256": "7aea630ddafb1add3869c6c046e2b8c83464771a29f7e47a59d482480d13d0be"
+        },
+        {
+          "path": "assets/preview.png",
+          "sourceSha256": "ed0298a7e15051887ad2e9ca775314de1dfae41de33f7f82fee89f39cdcf20e3",
+          "sha256": "ed0298a7e15051887ad2e9ca775314de1dfae41de33f7f82fee89f39cdcf20e3"
+        },
+        {
+          "path": "assets/reference.xlsx",
+          "sourceSha256": "b15aecd03ee94fc3e29fb5c6de33c6090b75287845ab337afe0376cc0330e052",
+          "sha256": "b15aecd03ee94fc3e29fb5c6de33c6090b75287845ab337afe0376cc0330e052"
+        },
+        {
+          "path": "SKILL.md",
+          "sourceSha256": "c0b6b7a62a15597aaf2b1ec679e21da48f533b756127f0aef957cdfe9f3da738",
+          "sha256": "c0b6b7a62a15597aaf2b1ec679e21da48f533b756127f0aef957cdfe9f3da738"
+        }
+      ]
+    },
+    {
+      "name": "artifact-template-investment-committee-memo",
+      "originalFolder": "artifact-template-investment-committee-memo",
+      "source": "C:/Users/surya/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-investment-committee-memo",
+      "description": "Create a document using the Investment Committee Memo template and its retained reference file. Use when the user selects or names Investment Committee Memo. Prepare investment committee memos with the thesis, transaction details, financial analysis, risks, and recommendation.",
+      "changes": [],
+      "files": [
+        {
+          "path": "agents/openai.yaml",
+          "sourceSha256": "0264537a7b51ef28e41907d34bd09c3e0259045a84f0591e13fd2efd44a3ac69",
+          "sha256": "0264537a7b51ef28e41907d34bd09c3e0259045a84f0591e13fd2efd44a3ac69"
+        },
+        {
+          "path": "artifact-template.json",
+          "sourceSha256": "54586c722449d873eb16ed211e8591a179f31da5e245dcc82800df649380b127",
+          "sha256": "54586c722449d873eb16ed211e8591a179f31da5e245dcc82800df649380b127"
+        },
+        {
+          "path": "assets/preview.png",
+          "sourceSha256": "4f5efed31db5f4468e8619e6ca579be1c57d84d4a023fe9a7c5ec0deafb0812a",
+          "sha256": "4f5efed31db5f4468e8619e6ca579be1c57d84d4a023fe9a7c5ec0deafb0812a"
+        },
+        {
+          "path": "assets/reference.docx",
+          "sourceSha256": "0a8a4c5b8b1d8c055e19c9eadcc7eac898899f067cbbd20602c4e7c078e545de",
+          "sha256": "0a8a4c5b8b1d8c055e19c9eadcc7eac898899f067cbbd20602c4e7c078e545de"
+        },
+        {
+          "path": "SKILL.md",
+          "sourceSha256": "68abd08cfe5e073e3c446a3f675f44c5bf98f57434dba679e8acd8a763379a8b",
+          "sha256": "68abd08cfe5e073e3c446a3f675f44c5bf98f57434dba679e8acd8a763379a8b"
+        }
+      ]
+    },
+    {
+      "name": "artifact-template-legal-memorandum",
+      "originalFolder": "artifact-template-legal-memorandum",
+      "source": "C:/Users/surya/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-legal-memorandum",
+      "description": "Create a document using the Legal Memorandum template and its retained reference file. Use when the user selects or names Legal Memorandum. Draft legal memoranda with the issue, brief answer, relevant facts, analysis, and conclusion.",
+      "changes": [],
+      "files": [
+        {
+          "path": "agents/openai.yaml",
+          "sourceSha256": "bfd77de2f34d5222e9db4b469aab576426c73b0850f5c3a628e4a5e8f8587887",
+          "sha256": "bfd77de2f34d5222e9db4b469aab576426c73b0850f5c3a628e4a5e8f8587887"
+        },
+        {
+          "path": "artifact-template.json",
+          "sourceSha256": "54586c722449d873eb16ed211e8591a179f31da5e245dcc82800df649380b127",
+          "sha256": "54586c722449d873eb16ed211e8591a179f31da5e245dcc82800df649380b127"
+        },
+        {
+          "path": "assets/preview.png",
+          "sourceSha256": "362e4d26521d6eadc5be3c0dec37d7000ef8c967883485e94db60149e4f28660",
+          "sha256": "362e4d26521d6eadc5be3c0dec37d7000ef8c967883485e94db60149e4f28660"
+        },
+        {
+          "path": "assets/reference.docx",
+          "sourceSha256": "d3006f9074e46823d103fe283be19901f55f75c19811558455d7a16c61797355",
+          "sha256": "d3006f9074e46823d103fe283be19901f55f75c19811558455d7a16c61797355"
+        },
+        {
+          "path": "SKILL.md",
+          "sourceSha256": "51fb9d21baf6119c4ccb1903638a6bac0e859210de63460fffa7025d52e997e0",
+          "sha256": "51fb9d21baf6119c4ccb1903638a6bac0e859210de63460fffa7025d52e997e0"
+        }
+      ]
+    },
+    {
+      "name": "artifact-template-market-trends-report",
+      "originalFolder": "artifact-template-market-trends-report",
+      "source": "C:/Users/surya/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-market-trends-report",
+      "description": "Create a presentation using the Market Trends Report template and its retained reference file. Use when the user selects or names Market Trends Report. Communicate market or industry trends, supporting evidence, implications, and recommended responses.",
+      "changes": [],
+      "files": [
+        {
+          "path": "agents/openai.yaml",
+          "sourceSha256": "fe84725e0c898778a5ed33bfab12a99beb171b08e98a834ebdc55860ac0d4efd",
+          "sha256": "fe84725e0c898778a5ed33bfab12a99beb171b08e98a834ebdc55860ac0d4efd"
+        },
+        {
+          "path": "artifact-template.json",
+          "sourceSha256": "809c64b42be1f603434873698306295e5344a7871d8a173d6665b89470f62b78",
+          "sha256": "809c64b42be1f603434873698306295e5344a7871d8a173d6665b89470f62b78"
+        },
+        {
+          "path": "assets/preview.png",
+          "sourceSha256": "a27d80525678a8b0b4e2242dd13aca95f7920ac790b1a66e96d8b39cc4a74e8f",
+          "sha256": "a27d80525678a8b0b4e2242dd13aca95f7920ac790b1a66e96d8b39cc4a74e8f"
+        },
+        {
+          "path": "assets/reference.pptx",
+          "sourceSha256": "52396c3a70dc11d35989bb4e3f9a96d2c728c5eba8a1aad96920cfe24cff59fa",
+          "sha256": "52396c3a70dc11d35989bb4e3f9a96d2c728c5eba8a1aad96920cfe24cff59fa"
+        },
+        {
+          "path": "SKILL.md",
+          "sourceSha256": "d58d019b89cb6f292ac3ab991d561489eef477ff53ce05fb024a0c936f5af26a",
+          "sha256": "d58d019b89cb6f292ac3ab991d561489eef477ff53ce05fb024a0c936f5af26a"
+        }
+      ]
+    },
+    {
+      "name": "artifact-template-minimal-letterhead",
+      "originalFolder": "artifact-template-minimal-letterhead",
+      "source": "C:/Users/surya/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-minimal-letterhead",
+      "description": "Create a document using the Minimal Letterhead template and its retained reference file. Use when the user selects or names Minimal Letterhead. Write professional business letters with sender, recipient, message, and signature fields in a minimal letterhead layout.",
+      "changes": [],
+      "files": [
+        {
+          "path": "agents/openai.yaml",
+          "sourceSha256": "f5b9311a53150e4d19c5c90664942a1537a73cec687b128dc6c6301261b803ad",
+          "sha256": "f5b9311a53150e4d19c5c90664942a1537a73cec687b128dc6c6301261b803ad"
+        },
+        {
+          "path": "artifact-template.json",
+          "sourceSha256": "54586c722449d873eb16ed211e8591a179f31da5e245dcc82800df649380b127",
+          "sha256": "54586c722449d873eb16ed211e8591a179f31da5e245dcc82800df649380b127"
+        },
+        {
+          "path": "assets/preview.png",
+          "sourceSha256": "827df9ab20cdcf07a62955c568343c27f1c597336444c84ad98d7c0ca7983b6b",
+          "sha256": "827df9ab20cdcf07a62955c568343c27f1c597336444c84ad98d7c0ca7983b6b"
+        },
+        {
+          "path": "assets/reference.docx",
+          "sourceSha256": "5dd55e0f5bbdb603d98db5b8560b8babc6005cbb7f31ce8ed63569417c5cae86",
+          "sha256": "5dd55e0f5bbdb603d98db5b8560b8babc6005cbb7f31ce8ed63569417c5cae86"
+        },
+        {
+          "path": "SKILL.md",
+          "sourceSha256": "880ef094d4d0c89a7bde5ce9bbe4086625c186651e9e6efc8ba8bdd7cc77f9d5",
+          "sha256": "880ef094d4d0c89a7bde5ce9bbe4086625c186651e9e6efc8ba8bdd7cc77f9d5"
+        }
+      ]
+    },
+    {
+      "name": "artifact-template-operating-calendar",
+      "originalFolder": "artifact-template-operating-calendar",
+      "source": "C:/Users/surya/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-operating-calendar",
+      "description": "Create a spreadsheet using the Operating Calendar template and its retained reference file. Use when the user selects or names Operating Calendar. Plan annual and monthly operating milestones, campaigns, launches, deadlines, and recurring events.",
+      "changes": [],
+      "files": [
+        {
+          "path": "agents/openai.yaml",
+          "sourceSha256": "cd41437c7fd39159b21d5decedcb3b53c9737e3854b7f9e46efcddfb73f610d5",
+          "sha256": "cd41437c7fd39159b21d5decedcb3b53c9737e3854b7f9e46efcddfb73f610d5"
+        },
+        {
+          "path": "artifact-template.json",
+          "sourceSha256": "7aea630ddafb1add3869c6c046e2b8c83464771a29f7e47a59d482480d13d0be",
+          "sha256": "7aea630ddafb1add3869c6c046e2b8c83464771a29f7e47a59d482480d13d0be"
+        },
+        {
+          "path": "assets/preview.png",
+          "sourceSha256": "9511212decb870cdded2c5ef0388c1bf4b3ee1747020a61f1c3a7078b2cfa6f2",
+          "sha256": "9511212decb870cdded2c5ef0388c1bf4b3ee1747020a61f1c3a7078b2cfa6f2"
+        },
+        {
+          "path": "assets/reference.xlsx",
+          "sourceSha256": "fef758154889db179aa701a3916d6e6d30c61935b92ad259dd603322888e7f5f",
+          "sha256": "fef758154889db179aa701a3916d6e6d30c61935b92ad259dd603322888e7f5f"
+        },
+        {
+          "path": "SKILL.md",
+          "sourceSha256": "33bb660791a0b9a21628a42c34934932220203b6aabd84e98cb1b45327d0384c",
+          "sha256": "33bb660791a0b9a21628a42c34934932220203b6aabd84e98cb1b45327d0384c"
+        }
+      ]
+    },
+    {
+      "name": "artifact-template-operating-review",
+      "originalFolder": "artifact-template-operating-review",
+      "source": "C:/Users/surya/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-operating-review",
+      "description": "Create a presentation using the Operating Review template and its retained reference file. Use when the user selects or names Operating Review. Run weekly operating reviews with scorecards, functional updates, risks, decisions, and action items.",
+      "changes": [],
+      "files": [
+        {
+          "path": "agents/openai.yaml",
+          "sourceSha256": "871a705a344c2461bb3fa43495ac9fb9724ee583649cafce9b97a054702b6cae",
+          "sha256": "871a705a344c2461bb3fa43495ac9fb9724ee583649cafce9b97a054702b6cae"
+        },
+        {
+          "path": "artifact-template.json",
+          "sourceSha256": "809c64b42be1f603434873698306295e5344a7871d8a173d6665b89470f62b78",
+          "sha256": "809c64b42be1f603434873698306295e5344a7871d8a173d6665b89470f62b78"
+        },
+        {
+          "path": "assets/preview.png",
+          "sourceSha256": "e8f1dd91d1258c3bb06d2b1d0c52a49fce454e6682732e2e8f43b37c494e3c19",
+          "sha256": "e8f1dd91d1258c3bb06d2b1d0c52a49fce454e6682732e2e8f43b37c494e3c19"
+        },
+        {
+          "path": "assets/reference.pptx",
+          "sourceSha256": "ec2084d143a4d52857cc06c24129abbb45c45d04b90cca06e319ac26d3cadd4f",
+          "sha256": "ec2084d143a4d52857cc06c24129abbb45c45d04b90cca06e319ac26d3cadd4f"
+        },
+        {
+          "path": "SKILL.md",
+          "sourceSha256": "6d63c5cd025ffe936e7bab5db3023672bbaec26af55c2bb8b057d38c202c9c32",
+          "sha256": "6d63c5cd025ffe936e7bab5db3023672bbaec26af55c2bb8b057d38c202c9c32"
+        }
+      ]
+    },
+    {
+      "name": "artifact-template-project-kickoff",
+      "originalFolder": "artifact-template-project-kickoff",
+      "source": "C:/Users/surya/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-project-kickoff",
+      "description": "Create a presentation using the Project Kickoff template and its retained reference file. Use when the user selects or names Project Kickoff. Align teams on project goals, scope, roles, milestones, risks, and the working model.",
+      "changes": [],
+      "files": [
+        {
+          "path": "agents/openai.yaml",
+          "sourceSha256": "3f62c61df6cd23f81c6f412994f40ff176b006d40b913b3c423480279eb4aff5",
+          "sha256": "3f62c61df6cd23f81c6f412994f40ff176b006d40b913b3c423480279eb4aff5"
+        },
+        {
+          "path": "artifact-template.json",
+          "sourceSha256": "809c64b42be1f603434873698306295e5344a7871d8a173d6665b89470f62b78",
+          "sha256": "809c64b42be1f603434873698306295e5344a7871d8a173d6665b89470f62b78"
+        },
+        {
+          "path": "assets/preview.png",
+          "sourceSha256": "02823427c2552cc894d333fb96fd2fb3e3ac04503904ab6f73643ca877362df5",
+          "sha256": "02823427c2552cc894d333fb96fd2fb3e3ac04503904ab6f73643ca877362df5"
+        },
+        {
+          "path": "assets/reference.pptx",
+          "sourceSha256": "b1b15cb0c23ad524f9832749ec31b775719bae2bdba897de9c9d8556ca00a44c",
+          "sha256": "b1b15cb0c23ad524f9832749ec31b775719bae2bdba897de9c9d8556ca00a44c"
+        },
+        {
+          "path": "SKILL.md",
+          "sourceSha256": "aa893ebd89e7c8d1db4261d01cc2b1add35d78d00785871ccaaa5fc8db783ec9",
+          "sha256": "aa893ebd89e7c8d1db4261d01cc2b1add35d78d00785871ccaaa5fc8db783ec9"
+        }
+      ]
+    },
+    {
+      "name": "artifact-template-project-tracker",
+      "originalFolder": "artifact-template-project-tracker",
+      "source": "C:/Users/surya/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-project-tracker",
+      "description": "Create a spreadsheet using the Project Tracker template and its retained reference file. Use when the user selects or names Project Tracker. Manage workstreams, tasks, owners, status, priority, dates, launch pulse, and a Gantt schedule.",
+      "changes": [],
+      "files": [
+        {
+          "path": "agents/openai.yaml",
+          "sourceSha256": "e858f66b2cd5a17a12ce7059be560d47c429faf34c1665b716c62e67b6b10496",
+          "sha256": "e858f66b2cd5a17a12ce7059be560d47c429faf34c1665b716c62e67b6b10496"
+        },
+        {
+          "path": "artifact-template.json",
+          "sourceSha256": "7aea630ddafb1add3869c6c046e2b8c83464771a29f7e47a59d482480d13d0be",
+          "sha256": "7aea630ddafb1add3869c6c046e2b8c83464771a29f7e47a59d482480d13d0be"
+        },
+        {
+          "path": "assets/preview.png",
+          "sourceSha256": "02811cec6d9b7d493342e03e08b6b56719af1eb6087a50dc6696c600ada90381",
+          "sha256": "02811cec6d9b7d493342e03e08b6b56719af1eb6087a50dc6696c600ada90381"
+        },
+        {
+          "path": "assets/reference.xlsx",
+          "sourceSha256": "dd8bd283784a189061a328040e845a6d26807e2ee1005a9a195e6dc7baeefe80",
+          "sha256": "dd8bd283784a189061a328040e845a6d26807e2ee1005a9a195e6dc7baeefe80"
+        },
+        {
+          "path": "SKILL.md",
+          "sourceSha256": "d97d5be20189b7f53dd269b6e1c5f694eaf53e5a72f6559fcb1578911b7cda82",
+          "sha256": "d97d5be20189b7f53dd269b6e1c5f694eaf53e5a72f6559fcb1578911b7cda82"
+        }
+      ]
+    },
+    {
+      "name": "artifact-template-sales-pipeline",
+      "originalFolder": "artifact-template-sales-pipeline",
+      "source": "C:/Users/surya/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-sales-pipeline",
+      "description": "Create a spreadsheet using the Sales Pipeline template and its retained reference file. Use when the user selects or names Sales Pipeline. Track opportunities, stages, owners, deal sizes, probabilities, forecasts, next steps, and risks.",
+      "changes": [],
+      "files": [
+        {
+          "path": "agents/openai.yaml",
+          "sourceSha256": "ea4d9150379ec34447137c436a7459c5f8863e7532a6a87ef1d0871412ee4410",
+          "sha256": "ea4d9150379ec34447137c436a7459c5f8863e7532a6a87ef1d0871412ee4410"
+        },
+        {
+          "path": "artifact-template.json",
+          "sourceSha256": "7aea630ddafb1add3869c6c046e2b8c83464771a29f7e47a59d482480d13d0be",
+          "sha256": "7aea630ddafb1add3869c6c046e2b8c83464771a29f7e47a59d482480d13d0be"
+        },
+        {
+          "path": "assets/preview.png",
+          "sourceSha256": "3208ad8051412202774cfe3f34de468d89a6c1e27cf00166933085f6a167cabe",
+          "sha256": "3208ad8051412202774cfe3f34de468d89a6c1e27cf00166933085f6a167cabe"
+        },
+        {
+          "path": "assets/reference.xlsx",
+          "sourceSha256": "a6ac1045a0602cbb4d90878949c2970d0e815dd9f98fe34d0ff92b69ebbb4db3",
+          "sha256": "a6ac1045a0602cbb4d90878949c2970d0e815dd9f98fe34d0ff92b69ebbb4db3"
+        },
+        {
+          "path": "SKILL.md",
+          "sourceSha256": "15cfeeedf440021f16ed3f3ad8c7c1ef6d48898b9447741e223d2fb41cfc9800",
+          "sha256": "15cfeeedf440021f16ed3f3ad8c7c1ef6d48898b9447741e223d2fb41cfc9800"
+        }
+      ]
+    },
+    {
+      "name": "artifact-template-simple-dark-mode",
+      "originalFolder": "artifact-template-simple-dark-mode",
+      "source": "C:/Users/surya/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-simple-dark-mode",
+      "description": "Create a presentation using the Simple Dark Mode template and its retained reference file. Use when the user selects or names Simple Dark Mode. Create clean dark-mode presentations with bold typography, simple sections, charts, and imagery.",
+      "changes": [],
+      "files": [
+        {
+          "path": "agents/openai.yaml",
+          "sourceSha256": "a5c3103290b5e28efec73cf5ad7af7c5a9212ff422256e2e831f11b456e995b9",
+          "sha256": "a5c3103290b5e28efec73cf5ad7af7c5a9212ff422256e2e831f11b456e995b9"
+        },
+        {
+          "path": "artifact-template.json",
+          "sourceSha256": "809c64b42be1f603434873698306295e5344a7871d8a173d6665b89470f62b78",
+          "sha256": "809c64b42be1f603434873698306295e5344a7871d8a173d6665b89470f62b78"
+        },
+        {
+          "path": "assets/preview.png",
+          "sourceSha256": "2082897b4e30c9a2ed137e51fa32503b1e85afb53c8555521ba374b75df622ec",
+          "sha256": "2082897b4e30c9a2ed137e51fa32503b1e85afb53c8555521ba374b75df622ec"
+        },
+        {
+          "path": "assets/reference.pptx",
+          "sourceSha256": "042ef2fcb8726524a1e773e3c73bf8b8c10b98f67ae675eb01c4501b9365a897",
+          "sha256": "042ef2fcb8726524a1e773e3c73bf8b8c10b98f67ae675eb01c4501b9365a897"
+        },
+        {
+          "path": "SKILL.md",
+          "sourceSha256": "b7c8d0c05f75878b9bc21e56a57c41ec1aa29700aca0a24822be0f9f1bd53207",
+          "sha256": "b7c8d0c05f75878b9bc21e56a57c41ec1aa29700aca0a24822be0f9f1bd53207"
+        }
+      ]
+    },
+    {
+      "name": "artifact-template-simple-light-mode",
+      "originalFolder": "artifact-template-simple-light-mode",
+      "source": "C:/Users/surya/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-simple-light-mode",
+      "description": "Create a presentation using the Simple Light Mode template and its retained reference file. Use when the user selects or names Simple Light Mode. Create clean light-mode presentations with spacious typography, simple sections, charts, and imagery.",
+      "changes": [],
+      "files": [
+        {
+          "path": "agents/openai.yaml",
+          "sourceSha256": "82d2ce0edb52134049718151db345ad1748a358ae1d20c2efe9e274404a1d029",
+          "sha256": "82d2ce0edb52134049718151db345ad1748a358ae1d20c2efe9e274404a1d029"
+        },
+        {
+          "path": "artifact-template.json",
+          "sourceSha256": "809c64b42be1f603434873698306295e5344a7871d8a173d6665b89470f62b78",
+          "sha256": "809c64b42be1f603434873698306295e5344a7871d8a173d6665b89470f62b78"
+        },
+        {
+          "path": "assets/preview.png",
+          "sourceSha256": "9c12751105bbdea9e74df059b0b86c6eef22b3af34ba38c090edb7e2e4acf3ac",
+          "sha256": "9c12751105bbdea9e74df059b0b86c6eef22b3af34ba38c090edb7e2e4acf3ac"
+        },
+        {
+          "path": "assets/reference.pptx",
+          "sourceSha256": "2ae8105571f68403f438458cd51e6ad14f0d989c7af64239e280437a4ac2a633",
+          "sha256": "2ae8105571f68403f438458cd51e6ad14f0d989c7af64239e280437a4ac2a633"
+        },
+        {
+          "path": "SKILL.md",
+          "sourceSha256": "7c68430c6cf57b55b457d4735dbd1a46b889bef135a32222902dd0848b6e1752",
+          "sha256": "7c68430c6cf57b55b457d4735dbd1a46b889bef135a32222902dd0848b6e1752"
+        }
+      ]
+    },
+    {
+      "name": "artifact-template-strategy-memorandum",
+      "originalFolder": "artifact-template-strategy-memorandum",
+      "source": "C:/Users/surya/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-strategy-memorandum",
+      "description": "Create a document using the Strategy Memorandum template and its retained reference file. Use when the user selects or names Strategy Memorandum. Present strategic context, choices, rationale, risks, milestones, and a clear recommendation.",
+      "changes": [],
+      "files": [
+        {
+          "path": "agents/openai.yaml",
+          "sourceSha256": "1a277cd3a6fd6be41fee1546183f5ea1119ea7c661e1cf156c6cce9b55c65bd3",
+          "sha256": "1a277cd3a6fd6be41fee1546183f5ea1119ea7c661e1cf156c6cce9b55c65bd3"
+        },
+        {
+          "path": "artifact-template.json",
+          "sourceSha256": "54586c722449d873eb16ed211e8591a179f31da5e245dcc82800df649380b127",
+          "sha256": "54586c722449d873eb16ed211e8591a179f31da5e245dcc82800df649380b127"
+        },
+        {
+          "path": "assets/preview.png",
+          "sourceSha256": "2a615bd6c983a2a747b8cb5ea82e47e92ff3b1736a1d94742c57a9ce42aa1d55",
+          "sha256": "2a615bd6c983a2a747b8cb5ea82e47e92ff3b1736a1d94742c57a9ce42aa1d55"
+        },
+        {
+          "path": "assets/reference.docx",
+          "sourceSha256": "13bd3ae7aef4b3ae76c5d65200acd654c922782974dac18672e973fad93bd453",
+          "sha256": "13bd3ae7aef4b3ae76c5d65200acd654c922782974dac18672e973fad93bd453"
+        },
+        {
+          "path": "SKILL.md",
+          "sourceSha256": "51d7882ac94e8e57b323394825728c33925af878806e37277217c2dc12a912e5",
+          "sha256": "51d7882ac94e8e57b323394825728c33925af878806e37277217c2dc12a912e5"
+        }
+      ]
+    },
+    {
+      "name": "artifact-template-system-design",
+      "originalFolder": "artifact-template-system-design",
+      "source": "C:/Users/surya/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-system-design",
+      "description": "Create a document using the System Design template and its retained reference file. Use when the user selects or names System Design. Document system architecture, requirements, components, data flows, APIs, tradeoffs, and operational considerations.",
+      "changes": [],
+      "files": [
+        {
+          "path": "agents/openai.yaml",
+          "sourceSha256": "fe728562ab2857373f460a25b5954ef532034ab21e10c38b36c739bc5c5ffd77",
+          "sha256": "fe728562ab2857373f460a25b5954ef532034ab21e10c38b36c739bc5c5ffd77"
+        },
+        {
+          "path": "artifact-template.json",
+          "sourceSha256": "54586c722449d873eb16ed211e8591a179f31da5e245dcc82800df649380b127",
+          "sha256": "54586c722449d873eb16ed211e8591a179f31da5e245dcc82800df649380b127"
+        },
+        {
+          "path": "assets/preview.png",
+          "sourceSha256": "703c8a85a22ebaaa129dc99f82e530532b5b46ad862d7cb253716e9759d5dfe0",
+          "sha256": "703c8a85a22ebaaa129dc99f82e530532b5b46ad862d7cb253716e9759d5dfe0"
+        },
+        {
+          "path": "assets/reference.docx",
+          "sourceSha256": "13504f6c221a42c1726460a9e865e563355539ff97d702d6c9b2267b4b261d76",
+          "sha256": "13504f6c221a42c1726460a9e865e563355539ff97d702d6c9b2267b4b261d76"
+        },
+        {
+          "path": "SKILL.md",
+          "sourceSha256": "87f7b7ed1b0d8410f5e5971cd7f7db9a4165e2f37069e97e52dbfb469b75a57c",
+          "sha256": "87f7b7ed1b0d8410f5e5971cd7f7db9a4165e2f37069e97e52dbfb469b75a57c"
+        }
+      ]
+    },
+    {
+      "name": "artifact-template-team-alignment",
+      "originalFolder": "artifact-template-team-alignment",
+      "source": "C:/Users/surya/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-team-alignment",
+      "description": "Create a presentation using the Team Alignment template and its retained reference file. Use when the user selects or names Team Alignment. Facilitate team offsites and planning with context, goals, priorities, decisions, and action items.",
+      "changes": [],
+      "files": [
+        {
+          "path": "agents/openai.yaml",
+          "sourceSha256": "dea3d32230b1e7e62d3f4844d3b1ddceb5f2855cd5fbe31e0849e51e1aa11c1d",
+          "sha256": "dea3d32230b1e7e62d3f4844d3b1ddceb5f2855cd5fbe31e0849e51e1aa11c1d"
+        },
+        {
+          "path": "artifact-template.json",
+          "sourceSha256": "809c64b42be1f603434873698306295e5344a7871d8a173d6665b89470f62b78",
+          "sha256": "809c64b42be1f603434873698306295e5344a7871d8a173d6665b89470f62b78"
+        },
+        {
+          "path": "assets/preview.png",
+          "sourceSha256": "8b91c66156be4dec9eca517ca330c246ca8e863ee9b97b3b93cc159eee362c2d",
+          "sha256": "8b91c66156be4dec9eca517ca330c246ca8e863ee9b97b3b93cc159eee362c2d"
+        },
+        {
+          "path": "assets/reference.pptx",
+          "sourceSha256": "72b9f23a07bfd679cde36757acb11ec99900b4be0f5d393a5b4e8c6fdce4286d",
+          "sha256": "72b9f23a07bfd679cde36757acb11ec99900b4be0f5d393a5b4e8c6fdce4286d"
+        },
+        {
+          "path": "SKILL.md",
+          "sourceSha256": "26d7cafdcd1899a937b325c5d02ac57c162d45002153be33a934d35f81eb6110",
+          "sha256": "26d7cafdcd1899a937b325c5d02ac57c162d45002153be33a934d35f81eb6110"
+        }
+      ]
+    },
+    {
+      "name": "artifact-template-three-statement-forecast",
+      "originalFolder": "artifact-template-three-statement-forecast",
+      "source": "C:/Users/surya/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-three-statement-forecast",
+      "description": "Create a spreadsheet using the Three-Statement Forecast template and its retained reference file. Use when the user selects or names Three-Statement Forecast. Build an integrated income statement, balance sheet, and cash flow forecast with assumptions, checks, and an executive summary.",
+      "changes": [],
+      "files": [
+        {
+          "path": "agents/openai.yaml",
+          "sourceSha256": "240d75e1e7b2f33a16a10538e125342ee6c701637e12c0fbe0d8aad5919b48eb",
+          "sha256": "240d75e1e7b2f33a16a10538e125342ee6c701637e12c0fbe0d8aad5919b48eb"
+        },
+        {
+          "path": "artifact-template.json",
+          "sourceSha256": "7aea630ddafb1add3869c6c046e2b8c83464771a29f7e47a59d482480d13d0be",
+          "sha256": "7aea630ddafb1add3869c6c046e2b8c83464771a29f7e47a59d482480d13d0be"
+        },
+        {
+          "path": "assets/preview.png",
+          "sourceSha256": "2fb61600384025e1266d5f8b9c641cba4b535b78a03173b5d051662f4df48e68",
+          "sha256": "2fb61600384025e1266d5f8b9c641cba4b535b78a03173b5d051662f4df48e68"
+        },
+        {
+          "path": "assets/reference.xlsx",
+          "sourceSha256": "4a4709ff9b860f762f4c3bb224c5084e9820d9a8d8085395aa121728c899d0c2",
+          "sha256": "4a4709ff9b860f762f4c3bb224c5084e9820d9a8d8085395aa121728c899d0c2"
+        },
+        {
+          "path": "SKILL.md",
+          "sourceSha256": "74f4a5cccec0107b861548b157e04c51d9b58ec13a990c86394b4c529b8ecf41",
+          "sha256": "74f4a5cccec0107b861548b157e04c51d9b58ec13a990c86394b4c529b8ecf41"
+        }
+      ]
+    },
+    {
+      "name": "maintain-space",
+      "originalFolder": "maintain-space",
+      "source": "C:/Users/surya/.codex/plugins/cache/openai-curated-remote/pages/0.1.23/skills/maintain-space",
+      "description": "Reconcile new evidence into existing ChatGPT Pages or a Space when the user requests upkeep. For a direct text correction, use write-page. Do not use for ordinary chat drafts, writing, or advice, or treat a selected Page as a request to save. Schedule future upkeep only when requested.",
+      "changes": [],
+      "files": [
+        {
+          "path": "agents/openai.yaml",
+          "sourceSha256": "3c7b43e378888955e9be6f02133b7522a0614f94f86d7066d72322ce2dc71325",
+          "sha256": "3c7b43e378888955e9be6f02133b7522a0614f94f86d7066d72322ce2dc71325"
+        },
+        {
+          "path": "SKILL.md",
+          "sourceSha256": "53570e6cb8663d370dce15ed0d67208876c3b13015832c352daa759213e7378e",
+          "sha256": "53570e6cb8663d370dce15ed0d67208876c3b13015832c352daa759213e7378e"
+        }
+      ]
+    },
+    {
+      "name": "manage-schedules",
+      "originalFolder": "manage-schedules",
+      "source": "C:/Users/surya/.codex/plugins/cache/openai-curated-remote/pages/0.1.23/skills/manage-schedules",
+      "description": "Review a ChatGPT Space page and its schedules, recommend useful recurring work, and create, update, or remove scheduled automations.",
+      "changes": [],
+      "files": [
+        {
+          "path": "agents/openai.yaml",
+          "sourceSha256": "502b266f394596a35919f7d77948e803fecc8f0ab7044893918b87a6fa8e45f6",
+          "sha256": "502b266f394596a35919f7d77948e803fecc8f0ab7044893918b87a6fa8e45f6"
+        },
+        {
+          "path": "SKILL.md",
+          "sourceSha256": "e0a464a83f15a6e896c5536cab775f667ebd0dd61eb64fe3c877a41935d64bd9",
+          "sha256": "e0a464a83f15a6e896c5536cab775f667ebd0dd61eb64fe3c877a41935d64bd9"
+        }
+      ]
+    },
+    {
+      "name": "organize-space",
+      "originalFolder": "organize-space",
+      "source": "C:/Users/surya/.codex/plugins/cache/openai-curated-remote/pages/0.1.23/skills/organize-space",
+      "description": "Organize existing ChatGPT Pages and Space structure when the user requests changes to that structure. Do not use for ordinary chat drafts or advice; a selected Page alone does not authorize reorganization. A narrow text edit does not need this workflow.",
+      "changes": [],
+      "files": [
+        {
+          "path": "agents/openai.yaml",
+          "sourceSha256": "a6e28b204d44f1312cdf715a73c9dacfda8b3d742ed5a57ef926bf4a15219f8f",
+          "sha256": "a6e28b204d44f1312cdf715a73c9dacfda8b3d742ed5a57ef926bf4a15219f8f"
+        },
+        {
+          "path": "SKILL.md",
+          "sourceSha256": "dfa8bfae86785a98e43b1ca0af67a9c89b90c658eee7fc7ad4ccfe8cc84a267b",
+          "sha256": "dfa8bfae86785a98e43b1ca0af67a9c89b90c658eee7fc7ad4ccfe8cc84a267b"
+        }
+      ]
+    },
+    {
+      "name": "write-page",
+      "originalFolder": "write-page",
+      "source": "C:/Users/surya/.codex/plugins/cache/openai-curated-remote/pages/0.1.23/skills/write-page",
+      "description": "Create or edit requested Page/Space content, or use for prose you have already decided to save as a standalone Markdown file, only if the user did not explicitly request a Markdown file. Honor established formats, destinations, and repository documentation. A selected Page alone does not authorize a write.",
+      "changes": [],
+      "files": [
+        {
+          "path": "agents/openai.yaml",
+          "sourceSha256": "b33464c83ab6cf5506a5097fb96ff13a0e3956a4ddf852b5c538b46580fa27a0",
+          "sha256": "b33464c83ab6cf5506a5097fb96ff13a0e3956a4ddf852b5c538b46580fa27a0"
+        },
+        {
+          "path": "references/edit-requests.md",
+          "sourceSha256": "b57bcdede9f3ebd132949a0171f0506e5dafa32c6a2b44d67618e35aef7bf2e9",
+          "sha256": "b57bcdede9f3ebd132949a0171f0506e5dafa32c6a2b44d67618e35aef7bf2e9"
+        },
+        {
+          "path": "references/page-content.md",
+          "sourceSha256": "20382aa580597801cc4dc2484cd5bab27a04453c15730624bbc266d70be0ee8d",
+          "sha256": "20382aa580597801cc4dc2484cd5bab27a04453c15730624bbc266d70be0ee8d"
+        },
+        {
+          "path": "SKILL.md",
+          "sourceSha256": "7a997ccee8cc3214cb1e9af4a5569bddb74499796aff808e94561109e148a658",
+          "sha256": "7a997ccee8cc3214cb1e9af4a5569bddb74499796aff808e94561109e148a658"
+        },
+        {
+          "path": "writing_quality.md",
+          "sourceSha256": "13923774ee99756b3cce6ee94b7378f6db94fc5f632bb814ff4cba82c73eee8a",
+          "sha256": "13923774ee99756b3cce6ee94b7378f6db94fc5f632bb814ff4cba82c73eee8a"
+        }
+      ]
+    },
+    {
+      "name": "plugin-management",
+      "originalFolder": "plugin-management",
+      "source": "C:/Users/surya/.codex/plugins/cache/openai-curated-remote/plugin-management/0.1.0/skills/plugin-management",
+      "description": "Discover and suggest relevant plugins, inspect app permissions and dependencies, and manage plugin connections or removal. Use when the user asks about plugins or when a task would materially benefit from an external app, account, service, or data source that available tools cannot access.",
+      "changes": [],
+      "files": [
+        {
+          "path": "SKILL.md",
+          "sourceSha256": "653841cc21205269f08b0ce135891e1518dac616a766bcfb0b57d788d3f68b10",
+          "sha256": "653841cc21205269f08b0ce135891e1518dac616a766bcfb0b57d788d3f68b10"
+        }
+      ]
+    },
+    {
+      "name": "create-pet",
+      "originalFolder": "create-pet",
+      "source": "C:/Users/surya/.codex/plugins/cache/openai-curated-remote/work-pets/0.1.6/skills/create-pet",
+      "description": "Create, repair, validate, preview, upload, or activate an animated v2 pet in ChatGPT Work mode from a character idea, brand cue, or reference image. Use for new ChatGPT Pets, custom mascots, non-pixel styles, and unattached sprite sheets requiring nine animation states plus sixteen look directions. Preserve Library artifacts and Pets MCP lifecycle behavior. Exclude real pets, standalone images, and other-app pets; clarify before invoking.",
+      "changes": [
+        "Made shared pet-contract links local to this skill."
+      ],
+      "files": [
+        {
+          "path": "agents/openai.yaml",
+          "sourceSha256": "16690f3d631222d7479bd052c7fda536b4553224a61109fe663f414605d3e27a",
+          "sha256": "16690f3d631222d7479bd052c7fda536b4553224a61109fe663f414605d3e27a"
+        },
+        {
+          "path": "references/animation-rows.md",
+          "sourceSha256": "d27b08d599e73cf6a65a03d2b8ad49e9ad408e18292636164e7b2d2f1815615f",
+          "sha256": "d27b08d599e73cf6a65a03d2b8ad49e9ad408e18292636164e7b2d2f1815615f"
+        },
+        {
+          "path": "scripts/assemble_extended_atlas.py",
+          "sourceSha256": "a8684c22e9409f1add388688218c8fa7e267b88b91fcb3edc3280dc87ebf1c3e",
+          "sha256": "a8684c22e9409f1add388688218c8fa7e267b88b91fcb3edc3280dc87ebf1c3e"
+        },
+        {
+          "path": "scripts/combine_direction_blind_verdicts.py",
+          "sourceSha256": "4dad56adaad032a4e6d070494b0ab2ca316429cf69363450f9fbf7135d1c2d42",
+          "sha256": "4dad56adaad032a4e6d070494b0ab2ca316429cf69363450f9fbf7135d1c2d42"
+        },
+        {
+          "path": "scripts/compose_atlas.py",
+          "sourceSha256": "d690f42252746b3306007b269168e62cff08b36d58e9aef246b78d986b6a10d5",
+          "sha256": "d690f42252746b3306007b269168e62cff08b36d58e9aef246b78d986b6a10d5"
+        },
+        {
+          "path": "scripts/compose_cardinal_anchor_strip.py",
+          "sourceSha256": "e67ac9816a909cad136189bf23eddf8b16e0fcb430ade2262556bbd12db2bca5",
+          "sha256": "e67ac9816a909cad136189bf23eddf8b16e0fcb430ade2262556bbd12db2bca5"
+        },
+        {
+          "path": "scripts/derive_running_left_from_running_right.py",
+          "sourceSha256": "ae42859720220fe8a407fc0dfff06e8344e535c6c8019220b1f63db7714baa77",
+          "sha256": "ae42859720220fe8a407fc0dfff06e8344e535c6c8019220b1f63db7714baa77"
+        },
+        {
+          "path": "scripts/despill_chroma_edges.py",
+          "sourceSha256": "dc93a5e752f4100e55010205462a8e7272bac451ee7e29b525abd6157a7fe309",
+          "sha256": "dc93a5e752f4100e55010205462a8e7272bac451ee7e29b525abd6157a7fe309"
+        },
+        {
+          "path": "scripts/extract_cardinal_anchors.py",
+          "sourceSha256": "55434d06bc328b1879d98c821f2586963910f89926f4dcbe92682b25555a8cde",
+          "sha256": "55434d06bc328b1879d98c821f2586963910f89926f4dcbe92682b25555a8cde"
+        },
+        {
+          "path": "scripts/extract_strip_frames.py",
+          "sourceSha256": "af2cfea385189df30674c91f4658a49e5b51e58471057fbca0b3319cf932c75e",
+          "sha256": "af2cfea385189df30674c91f4658a49e5b51e58471057fbca0b3319cf932c75e"
+        },
+        {
+          "path": "scripts/inspect_frames.py",
+          "sourceSha256": "d8a43f01970c511c74f77d256c2c81d41e70cfb7ec234f5bbd76b60b3ebbdfe4",
+          "sha256": "d8a43f01970c511c74f77d256c2c81d41e70cfb7ec234f5bbd76b60b3ebbdfe4"
+        },
+        {
+          "path": "scripts/make_contact_sheet.py",
+          "sourceSha256": "721399a805ae58d91a85a4d27e8bb3503eb20f4132fe4261e83acc166adc6a56",
+          "sha256": "721399a805ae58d91a85a4d27e8bb3503eb20f4132fe4261e83acc166adc6a56"
+        },
+        {
+          "path": "scripts/make_direction_blind_qa_sheet.py",
+          "sourceSha256": "52f2a29251872449fed51c7744c3f9f503274ee288eb23efc29a2c568b0d52bd",
+          "sha256": "52f2a29251872449fed51c7744c3f9f503274ee288eb23efc29a2c568b0d52bd"
+        },
+        {
+          "path": "scripts/make_direction_qa_sheet.py",
+          "sourceSha256": "ed09a31b3bc9b68f929a7a85be367c5b7d5639215260f98af6c97df896197908",
+          "sha256": "ed09a31b3bc9b68f929a7a85be367c5b7d5639215260f98af6c97df896197908"
+        },
+        {
+          "path": "scripts/measure_direction_continuity.py",
+          "sourceSha256": "e24b7065af82eab5638f1fcdeb627d497391a2f1e9ba19801827d1db3a6d8c2d",
+          "sha256": "e24b7065af82eab5638f1fcdeb627d497391a2f1e9ba19801827d1db3a6d8c2d"
+        },
+        {
+          "path": "scripts/prepare_pet_run.py",
+          "sourceSha256": "cf806ef4bed67b6ca0a568fdc3a47b178272a82d1ce5949ebc2b3c59e4f253d9",
+          "sha256": "cf806ef4bed67b6ca0a568fdc3a47b178272a82d1ce5949ebc2b3c59e4f253d9"
+        },
+        {
+          "path": "scripts/render_animation_previews.py",
+          "sourceSha256": "5fe50707052f815964cc5bfc35addc79b2d55f3331fc7562645e56835211a400",
+          "sha256": "5fe50707052f815964cc5bfc35addc79b2d55f3331fc7562645e56835211a400"
+        },
+        {
+          "path": "scripts/validate_atlas.py",
+          "sourceSha256": "cd28f7e3ed4fc7d879239cbf4d4a5ae1fb603f457b14560ef2c8e15899507b6b",
+          "sha256": "cd28f7e3ed4fc7d879239cbf4d4a5ae1fb603f457b14560ef2c8e15899507b6b"
+        },
+        {
+          "path": "scripts/validate_direction_blind_verdicts.py",
+          "sourceSha256": "7871667432918e0ffcdbb9beaf88a01c0af4b9e2809c5000f7b533a9ddc6e13d",
+          "sha256": "7871667432918e0ffcdbb9beaf88a01c0af4b9e2809c5000f7b533a9ddc6e13d"
+        },
+        {
+          "path": "scripts/validate_pet_quality.py",
+          "sourceSha256": "2e83db1c5a2a16d4ddc3ef22c4c9856310c438a8426bad99f962f99e9597e555",
+          "sha256": "2e83db1c5a2a16d4ddc3ef22c4c9856310c438a8426bad99f962f99e9597e555"
+        },
+        {
+          "path": "SKILL.md",
+          "sourceSha256": "841354fb8116f8fdfd3b643b30828f5180196c594d3fed9b669b948b88892af1",
+          "sha256": "c7c4fca868e3e2130360104a64ad11c3f9ad3ddad3dc3537b2d001df5b8208ca"
+        },
+        {
+          "path": "references/sprite-sheet-contract.md",
+          "source": "C:/Users/surya/.codex/plugins/cache/openai-curated-remote/work-pets/0.1.6/references/sprite-sheet-contract.md",
+          "sourceSha256": "88d05bfbc76c3a2a64d128cafe5792cc43f78170fee85496d50cb3925934d093",
+          "sha256": "88d05bfbc76c3a2a64d128cafe5792cc43f78170fee85496d50cb3925934d093"
+        },
+        {
+          "path": "references/upload-session.md",
+          "source": "C:/Users/surya/.codex/plugins/cache/openai-curated-remote/work-pets/0.1.6/references/upload-session.md",
+          "sourceSha256": "59afd4f37755ce5cda6a49ec2f31c6f8c5f3df271c18f6c4073012b70d37e6e6",
+          "sha256": "59afd4f37755ce5cda6a49ec2f31c6f8c5f3df271c18f6c4073012b70d37e6e6"
+        }
+      ]
+    },
+    {
+      "name": "pets",
+      "originalFolder": "pets",
+      "source": "C:/Users/surya/.codex/plugins/cache/openai-curated-remote/work-pets/0.1.6/skills/pets",
+      "description": "List, inspect, select, download, or delete animated pets in ChatGPT Work mode. Use for an explicit pet in ChatGPT or established ChatGPT Pets context. Exclude real-world and other-app pets; clarify before invoking.",
+      "changes": [],
+      "files": [
+        {
+          "path": "agents/openai.yaml",
+          "sourceSha256": "2570b140c41a0080edcdb323235690ae8f18b0e3c40dbe08a7dc57ce006b8cf2",
+          "sha256": "2570b140c41a0080edcdb323235690ae8f18b0e3c40dbe08a7dc57ce006b8cf2"
+        },
+        {
+          "path": "SKILL.md",
+          "sourceSha256": "1bf5d45fd6a6390aab777229293fb05cef7cf898aac882f8955e40c378e52fcd",
+          "sha256": "1bf5d45fd6a6390aab777229293fb05cef7cf898aac882f8955e40c378e52fcd"
+        }
+      ]
+    },
+    {
+      "name": "update-pet",
+      "originalFolder": "update-pet",
+      "source": "C:/Users/surya/.codex/plugins/cache/openai-curated-remote/work-pets/0.1.6/skills/update-pet",
+      "description": "Inspect, validate, preview, repair, or update a custom pet in ChatGPT Work mode, including its name, description, or sprite sheet. Use for a pet in ChatGPT or established ChatGPT Pets context. Exclude real-world and other-app pets; clarify before invoking.",
+      "changes": [
+        "Made shared pet-contract links local to this skill."
+      ],
+      "files": [
+        {
+          "path": "agents/openai.yaml",
+          "sourceSha256": "b031edf7b860302fc56ff938ee90906dd09e9d6c3e44447847a068417eaf80b9",
+          "sha256": "b031edf7b860302fc56ff938ee90906dd09e9d6c3e44447847a068417eaf80b9"
+        },
+        {
+          "path": "SKILL.md",
+          "sourceSha256": "c63c98d67b6ad781a72a8f9837ba1fb5e2d2a8054a2562e4025890a97d8a0e67",
+          "sha256": "724c7f6aa35c93748f5531d4ce50b590054526987ed4005ad3d33eb454e58e6c"
+        },
+        {
+          "path": "references/sprite-sheet-contract.md",
+          "source": "C:/Users/surya/.codex/plugins/cache/openai-curated-remote/work-pets/0.1.6/references/sprite-sheet-contract.md",
+          "sourceSha256": "88d05bfbc76c3a2a64d128cafe5792cc43f78170fee85496d50cb3925934d093",
+          "sha256": "88d05bfbc76c3a2a64d128cafe5792cc43f78170fee85496d50cb3925934d093"
+        },
+        {
+          "path": "references/upload-session.md",
+          "source": "C:/Users/surya/.codex/plugins/cache/openai-curated-remote/work-pets/0.1.6/references/upload-session.md",
+          "sourceSha256": "59afd4f37755ce5cda6a49ec2f31c6f8c5f3df271c18f6c4073012b70d37e6e6",
+          "sha256": "59afd4f37755ce5cda6a49ec2f31c6f8c5f3df271c18f6c4073012b70d37e6e6"
+        }
+      ]
+    },
+    {
+      "name": "documents",
+      "originalFolder": "documents",
+      "source": "C:/Users/surya/.codex/plugins/cache/openai-primary-runtime/documents/26.1017.22136/skills/documents",
+      "description": "Create, edit, redline, and comment on `.docx`, Word, and Google Docs-targeted document artifacts inside the container, with a strict render-and-verify workflow. Use `render_docx.py` to generate page PNGs (and optional PDF) for visual QA, then iterate until layout is flawless before delivering the final document.",
+      "changes": [],
+      "files": [
+        {
+          "path": "agents/openai.yaml",
+          "sourceSha256": "8fc41ecccfae0d0310060235a43f9c4aea6e6c2aa05cec737a59599968ec22c4",
+          "sha256": "8fc41ecccfae0d0310060235a43f9c4aea6e6c2aa05cec737a59599968ec22c4"
+        },
+        {
+          "path": "assets/file-document.png",
+          "sourceSha256": "faec8ad51ed2c8db6bb7ba51aa4be1d5d88b80974f7f3c167d56781fbb8d3218",
+          "sha256": "faec8ad51ed2c8db6bb7ba51aa4be1d5d88b80974f7f3c167d56781fbb8d3218"
+        },
+        {
+          "path": "container_tools/mark_artifact_operation_started.mjs",
+          "sourceSha256": "703516891e879553004822815dfb454f3277ab22bc031bcc217dd9a4c8825793",
+          "sha256": "703516891e879553004822815dfb454f3277ab22bc031bcc217dd9a4c8825793"
+        },
+        {
+          "path": "examples/end_to_end_smoke_test.md",
+          "sourceSha256": "2abd9bdec48f2dcb905bf950423e021b61ca8169f56bcff58b4b3131663aec50",
+          "sha256": "2abd9bdec48f2dcb905bf950423e021b61ca8169f56bcff58b4b3131663aec50"
+        },
+        {
+          "path": "LICENSE.txt",
+          "sourceSha256": "d31e7017b70c25daf83b7b01804816ddad6bd984b724e03d52b20b9a81746bd1",
+          "sha256": "d31e7017b70c25daf83b7b01804816ddad6bd984b724e03d52b20b9a81746bd1"
+        },
+        {
+          "path": "manifest.txt",
+          "sourceSha256": "3357b7233af9bc79d448737b6c6c48d991cfab13b8ab48d9dd03817461ee76e4",
+          "sha256": "3357b7233af9bc79d448737b6c6c48d991cfab13b8ab48d9dd03817461ee76e4"
+        },
+        {
+          "path": "ooxml/comments.md",
+          "sourceSha256": "aa8004a76499c36a4046041eaff8966fd3ec43fab3a48e1b158e95534ec61557",
+          "sha256": "aa8004a76499c36a4046041eaff8966fd3ec43fab3a48e1b158e95534ec61557"
+        },
+        {
+          "path": "ooxml/hyperlinks_and_fields.md",
+          "sourceSha256": "88b8615aabd48727086208d981958dc1d74a4432b81060707d97c3ded9d7764c",
+          "sha256": "88b8615aabd48727086208d981958dc1d74a4432b81060707d97c3ded9d7764c"
+        },
+        {
+          "path": "ooxml/rels_and_content_types.md",
+          "sourceSha256": "d64fe64dc3daa56f4c90baa9098f94f6fcf52e5d4ce041ab548392e06c9691c2",
+          "sha256": "d64fe64dc3daa56f4c90baa9098f94f6fcf52e5d4ce041ab548392e06c9691c2"
+        },
+        {
+          "path": "ooxml/tracked_changes.md",
+          "sourceSha256": "9293157ade79498db26fdb79b3d7835896f4f87ebb73c28eddc6a5e48aae47f3",
+          "sha256": "9293157ade79498db26fdb79b3d7835896f4f87ebb73c28eddc6a5e48aae47f3"
+        },
+        {
+          "path": "references/artifact-template-selection.md",
+          "sourceSha256": "f3105aaaecea38815edf9a17e937e0cd249a4465bb586079284f0dae2da201fe",
+          "sha256": "f3105aaaecea38815edf9a17e937e0cd249a4465bb586079284f0dae2da201fe"
+        },
+        {
+          "path": "render_docx.py",
+          "sourceSha256": "8b48b8f05f30cc6c7b5a7bd8e18e7ea93a61aec1ea601026a3358b2105f0903a",
+          "sha256": "8b48b8f05f30cc6c7b5a7bd8e18e7ea93a61aec1ea601026a3358b2105f0903a"
+        },
+        {
+          "path": "scripts/a11y_audit.py",
+          "sourceSha256": "a832e288503704a24ae4e7d9bde4444dee01c835c651f746f19167c4ef4632bf",
+          "sha256": "a832e288503704a24ae4e7d9bde4444dee01c835c651f746f19167c4ef4632bf"
+        },
+        {
+          "path": "scripts/accept_tracked_changes.py",
+          "sourceSha256": "7842a79bc73941a50318bfb4178fd9c01cec8984a4f10565a08f485282799f06",
+          "sha256": "7842a79bc73941a50318bfb4178fd9c01cec8984a4f10565a08f485282799f06"
+        },
+        {
+          "path": "scripts/add_tracked_replacements.py",
+          "sourceSha256": "2c66d170f70335dbfab691e6d76c73e49dd14b753ead0728a55dbf228c510ba5",
+          "sha256": "2c66d170f70335dbfab691e6d76c73e49dd14b753ead0728a55dbf228c510ba5"
+        },
+        {
+          "path": "scripts/apply_template_styles.py",
+          "sourceSha256": "47dbba6245fc1f9b5237cb975981ce5c42bb96d513a030ba93c3ad80497ecde9",
+          "sha256": "47dbba6245fc1f9b5237cb975981ce5c42bb96d513a030ba93c3ad80497ecde9"
+        },
+        {
+          "path": "scripts/captions_and_crossrefs.py",
+          "sourceSha256": "2d8db89e3f18b7287877c61b9851d083163d3888c8e8d57b52708c1e63db6d03",
+          "sha256": "2d8db89e3f18b7287877c61b9851d083163d3888c8e8d57b52708c1e63db6d03"
+        },
+        {
+          "path": "scripts/comments_add.py",
+          "sourceSha256": "78fbfc023c644466fd0eb9cdf2ac55983bb6aed1c070e8e7a9126b1a6233efe0",
+          "sha256": "78fbfc023c644466fd0eb9cdf2ac55983bb6aed1c070e8e7a9126b1a6233efe0"
+        },
+        {
+          "path": "scripts/comments_apply_patch.py",
+          "sourceSha256": "0c82868fd104f121a830e0394cbf6d6a288e84d8aafddb334ae1298de178edc2",
+          "sha256": "0c82868fd104f121a830e0394cbf6d6a288e84d8aafddb334ae1298de178edc2"
+        },
+        {
+          "path": "scripts/comments_extract.py",
+          "sourceSha256": "9eedfdb515111b77cc04bc30030bae13de907ff2202b838cc9ba37a9b1060c09",
+          "sha256": "9eedfdb515111b77cc04bc30030bae13de907ff2202b838cc9ba37a9b1060c09"
+        },
+        {
+          "path": "scripts/comments_strip.py",
+          "sourceSha256": "b3b27cd86527248a54b3794e7e907b244ea4a2e0e9efa726485aa0b296b906ab",
+          "sha256": "b3b27cd86527248a54b3794e7e907b244ea4a2e0e9efa726485aa0b296b906ab"
+        },
+        {
+          "path": "scripts/content_controls.py",
+          "sourceSha256": "783b38cdbc36864c757c20ec3473d033ead50f2db78b1741405481d070d7c56c",
+          "sha256": "783b38cdbc36864c757c20ec3473d033ead50f2db78b1741405481d070d7c56c"
+        },
+        {
+          "path": "scripts/docx_ooxml_patch.py",
+          "sourceSha256": "39a998f10e786d892854246accff85c86548fd58ed1429e94eb98a984023f7bb",
+          "sha256": "39a998f10e786d892854246accff85c86548fd58ed1429e94eb98a984023f7bb"
+        },
+        {
+          "path": "scripts/docx_table_to_csv.py",
+          "sourceSha256": "fa993cce50372ae2f647387547d5037c9eca66f0bd6d7f94bc0b2ef481c0d55e",
+          "sha256": "fa993cce50372ae2f647387547d5037c9eca66f0bd6d7f94bc0b2ef481c0d55e"
+        },
+        {
+          "path": "scripts/fields_materialize.py",
+          "sourceSha256": "d8d0cfe5b0f637e5324bd4ac7d5f384953167acdc247987f491a7d00b4d51889",
+          "sha256": "d8d0cfe5b0f637e5324bd4ac7d5f384953167acdc247987f491a7d00b4d51889"
+        },
+        {
+          "path": "scripts/fields_report.py",
+          "sourceSha256": "807537b56e333c613eac74c4cf288c88908bec5a450d7018c612afd5ef879af7",
+          "sha256": "807537b56e333c613eac74c4cf288c88908bec5a450d7018c612afd5ef879af7"
+        },
+        {
+          "path": "scripts/flatten_ref_fields.py",
+          "sourceSha256": "01e1089664f005e9aa4590dccc4156addc49c9668a8fbb404bde04fe5678cb39",
+          "sha256": "01e1089664f005e9aa4590dccc4156addc49c9668a8fbb404bde04fe5678cb39"
+        },
+        {
+          "path": "scripts/footnotes_report.py",
+          "sourceSha256": "3318c8d535beeee94db3496d80e42a03aeb6522e20f4a4776771f7be677919cb",
+          "sha256": "3318c8d535beeee94db3496d80e42a03aeb6522e20f4a4776771f7be677919cb"
+        },
+        {
+          "path": "scripts/google_docs_title_sanitize.py",
+          "sourceSha256": "c8dafcef80220593411103ea3caefaa221e0ec7970bf31237f6ffbe762b0d4bf",
+          "sha256": "c8dafcef80220593411103ea3caefaa221e0ec7970bf31237f6ffbe762b0d4bf"
+        },
+        {
+          "path": "scripts/heading_audit.py",
+          "sourceSha256": "6c95509da0932cf870ead927a5d9f8d0170cdf31d2f6718d64a3641b8f3931dc",
+          "sha256": "6c95509da0932cf870ead927a5d9f8d0170cdf31d2f6718d64a3641b8f3931dc"
+        },
+        {
+          "path": "scripts/images_audit.py",
+          "sourceSha256": "57443a088015fa7a3f28b1f2785d0839cd78b6c6f6dd08eee9601bd7b840bb2c",
+          "sha256": "57443a088015fa7a3f28b1f2785d0839cd78b6c6f6dd08eee9601bd7b840bb2c"
+        },
+        {
+          "path": "scripts/insert_note.py",
+          "sourceSha256": "9584b502051317923e183b3f45fb78cbb855e1a8e944948976ea854e18f4e5ed",
+          "sha256": "9584b502051317923e183b3f45fb78cbb855e1a8e944948976ea854e18f4e5ed"
+        },
+        {
+          "path": "scripts/insert_ref_fields.py",
+          "sourceSha256": "4b20bbc5c297d7f607db6428e6ad00580c5411c949dfe52fb13710d7301c917c",
+          "sha256": "4b20bbc5c297d7f607db6428e6ad00580c5411c949dfe52fb13710d7301c917c"
+        },
+        {
+          "path": "scripts/insert_toc.py",
+          "sourceSha256": "b069ad3a0c1824742e31c84f417f08b9abba7aff236494544f9a22055ed68943",
+          "sha256": "b069ad3a0c1824742e31c84f417f08b9abba7aff236494544f9a22055ed68943"
+        },
+        {
+          "path": "scripts/internal_nav.py",
+          "sourceSha256": "53e1695c08f1abb81b4cd07c97c7e27019214f7dda0e37ca84697bce4cc01292",
+          "sha256": "53e1695c08f1abb81b4cd07c97c7e27019214f7dda0e37ca84697bce4cc01292"
+        },
+        {
+          "path": "scripts/make_fixtures.py",
+          "sourceSha256": "c11118357e78084345544c2c232c7d0fc785e766c7c7fcc481f59abf4154968c",
+          "sha256": "c11118357e78084345544c2c232c7d0fc785e766c7c7fcc481f59abf4154968c"
+        },
+        {
+          "path": "scripts/merge_docx_append.py",
+          "sourceSha256": "0fac13945db9cf61b9cfaa708862dd7ee37fb02d72ae1e8b4745c38ba636d414",
+          "sha256": "0fac13945db9cf61b9cfaa708862dd7ee37fb02d72ae1e8b4745c38ba636d414"
+        },
+        {
+          "path": "scripts/privacy_scrub.py",
+          "sourceSha256": "ae8d9bc7ef52cc91370a17070f4ee12b400fa7baf2af0ee403099d7762d072a4",
+          "sha256": "ae8d9bc7ef52cc91370a17070f4ee12b400fa7baf2af0ee403099d7762d072a4"
+        },
+        {
+          "path": "scripts/redact_docx.py",
+          "sourceSha256": "cd02f988732823adb6c1524398bf499cf7d93236871262bbab0074b95b7f4310",
+          "sha256": "cd02f988732823adb6c1524398bf499cf7d93236871262bbab0074b95b7f4310"
+        },
+        {
+          "path": "scripts/render_and_diff.py",
+          "sourceSha256": "7b2d613289047a54e8d747520f079c276ab899bd99f76556d5c2827bef2ddb67",
+          "sha256": "7b2d613289047a54e8d747520f079c276ab899bd99f76556d5c2827bef2ddb67"
+        },
+        {
+          "path": "scripts/section_audit.py",
+          "sourceSha256": "c718d416f0d7512ceadc07f76fefd42d633f443dda3412b0722470ce0302d482",
+          "sha256": "c718d416f0d7512ceadc07f76fefd42d633f443dda3412b0722470ce0302d482"
+        },
+        {
+          "path": "scripts/set_protection.py",
+          "sourceSha256": "3a9fa60ee0fe11ba40a97b84ea1b3a10c8595173aedb35f5b95e18911a91bf14",
+          "sha256": "3a9fa60ee0fe11ba40a97b84ea1b3a10c8595173aedb35f5b95e18911a91bf14"
+        },
+        {
+          "path": "scripts/style_lint.py",
+          "sourceSha256": "52e485a8fb96dda954a7f7e88ce3a59714ee1a4c945a41e7dff0d1d77ee5da4d",
+          "sha256": "52e485a8fb96dda954a7f7e88ce3a59714ee1a4c945a41e7dff0d1d77ee5da4d"
+        },
+        {
+          "path": "scripts/style_normalize.py",
+          "sourceSha256": "9e293590db1e6b71d932dc3b811d9f8b6d1a4351dc07f8d1ccccd868dcddafe0",
+          "sha256": "9e293590db1e6b71d932dc3b811d9f8b6d1a4351dc07f8d1ccccd868dcddafe0"
+        },
+        {
+          "path": "scripts/table_geometry.py",
+          "sourceSha256": "c792883c6785663588e80900b73f1bbf696a5e48dd2d56718af3bfbfa2d2b42e",
+          "sha256": "c792883c6785663588e80900b73f1bbf696a5e48dd2d56718af3bfbfa2d2b42e"
+        },
+        {
+          "path": "scripts/watermark_add.py",
+          "sourceSha256": "44f7556f7e6a57ab6ac78f7b9ff35b78e6fa10f2b0c94cf4dc12e5b135330542",
+          "sha256": "44f7556f7e6a57ab6ac78f7b9ff35b78e6fa10f2b0c94cf4dc12e5b135330542"
+        },
+        {
+          "path": "scripts/watermark_audit_remove.py",
+          "sourceSha256": "ed2b0eb4d58970e8f215656f130240c6bd561fdd4fd1b4887366d7ec055ce156",
+          "sha256": "ed2b0eb4d58970e8f215656f130240c6bd561fdd4fd1b4887366d7ec055ce156"
+        },
+        {
+          "path": "scripts/xlsx_to_docx_table.py",
+          "sourceSha256": "181c3bc9fd8789aab352df984da5ef0cccc4d664a967f51dccaab79815e3c9f2",
+          "sha256": "181c3bc9fd8789aab352df984da5ef0cccc4d664a967f51dccaab79815e3c9f2"
+        },
+        {
+          "path": "SKILL.md",
+          "sourceSha256": "2412c240a6412eb8186d1daf0b92cbb828f4674069fa90d19243fb5fb58a2639",
+          "sha256": "2412c240a6412eb8186d1daf0b92cbb828f4674069fa90d19243fb5fb58a2639"
+        },
+        {
+          "path": "tasks/accessibility_a11y.md",
+          "sourceSha256": "951dca7ba7e520792776a636c22e512a9a3c53699c6da80c5c3e47b0690c1374",
+          "sha256": "951dca7ba7e520792776a636c22e512a9a3c53699c6da80c5c3e47b0690c1374"
+        },
+        {
+          "path": "tasks/captions_crossrefs.md",
+          "sourceSha256": "20a50a2663b2d020d8a7e1bd3a31ae60a45ba41e40b437c9ada4e958987c421f",
+          "sha256": "20a50a2663b2d020d8a7e1bd3a31ae60a45ba41e40b437c9ada4e958987c421f"
+        },
+        {
+          "path": "tasks/clean_tracked_changes.md",
+          "sourceSha256": "6bd628bce5a571b73b59993a474bae039a7ea2e63e85f1292996688e1e2fa446",
+          "sha256": "6bd628bce5a571b73b59993a474bae039a7ea2e63e85f1292996688e1e2fa446"
+        },
+        {
+          "path": "tasks/comments_manage.md",
+          "sourceSha256": "2ec577fca8ef24d2ee3df9bbd3268eda9ca54a84169499c2fbb293d08a3bbbe0",
+          "sha256": "2ec577fca8ef24d2ee3df9bbd3268eda9ca54a84169499c2fbb293d08a3bbbe0"
+        },
+        {
+          "path": "tasks/compare_diff.md",
+          "sourceSha256": "e06551fbfadd651aa761ba497c04c98449150ddd61ae1221f0ec6f9947fe30a9",
+          "sha256": "e06551fbfadd651aa761ba497c04c98449150ddd61ae1221f0ec6f9947fe30a9"
+        },
+        {
+          "path": "tasks/create_edit.md",
+          "sourceSha256": "a842b20c8709f8bc19526de246e9f8722b4304d30c7a3d9fb7b111fdd6f8ec65",
+          "sha256": "a842b20c8709f8bc19526de246e9f8722b4304d30c7a3d9fb7b111fdd6f8ec65"
+        },
+        {
+          "path": "tasks/equations.md",
+          "sourceSha256": "add25da4ccc4a796db1dd4e793e0b45c68c355d531495df9b42539d2076db947",
+          "sha256": "add25da4ccc4a796db1dd4e793e0b45c68c355d531495df9b42539d2076db947"
+        },
+        {
+          "path": "tasks/fields_update.md",
+          "sourceSha256": "1ea14774b8e39b37884187e98059e0829e6bc9e0db502b26d4aea38ab68a4148",
+          "sha256": "1ea14774b8e39b37884187e98059e0829e6bc9e0db502b26d4aea38ab68a4148"
+        },
+        {
+          "path": "tasks/fixtures_edge_cases.md",
+          "sourceSha256": "41718f5b067990ca5e32f4065bb24ec152b3e9ec110fad6e81e81cc08af48cef",
+          "sha256": "41718f5b067990ca5e32f4065bb24ec152b3e9ec110fad6e81e81cc08af48cef"
+        },
+        {
+          "path": "tasks/footnotes_endnotes.md",
+          "sourceSha256": "6e8bd0a290fc5261e85c2dfcfcde483c685a0cacd00b24950f1fadad8b7b7072",
+          "sha256": "6e8bd0a290fc5261e85c2dfcfcde483c685a0cacd00b24950f1fadad8b7b7072"
+        },
+        {
+          "path": "tasks/forms_content_controls.md",
+          "sourceSha256": "d09c066658b0fd8cda6fc51413d57f37dfc12d6828799f52a6137cba20568ec7",
+          "sha256": "d09c066658b0fd8cda6fc51413d57f37dfc12d6828799f52a6137cba20568ec7"
+        },
+        {
+          "path": "tasks/headings_numbering.md",
+          "sourceSha256": "36bbf196fecac25e2e8c1239356fa2af6994a8939048eb7b59f14d2c5bc1999c",
+          "sha256": "36bbf196fecac25e2e8c1239356fa2af6994a8939048eb7b59f14d2c5bc1999c"
+        },
+        {
+          "path": "tasks/images_figures.md",
+          "sourceSha256": "482e14799b7021a9c191b320c60e492ab58f6f36a16187586c7f5bff38c85b45",
+          "sha256": "482e14799b7021a9c191b320c60e492ab58f6f36a16187586c7f5bff38c85b45"
+        },
+        {
+          "path": "tasks/multi_doc_merge.md",
+          "sourceSha256": "9706902b4f91fd8e9af87297a8a66e2767c512a357511ca3ae9bcc56f1a4cd35",
+          "sha256": "9706902b4f91fd8e9af87297a8a66e2767c512a357511ca3ae9bcc56f1a4cd35"
+        },
+        {
+          "path": "tasks/navigation_internal_links.md",
+          "sourceSha256": "33ee4fa5c4e051a0216728a43f92d4de8319169080834b008c48a837bc5acdbd",
+          "sha256": "33ee4fa5c4e051a0216728a43f92d4de8319169080834b008c48a837bc5acdbd"
+        },
+        {
+          "path": "tasks/privacy_scrub_metadata.md",
+          "sourceSha256": "6a1360d873bcade5dd2989f5406ea1c415dbcb52da25cc6c3580da3126880b93",
+          "sha256": "6a1360d873bcade5dd2989f5406ea1c415dbcb52da25cc6c3580da3126880b93"
+        },
+        {
+          "path": "tasks/protection_restrict_editing.md",
+          "sourceSha256": "97024dcc16af3b3666a2d1fc7ae8199f18d881ea62cdb367bd4d37ad0e9e8f53",
+          "sha256": "97024dcc16af3b3666a2d1fc7ae8199f18d881ea62cdb367bd4d37ad0e9e8f53"
+        },
+        {
+          "path": "tasks/read_review.md",
+          "sourceSha256": "ed1bce5450e03011225dbd2974f307cd5dec6fa48bde0a071e4907fd06f6bb16",
+          "sha256": "ed1bce5450e03011225dbd2974f307cd5dec6fa48bde0a071e4907fd06f6bb16"
+        },
+        {
+          "path": "tasks/redaction_anonymization.md",
+          "sourceSha256": "df3b89d5bacc8405e73f4ec16056a78dc655c6d181086a1b37464038cae2bd02",
+          "sha256": "df3b89d5bacc8405e73f4ec16056a78dc655c6d181086a1b37464038cae2bd02"
+        },
+        {
+          "path": "tasks/sections_layout.md",
+          "sourceSha256": "3b36b7f96ee095c66d4e3d24681b0b9cd1b6b82b1b3b5491aeb748545c89f5cf",
+          "sha256": "3b36b7f96ee095c66d4e3d24681b0b9cd1b6b82b1b3b5491aeb748545c89f5cf"
+        },
+        {
+          "path": "tasks/style_lint_normalize.md",
+          "sourceSha256": "993bb9c5129dc6ccb63d28b95f4e3bc5f716eee9fd6a6c75c106031ed42b12e8",
+          "sha256": "993bb9c5129dc6ccb63d28b95f4e3bc5f716eee9fd6a6c75c106031ed42b12e8"
+        },
+        {
+          "path": "tasks/tables_spreadsheets.md",
+          "sourceSha256": "eeb08bc4d64db98679a5648a041f7786dca160f35c0909a10b7963e1af3f88db",
+          "sha256": "eeb08bc4d64db98679a5648a041f7786dca160f35c0909a10b7963e1af3f88db"
+        },
+        {
+          "path": "tasks/templates_style_packs.md",
+          "sourceSha256": "a75db63fcdfd135bab27b164fe7747adda75c63501e6300d7eb5d56b9fc6a580",
+          "sha256": "a75db63fcdfd135bab27b164fe7747adda75c63501e6300d7eb5d56b9fc6a580"
+        },
+        {
+          "path": "tasks/toc_workflow.md",
+          "sourceSha256": "ae2c36431d7ba8f7be1fad51c5af79831f4e38441060ca5fb0058247a54e9ab9",
+          "sha256": "ae2c36431d7ba8f7be1fad51c5af79831f4e38441060ca5fb0058247a54e9ab9"
+        },
+        {
+          "path": "tasks/verify_render.md",
+          "sourceSha256": "e94db9fefda34eefb65ea527467d8307eb0e834dca2705b04d027a426ebc9d9b",
+          "sha256": "e94db9fefda34eefb65ea527467d8307eb0e834dca2705b04d027a426ebc9d9b"
+        },
+        {
+          "path": "tasks/watermarks_background.md",
+          "sourceSha256": "9f87e23d4b5e54edb1560367e231bb3c0a6ef88193c600af8842d8537dcb9757",
+          "sha256": "9f87e23d4b5e54edb1560367e231bb3c0a6ef88193c600af8842d8537dcb9757"
+        },
+        {
+          "path": "template-create.md",
+          "sourceSha256": "f02df8f6fa8f764de7a9b0ed4dcd38ae3560df364edd259b127bf53c3f496dd3",
+          "sha256": "f02df8f6fa8f764de7a9b0ed4dcd38ae3560df364edd259b127bf53c3f496dd3"
+        },
+        {
+          "path": "template-distill.md",
+          "sourceSha256": "dd01e59b5ffc7fb28f43fd4bd0eeb02a7d0e881f7d24780d195e6b3f6fc1f658",
+          "sha256": "dd01e59b5ffc7fb28f43fd4bd0eeb02a7d0e881f7d24780d195e6b3f6fc1f658"
+        },
+        {
+          "path": "troubleshooting/libreoffice_headless.md",
+          "sourceSha256": "929b2b124ce2e65b3de17565a8aad2ff9d569f38ae648ec7ca0e3bed87041ae8",
+          "sha256": "929b2b124ce2e65b3de17565a8aad2ff9d569f38ae648ec7ca0e3bed87041ae8"
+        },
+        {
+          "path": "troubleshooting/run_splitting.md",
+          "sourceSha256": "37df942902847797e8060308121d3db10273f71fd9dac748e0157e3c29624b85",
+          "sha256": "37df942902847797e8060308121d3db10273f71fd9dac748e0157e3c29624b85"
+        },
+        {
+          "path": "writing_quality.md",
+          "sourceSha256": "f3b37e02e3a2b4890f036ae9f279c2f3ce673b9b2c2d0dd893b998b028261129",
+          "sha256": "f3b37e02e3a2b4890f036ae9f279c2f3ce673b9b2c2d0dd893b998b028261129"
+        }
+      ]
+    },
+    {
+      "name": "codex-pdf",
+      "originalFolder": "pdf",
+      "source": "C:/Users/surya/.codex/plugins/cache/openai-primary-runtime/pdf/26.1017.22136/skills/pdf",
+      "description": "Read, create, inspect, render, and verify PDF files where visual layout matters, including fillable AcroForms. Use Poppler rendering plus Python tools such as reportlab, pdfplumber, and pypdf for generation and extraction.",
+      "changes": [
+        "Normalized frontmatter name to the destination folder."
+      ],
+      "files": [
+        {
+          "path": "agents/openai.yaml",
+          "sourceSha256": "5819dd168e544e3293d1501174130c56e139eb37c7d176884d8c6de4b9354f56",
+          "sha256": "5819dd168e544e3293d1501174130c56e139eb37c7d176884d8c6de4b9354f56"
+        },
+        {
+          "path": "assets/file-document.png",
+          "sourceSha256": "bbb3c29874cb3bc706eef9ba4436c7ef8ef33462a173c4c3d4deeec774e4da79",
+          "sha256": "bbb3c29874cb3bc706eef9ba4436c7ef8ef33462a173c4c3d4deeec774e4da79"
+        },
+        {
+          "path": "container_tools/mark_artifact_operation_started.mjs",
+          "sourceSha256": "968d66a7b491c7728f2ab009dcb54ac0025d6f474de6f3734f66b8809f6c18a8",
+          "sha256": "968d66a7b491c7728f2ab009dcb54ac0025d6f474de6f3734f66b8809f6c18a8"
+        },
+        {
+          "path": "SKILL.md",
+          "sourceSha256": "5e14b4b8f944dc5e678ee703dfacf583010431d64d5d829902c5b2541f736c89",
+          "sha256": "d764876b729a0ad3ff08fa6c5915c5b511ea10c7bca30ca949b20b218e3cc7e8"
+        }
+      ]
+    },
+    {
+      "name": "presentations",
+      "originalFolder": "presentations",
+      "source": "C:/Users/surya/.codex/plugins/cache/openai-primary-runtime/presentations/26.1017.22136/skills/presentations",
+      "description": "Read, create or edit Spaces presentations, PowerPoint files, or Google Slides decks. Use for presentation, slide deck, PowerPoint, PPT, PPTX, or Google Slides requests.",
+      "changes": [
+        "Normalized frontmatter name to the destination folder."
+      ],
+      "files": [
+        {
+          "path": "agents/openai.yaml",
+          "sourceSha256": "35fa03254b9d9e2c859a2e1d343406df161e70c07af43a352fc6424d01c03776",
+          "sha256": "35fa03254b9d9e2c859a2e1d343406df161e70c07af43a352fc6424d01c03776"
+        },
+        {
+          "path": "artifact_tool_docs/api/API_DOCS.md",
+          "sourceSha256": "72ca76b80eb87952d1ba0a9ac49d62bb1090732ac710e65a228182957ab99268",
+          "sha256": "72ca76b80eb87952d1ba0a9ac49d62bb1090732ac710e65a228182957ab99268"
+        },
+        {
+          "path": "artifact_tool_docs/api/references/auto-layout.spec.md",
+          "sourceSha256": "e58ac421e5aed6e944cab4fb3e59e3d5b33874844485fe89571ee2b6e3319051",
+          "sha256": "e58ac421e5aed6e944cab4fb3e59e3d5b33874844485fe89571ee2b6e3319051"
+        },
+        {
+          "path": "artifact_tool_docs/api/references/charts.spec.md",
+          "sourceSha256": "58f663ad37dfb3fe4396738a2baf7de6fa384f7e2273cefa6a5975db801c0961",
+          "sha256": "58f663ad37dfb3fe4396738a2baf7de6fa384f7e2273cefa6a5975db801c0961"
+        },
+        {
+          "path": "artifact_tool_docs/api/references/comments.md",
+          "sourceSha256": "7289cf3218ca948898f3d38a0a7951062b719277472c18ce2f672314dea0c416",
+          "sha256": "7289cf3218ca948898f3d38a0a7951062b719277472c18ce2f672314dea0c416"
+        },
+        {
+          "path": "artifact_tool_docs/api/references/connectors.md",
+          "sourceSha256": "27c58bf7e31163648e95dcb730e1374097121d6657ebec93a5bae1b112bb3b40",
+          "sha256": "27c58bf7e31163648e95dcb730e1374097121d6657ebec93a5bae1b112bb3b40"
+        },
+        {
+          "path": "artifact_tool_docs/api/references/cookbook/imported-deck.md",
+          "sourceSha256": "39bf668bea76b5e7dc5ab452741bf0f9e6241ad26f3621b36ac312ceb7e0fb45",
+          "sha256": "39bf668bea76b5e7dc5ab452741bf0f9e6241ad26f3621b36ac312ceb7e0fb45"
+        },
+        {
+          "path": "artifact_tool_docs/api/references/cookbook/layout.md",
+          "sourceSha256": "a9fdbdba442b3ed2e27ca75de358b4f0e475d2c82cd0d1e309fbdae425bd3aa1",
+          "sha256": "a9fdbdba442b3ed2e27ca75de358b4f0e475d2c82cd0d1e309fbdae425bd3aa1"
+        },
+        {
+          "path": "artifact_tool_docs/api/references/fill.spec.md",
+          "sourceSha256": "0c081891cb2355aa9a562a7f43cf168d2fafad8aa6af6ae11ed62115c162fb81",
+          "sha256": "0c081891cb2355aa9a562a7f43cf168d2fafad8aa6af6ae11ed62115c162fb81"
+        },
+        {
+          "path": "artifact_tool_docs/api/references/help.md",
+          "sourceSha256": "087277c6b7c572dfd7b52ecc6c8cc9affbf33ab56c0b928651b18f476e03e044",
+          "sha256": "087277c6b7c572dfd7b52ecc6c8cc9affbf33ab56c0b928651b18f476e03e044"
+        },
+        {
+          "path": "artifact_tool_docs/api/references/images.spec.md",
+          "sourceSha256": "fc2fedb1690527fdd14d847153f209ef22cb0d71dc389e2029cf19ccf01007f8",
+          "sha256": "fc2fedb1690527fdd14d847153f209ef22cb0d71dc389e2029cf19ccf01007f8"
+        },
+        {
+          "path": "artifact_tool_docs/api/references/inspect.md",
+          "sourceSha256": "be8353950fe46064af5d9d437d546c5abd61c634a249bc5c8e6c3487d25775ee",
+          "sha256": "be8353950fe46064af5d9d437d546c5abd61c634a249bc5c8e6c3487d25775ee"
+        },
+        {
+          "path": "artifact_tool_docs/api/references/inspect.schema.json",
+          "sourceSha256": "1a60266cc79bef1ff04ae15143480495c206a3fd5e2b48002d2efbb77a82e134",
+          "sha256": "1a60266cc79bef1ff04ae15143480495c206a3fd5e2b48002d2efbb77a82e134"
+        },
+        {
+          "path": "artifact_tool_docs/api/references/jsx.md",
+          "sourceSha256": "5461aa523334ee56f5f44beee273846393478ad4ca106b1a1f0da9a300e34d3d",
+          "sha256": "5461aa523334ee56f5f44beee273846393478ad4ca106b1a1f0da9a300e34d3d"
+        },
+        {
+          "path": "artifact_tool_docs/api/references/layout.spec.md",
+          "sourceSha256": "0f003841d75c1c6243c990aaf090c7ae1aaa878d4d830032f07744521f4075e6",
+          "sha256": "0f003841d75c1c6243c990aaf090c7ae1aaa878d4d830032f07744521f4075e6"
+        },
+        {
+          "path": "artifact_tool_docs/api/references/master.spec.md",
+          "sourceSha256": "25f5032926c3bd7345ca46ca4bc7401d837e8c3d4645853ebd0c21e4d842ac4f",
+          "sha256": "25f5032926c3bd7345ca46ca4bc7401d837e8c3d4645853ebd0c21e4d842ac4f"
+        },
+        {
+          "path": "artifact_tool_docs/api/references/presentation.spec.md",
+          "sourceSha256": "35ee77aa28976d6dfe3b3920eeb028c9a5cf754fd37ee07f20270ed235611985",
+          "sha256": "35ee77aa28976d6dfe3b3920eeb028c9a5cf754fd37ee07f20270ed235611985"
+        },
+        {
+          "path": "artifact_tool_docs/api/references/rich-text.spec.md",
+          "sourceSha256": "9ff88fde3ac6595aabc3b17ad767c442f2eb35ff1aeb171f2b11a839b22dc93a",
+          "sha256": "9ff88fde3ac6595aabc3b17ad767c442f2eb35ff1aeb171f2b11a839b22dc93a"
+        },
+        {
+          "path": "artifact_tool_docs/api/references/shapes.spec.md",
+          "sourceSha256": "bcef41da95bf05cf5e12f14b7e2b916dcd4ab48eb7a8bf8242094cf59532684b",
+          "sha256": "bcef41da95bf05cf5e12f14b7e2b916dcd4ab48eb7a8bf8242094cf59532684b"
+        },
+        {
+          "path": "artifact_tool_docs/api/references/slide.spec.md",
+          "sourceSha256": "7f7a6e82e3f295ea0523963108f7d5cb776b7d40483b52719f063ef589791479",
+          "sha256": "7f7a6e82e3f295ea0523963108f7d5cb776b7d40483b52719f063ef589791479"
+        },
+        {
+          "path": "artifact_tool_docs/api/references/speaker-notes.spec.md",
+          "sourceSha256": "52b09b2cf44fa3eb5224a7507a784cea17b37601520d587fb9e29a4ea3666eb9",
+          "sha256": "52b09b2cf44fa3eb5224a7507a784cea17b37601520d587fb9e29a4ea3666eb9"
+        },
+        {
+          "path": "artifact_tool_docs/api/references/styles.spec.md",
+          "sourceSha256": "142d7abd0e54404fa49067f9a294bf20512540b89d304174386c4db90a73e74c",
+          "sha256": "142d7abd0e54404fa49067f9a294bf20512540b89d304174386c4db90a73e74c"
+        },
+        {
+          "path": "artifact_tool_docs/api/references/tables.spec.md",
+          "sourceSha256": "5d294873f5ca630f4400f627e176517b170ef1a61414be008c926c8c216414d4",
+          "sha256": "5d294873f5ca630f4400f627e176517b170ef1a61414be008c926c8c216414d4"
+        },
+        {
+          "path": "artifact_tool_docs/api/references/theme.spec.md",
+          "sourceSha256": "12976bae67a923f9028c9af51db1b733f733544bd11dfce807e6ebf4bc5bafb4",
+          "sha256": "12976bae67a923f9028c9af51db1b733f733544bd11dfce807e6ebf4bc5bafb4"
+        },
+        {
+          "path": "artifact_tool_docs/api/references/tokens.md",
+          "sourceSha256": "aa7601c6e7156d45ceeba151ad48633f8556a080678b7ee44daa74c32b42c478",
+          "sha256": "aa7601c6e7156d45ceeba151ad48633f8556a080678b7ee44daa74c32b42c478"
+        },
+        {
+          "path": "artifact_tool_docs/API_QUICK_START.md",
+          "sourceSha256": "851102a1c6d9f0efc0564edc3f6d8dc5246358d6966ced2241d699c3bed99c99",
+          "sha256": "851102a1c6d9f0efc0564edc3f6d8dc5246358d6966ced2241d699c3bed99c99"
+        },
+        {
+          "path": "assets/file-presentation.png",
+          "sourceSha256": "a3c03edcadfe5af5a06c709b264d276d7e8ac6e150d69729c502459998b2a680",
+          "sha256": "a3c03edcadfe5af5a06c709b264d276d7e8ac6e150d69729c502459998b2a680"
+        },
+        {
+          "path": "container_tools/artifact_tool_utils.mjs",
+          "sourceSha256": "17e988ef8c486800328e624154aa20b42c30fa85a236f60fbc9254d7a86bf18f",
+          "sha256": "17e988ef8c486800328e624154aa20b42c30fa85a236f60fbc9254d7a86bf18f"
+        },
+        {
+          "path": "container_tools/create_montage.py",
+          "sourceSha256": "1b9031247132b787748ccd5f65d29f2be6e25bc362578e2cf040b3394811e86b",
+          "sha256": "1b9031247132b787748ccd5f65d29f2be6e25bc362578e2cf040b3394811e86b"
+        },
+        {
+          "path": "container_tools/ensure_raster_image.py",
+          "sourceSha256": "2c3bc18a8cddf737f5b3f769561b2cf8c55fe190387e53c2487f7c1b4d0ae8a7",
+          "sha256": "2c3bc18a8cddf737f5b3f769561b2cf8c55fe190387e53c2487f7c1b4d0ae8a7"
+        },
+        {
+          "path": "container_tools/inspect_presentation_layout_geometry.py",
+          "sourceSha256": "cfdc5076ffc4bc8c0c1d4578b6ce64c883e2d514780348bb278365fdb9f0e10d",
+          "sha256": "cfdc5076ffc4bc8c0c1d4578b6ce64c883e2d514780348bb278365fdb9f0e10d"
+        },
+        {
+          "path": "container_tools/inspect_presentation_package_integrity.py",
+          "sourceSha256": "b54cb6004fe58213bcf4268c355e3f15ea78cd9dbfe0c955d65e92024fe080c8",
+          "sha256": "b54cb6004fe58213bcf4268c355e3f15ea78cd9dbfe0c955d65e92024fe080c8"
+        },
+        {
+          "path": "container_tools/mark_artifact_operation_started.mjs",
+          "sourceSha256": "6f46ccf38f7d266ad459309233c597d8f7221ad3fda26af91aeba80bbcd322dd",
+          "sha256": "6f46ccf38f7d266ad459309233c597d8f7221ad3fda26af91aeba80bbcd322dd"
+        },
+        {
+          "path": "container_tools/materialize_literal_chart_workbooks.py",
+          "sourceSha256": "5f9c89e72f0dd3e8aeca48d2ac7c429fb57dd801e4d3fb57d9c71d189154c8bd",
+          "sha256": "5f9c89e72f0dd3e8aeca48d2ac7c429fb57dd801e4d3fb57d9c71d189154c8bd"
+        },
+        {
+          "path": "container_tools/native_chart_title_gate.py",
+          "sourceSha256": "494f8dddc3de753fda80f61498c07ca0e744e585a0b84f46ba9e2a88dfb1613f",
+          "sha256": "494f8dddc3de753fda80f61498c07ca0e744e585a0b84f46ba9e2a88dfb1613f"
+        },
+        {
+          "path": "container_tools/native_quantitative_chart_gate.py",
+          "sourceSha256": "047ac10a0acda115d95a551c91fe16225aaa8d44735170091c80294518225c60",
+          "sha256": "047ac10a0acda115d95a551c91fe16225aaa8d44735170091c80294518225c60"
+        },
+        {
+          "path": "container_tools/native_table_arithmetic_gate.py",
+          "sourceSha256": "604db17de8cce452c515a8e7929bf1fccfc08ad7851ac29eff1a9b70879a50b0",
+          "sha256": "604db17de8cce452c515a8e7929bf1fccfc08ad7851ac29eff1a9b70879a50b0"
+        },
+        {
+          "path": "container_tools/rasterize_svg.mjs",
+          "sourceSha256": "73d9ed4573d4a286c1dae520245df86885520f6c85dc83e19649d962e4852982",
+          "sha256": "73d9ed4573d4a286c1dae520245df86885520f6c85dc83e19649d962e4852982"
+        },
+        {
+          "path": "container_tools/render_presentation.mjs",
+          "sourceSha256": "49024ae5949965f2d163daafb05d4e33b543ea59007a95253a78183b9357c1b8",
+          "sha256": "49024ae5949965f2d163daafb05d4e33b543ea59007a95253a78183b9357c1b8"
+        },
+        {
+          "path": "container_tools/render_slides.py",
+          "sourceSha256": "af5fbe8caf40be4ba57ad42993ff0c3792c0a7e97bd65bbba86ed1494911a220",
+          "sha256": "af5fbe8caf40be4ba57ad42993ff0c3792c0a7e97bd65bbba86ed1494911a220"
+        },
+        {
+          "path": "container_tools/runtime_helpers.mjs",
+          "sourceSha256": "79ed0013a2d5ae7d45ad111cbc9188a5c804d461c24a123725832c5eeaab11f1",
+          "sha256": "79ed0013a2d5ae7d45ad111cbc9188a5c804d461c24a123725832c5eeaab11f1"
+        },
+        {
+          "path": "container_tools/runtime_helpers.py",
+          "sourceSha256": "93322ca08c0bf5e29e7fd1297d1b3cfc307550cf4251098b366bf4cc42b4370a",
+          "sha256": "93322ca08c0bf5e29e7fd1297d1b3cfc307550cf4251098b366bf4cc42b4370a"
+        },
+        {
+          "path": "container_tools/slides_test.py",
+          "sourceSha256": "e0f660c3a03c524e54a2b0ac4cdd55646502f18bad409593d056a1ea570f5de0",
+          "sha256": "e0f660c3a03c524e54a2b0ac4cdd55646502f18bad409593d056a1ea570f5de0"
+        },
+        {
+          "path": "container_tools/template_source_fidelity_gate.py",
+          "sourceSha256": "0e070dce9102403cdd418bfe0810c23f8886d074430ba8fe597cde352a83b7be",
+          "sha256": "0e070dce9102403cdd418bfe0810c23f8886d074430ba8fe597cde352a83b7be"
+        },
+        {
+          "path": "container_tools/__pycache__/runtime_helpers.cpython-312.pyc",
+          "sourceSha256": "571ef9582092999833014d7e559216da819f2b2b96ae0dd4e04686e791808175",
+          "sha256": "571ef9582092999833014d7e559216da819f2b2b96ae0dd4e04686e791808175"
+        },
+        {
+          "path": "domain_guidance/finance.md",
+          "sourceSha256": "0182623353b8d0ca47abffbe3b4005f9ee4128df234440033cf5957bc28ddcf8",
+          "sha256": "0182623353b8d0ca47abffbe3b4005f9ee4128df234440033cf5957bc28ddcf8"
+        },
+        {
+          "path": "references/artifact-template-selection.md",
+          "sourceSha256": "521738d3d718751b8a83a957d010a8d3a3dc1d070e7d1c517762d1b45bec0c5a",
+          "sha256": "521738d3d718751b8a83a957d010a8d3a3dc1d070e7d1c517762d1b45bec0c5a"
+        },
+        {
+          "path": "references/artifact_sessions.md",
+          "sourceSha256": "39fb7513b017266b6a471054ac66bb8367f2a6bbcb2f77e88f9edd2a028a7923",
+          "sha256": "39fb7513b017266b6a471054ac66bb8367f2a6bbcb2f77e88f9edd2a028a7923"
+        },
+        {
+          "path": "references/cover_art_direction.md",
+          "sourceSha256": "753e58efd6da31fc68076c554ae919e46893d7a0a15f37c4cf357e7c41025d00",
+          "sha256": "753e58efd6da31fc68076c554ae919e46893d7a0a15f37c4cf357e7c41025d00"
+        },
+        {
+          "path": "references/finalization.md",
+          "sourceSha256": "32f8ff54baba353425f5b5ca11f0390f4daa991630a5bd2f2a2727f2c1726dab",
+          "sha256": "32f8ff54baba353425f5b5ca11f0390f4daa991630a5bd2f2a2727f2c1726dab"
+        },
+        {
+          "path": "references/implementation.md",
+          "sourceSha256": "5a204a43a993ddf478f774b18bb0794dd481f88e3375ec45d0108489101e0e21",
+          "sha256": "5a204a43a993ddf478f774b18bb0794dd481f88e3375ec45d0108489101e0e21"
+        },
+        {
+          "path": "references/native_bullets.md",
+          "sourceSha256": "719a0410bbb997f055f207aa8b4b8967360a81b4dbade9719a564745cfe16a2c",
+          "sha256": "719a0410bbb997f055f207aa8b4b8967360a81b4dbade9719a564745cfe16a2c"
+        },
+        {
+          "path": "references/native_evidence.md",
+          "sourceSha256": "dc4de24c99d504c10b8c3d0b0971d1137c2fb3f24538097fe1c3f925f05365d5",
+          "sha256": "dc4de24c99d504c10b8c3d0b0971d1137c2fb3f24538097fe1c3f925f05365d5"
+        },
+        {
+          "path": "references/template_following.md",
+          "sourceSha256": "881875960ffa6bc59c9f6351552d9f499ac053884c780f0725cc8ccf1125c4d2",
+          "sha256": "881875960ffa6bc59c9f6351552d9f499ac053884c780f0725cc8ccf1125c4d2"
+        },
+        {
+          "path": "routing/google_slides.md",
+          "sourceSha256": "fd3998117596a48fd73eb22bb8c1e7998d0e53949382b837ff6922deaf5bfa3a",
+          "sha256": "fd3998117596a48fd73eb22bb8c1e7998d0e53949382b837ff6922deaf5bfa3a"
+        },
+        {
+          "path": "SKILL.md",
+          "sourceSha256": "4afb86b2893225ecce1f4cf8b0d8cde5d7b7538b011ffe8536fbfbdbb6c1e1dd",
+          "sha256": "68c04c26d7ebfef86f864ac320920a45ee84d4c678b6a4eb83c1ca036daaca4c"
+        },
+        {
+          "path": "style_guidelines.md",
+          "sourceSha256": "b682d1beb638b6ce77ecab86f83afcbde7a68207a749bc7994d8fd805feec619",
+          "sha256": "b682d1beb638b6ce77ecab86f83afcbde7a68207a749bc7994d8fd805feec619"
+        },
+        {
+          "path": "template_following_scripts/check_template_fidelity.mjs",
+          "sourceSha256": "204c580f53818ca188b04af66b2cec6e588520d832bc9f25305686893bf0bd18",
+          "sha256": "204c580f53818ca188b04af66b2cec6e588520d832bc9f25305686893bf0bd18"
+        },
+        {
+          "path": "template_following_scripts/inspect_template_deck.mjs",
+          "sourceSha256": "03a8ea3b36a7b1859ccda3b2cce7c3c73bb0c691fa0114548b804bf5a5465661",
+          "sha256": "03a8ea3b36a7b1859ccda3b2cce7c3c73bb0c691fa0114548b804bf5a5465661"
+        },
+        {
+          "path": "template_following_scripts/make_contact_sheet.py",
+          "sourceSha256": "69a1f031bca5e0a214aaa848460b36ee17c641b8865d7a5d0a9a0308dea320e8",
+          "sha256": "69a1f031bca5e0a214aaa848460b36ee17c641b8865d7a5d0a9a0308dea320e8"
+        },
+        {
+          "path": "template_following_scripts/prepare_template_starter_deck.mjs",
+          "sourceSha256": "67b18d023a5c28e6c8e9c8d7a139ec441b55ae73f8f3159d122f4b2d34c371bf",
+          "sha256": "67b18d023a5c28e6c8e9c8d7a139ec441b55ae73f8f3159d122f4b2d34c371bf"
+        },
+        {
+          "path": "template_following_scripts/validate_template_plan.mjs",
+          "sourceSha256": "d8aad11b03275eaf800f96ec6c58731c68033312f5b13a44f5c9291ca5e3bacf",
+          "sha256": "d8aad11b03275eaf800f96ec6c58731c68033312f5b13a44f5c9291ca5e3bacf"
+        }
+      ]
+    },
+    {
+      "name": "excel-live-control",
+      "originalFolder": "excel-live-control",
+      "source": "C:/Users/surya/.codex/plugins/cache/openai-primary-runtime/spreadsheets/26.1017.22136/skills/excel-live-control",
+      "description": "Control an open or active Microsoft Excel workbook through the ChatGPT add-in or connected session. Use when the user tags the Microsoft Excel app in Codex or follows up on an established live Excel task. Do not use for standalone spreadsheet files or Google Sheets.",
+      "changes": [],
+      "files": [
+        {
+          "path": "agents/openai.yaml",
+          "sourceSha256": "e7dd753d45019ad2196cef0e2dd866e50bb14832f0653d019d69b0eb4d1a82ea",
+          "sha256": "e7dd753d45019ad2196cef0e2dd866e50bb14832f0653d019d69b0eb4d1a82ea"
+        },
+        {
+          "path": "domain_guidance/financial_models.md",
+          "sourceSha256": "3169cc0e2453f3c34f63ef639aab22abc5686c6e2639f1d4ad7dc0235e8480ee",
+          "sha256": "3169cc0e2453f3c34f63ef639aab22abc5686c6e2639f1d4ad7dc0235e8480ee"
+        },
+        {
+          "path": "domain_guidance/healthcare.md",
+          "sourceSha256": "8edae030b3abb0ef178f5a38691f64d7d9f4a462a70c0656ae8650605363f921",
+          "sha256": "8edae030b3abb0ef178f5a38691f64d7d9f4a462a70c0656ae8650605363f921"
+        },
+        {
+          "path": "domain_guidance/marketing_advertising.md",
+          "sourceSha256": "b2e087facba8e407fb5d47d55505ea544ca7c7ff5d402fd6a535093df740d086",
+          "sha256": "b2e087facba8e407fb5d47d55505ea544ca7c7ff5d402fd6a535093df740d086"
+        },
+        {
+          "path": "domain_guidance/scientific_research.md",
+          "sourceSha256": "bad46ddb8561c02b5460cd8dcb9bc9018b8b24df03a6688af7b9a3977b5b298c",
+          "sha256": "bad46ddb8561c02b5460cd8dcb9bc9018b8b24df03a6688af7b9a3977b5b298c"
+        },
+        {
+          "path": "features/charts.md",
+          "sourceSha256": "a5bb73e5a3c0f7ec44cf0737d5dc25ae690e420a99d37e23cf8144d8316f56a3",
+          "sha256": "a5bb73e5a3c0f7ec44cf0737d5dc25ae690e420a99d37e23cf8144d8316f56a3"
+        },
+        {
+          "path": "officejs.md",
+          "sourceSha256": "cb3d4292191d6a6adfc5251b88ea5a62aab75bb5c9c863fc1ed546b881045955",
+          "sha256": "cb3d4292191d6a6adfc5251b88ea5a62aab75bb5c9c863fc1ed546b881045955"
+        },
+        {
+          "path": "references/image-references.md",
+          "sourceSha256": "7fe546860468950ed80f428c79eea269383aa30f421b957546666ee15161e6b8",
+          "sha256": "7fe546860468950ed80f428c79eea269383aa30f421b957546666ee15161e6b8"
+        },
+        {
+          "path": "references/read_only_qna.md",
+          "sourceSha256": "993fa777f0f3003c2a1c3b2021a1f9d78f7a177620603e47cc9cff097cf156fd",
+          "sha256": "993fa777f0f3003c2a1c3b2021a1f9d78f7a177620603e47cc9cff097cf156fd"
+        },
+        {
+          "path": "SKILL.md",
+          "sourceSha256": "55335802aeb641f8819f0020d4fa172b069376aaa00ab7934f3426d8a121509a",
+          "sha256": "55335802aeb641f8819f0020d4fa172b069376aaa00ab7934f3426d8a121509a"
+        },
+        {
+          "path": "style_guidelines.md",
+          "sourceSha256": "a0e328147991a4acc3d867d8e10a0a6697373ff2fe43eefd41646c83b29ad630",
+          "sha256": "a0e328147991a4acc3d867d8e10a0a6697373ff2fe43eefd41646c83b29ad630"
+        },
+        {
+          "path": "workflows/create_workflows.md",
+          "sourceSha256": "b24cbf85c4358c2269352bf44002ad5a1e24174983010a836f5ead6e6c0b3958",
+          "sha256": "b24cbf85c4358c2269352bf44002ad5a1e24174983010a836f5ead6e6c0b3958"
+        },
+        {
+          "path": "workflows/edit_workflows.md",
+          "sourceSha256": "d195ef03edbb07036706659bfc899b97afd0aa6121f7d607c1d1e0cd8a47f8e8",
+          "sha256": "d195ef03edbb07036706659bfc899b97afd0aa6121f7d607c1d1e0cd8a47f8e8"
+        }
+      ]
+    },
+    {
+      "name": "spreadsheets",
+      "originalFolder": "spreadsheets",
+      "source": "C:/Users/surya/.codex/plugins/cache/openai-primary-runtime/spreadsheets/26.1017.22136/skills/spreadsheets",
+      "description": "Use skill when user requests to create, modify, analyze, visualize, or work with spreadsheet files (`.xlsx`, `.xls`, `.csv`, `.tsv`) or Google Sheets with formulas, formatting, charts, tables, and recalculation. Do not use for live controlling Microsoft Excel app or a live Excel session.",
+      "changes": [
+        "Normalized frontmatter name to the destination folder."
+      ],
+      "files": [
+        {
+          "path": "agents/openai.yaml",
+          "sourceSha256": "18eb739db3a18e7d1bbd2c17b6884eff011f9b07814ab23216aba926b4de9cd7",
+          "sha256": "18eb739db3a18e7d1bbd2c17b6884eff011f9b07814ab23216aba926b4de9cd7"
+        },
+        {
+          "path": "artifact_tool_docs/API_QUICK_START.md",
+          "sourceSha256": "313e2256d212671638006006926bd80474ba04c9347d2caff7f575e9ea958ab2",
+          "sha256": "313e2256d212671638006006926bd80474ba04c9347d2caff7f575e9ea958ab2"
+        },
+        {
+          "path": "artifact_tool_docs/DATA_TABLES.md",
+          "sourceSha256": "627423c5c263a0df909c3f7b2253098d80a2c10f068c0756a828d68509d3021e",
+          "sha256": "627423c5c263a0df909c3f7b2253098d80a2c10f068c0756a828d68509d3021e"
+        },
+        {
+          "path": "artifact_tool_docs/SPARKLINES.md",
+          "sourceSha256": "284d40cb8624604c638bd3131b004db73fc193bce421e0a085959e0ea6f1afef",
+          "sha256": "284d40cb8624604c638bd3131b004db73fc193bce421e0a085959e0ea6f1afef"
+        },
+        {
+          "path": "assets/file-spreadsheet.png",
+          "sourceSha256": "3a1c5e6c52a1877942b8ef8654247fbe1c4a82f6df8ef464dc99983fc72cd6fb",
+          "sha256": "3a1c5e6c52a1877942b8ef8654247fbe1c4a82f6df8ef464dc99983fc72cd6fb"
+        },
+        {
+          "path": "container_tools/mark_artifact_operation_started.mjs",
+          "sourceSha256": "fd95cb9918e52bbc2323ed1854fdc7510361f66cbe50446f6fcf0b9b21fa1ded",
+          "sha256": "fd95cb9918e52bbc2323ed1854fdc7510361f66cbe50446f6fcf0b9b21fa1ded"
+        },
+        {
+          "path": "domain_guidance/financial_models.md",
+          "sourceSha256": "3169cc0e2453f3c34f63ef639aab22abc5686c6e2639f1d4ad7dc0235e8480ee",
+          "sha256": "3169cc0e2453f3c34f63ef639aab22abc5686c6e2639f1d4ad7dc0235e8480ee"
+        },
+        {
+          "path": "domain_guidance/healthcare.md",
+          "sourceSha256": "8edae030b3abb0ef178f5a38691f64d7d9f4a462a70c0656ae8650605363f921",
+          "sha256": "8edae030b3abb0ef178f5a38691f64d7d9f4a462a70c0656ae8650605363f921"
+        },
+        {
+          "path": "domain_guidance/marketing_advertising.md",
+          "sourceSha256": "b2e087facba8e407fb5d47d55505ea544ca7c7ff5d402fd6a535093df740d086",
+          "sha256": "b2e087facba8e407fb5d47d55505ea544ca7c7ff5d402fd6a535093df740d086"
+        },
+        {
+          "path": "domain_guidance/scientific_research.md",
+          "sourceSha256": "bad46ddb8561c02b5460cd8dcb9bc9018b8b24df03a6688af7b9a3977b5b298c",
+          "sha256": "bad46ddb8561c02b5460cd8dcb9bc9018b8b24df03a6688af7b9a3977b5b298c"
+        },
+        {
+          "path": "features/charts.md",
+          "sourceSha256": "a5bb73e5a3c0f7ec44cf0737d5dc25ae690e420a99d37e23cf8144d8316f56a3",
+          "sha256": "a5bb73e5a3c0f7ec44cf0737d5dc25ae690e420a99d37e23cf8144d8316f56a3"
+        },
+        {
+          "path": "references/artifact-template-selection.md",
+          "sourceSha256": "a854615f4a87488bcfa1de5cf8a7f741324540ab70963aaa4431a34595961f17",
+          "sha256": "a854615f4a87488bcfa1de5cf8a7f741324540ab70963aaa4431a34595961f17"
+        },
+        {
+          "path": "references/image-references.md",
+          "sourceSha256": "7fe546860468950ed80f428c79eea269383aa30f421b957546666ee15161e6b8",
+          "sha256": "7fe546860468950ed80f428c79eea269383aa30f421b957546666ee15161e6b8"
+        },
+        {
+          "path": "references/read_only_qna.md",
+          "sourceSha256": "993fa777f0f3003c2a1c3b2021a1f9d78f7a177620603e47cc9cff097cf156fd",
+          "sha256": "993fa777f0f3003c2a1c3b2021a1f9d78f7a177620603e47cc9cff097cf156fd"
+        },
+        {
+          "path": "routing/google_sheets.md",
+          "sourceSha256": "1f55af62cc2819f5610a35abde281aa7b0b105ef6edb2c49996809760ddc0685",
+          "sha256": "1f55af62cc2819f5610a35abde281aa7b0b105ef6edb2c49996809760ddc0685"
+        },
+        {
+          "path": "SKILL.md",
+          "sourceSha256": "6d8034aaba4dfb23ce8d1aec92e5bbe6fa1c5079033e2244f4a27445ef867e9b",
+          "sha256": "16fd9ae04894aab4c68d1aa073ec18bb36afa99ad204bc581429f86689c6a459"
+        },
+        {
+          "path": "style_guidelines.md",
+          "sourceSha256": "a0e328147991a4acc3d867d8e10a0a6697373ff2fe43eefd41646c83b29ad630",
+          "sha256": "a0e328147991a4acc3d867d8e10a0a6697373ff2fe43eefd41646c83b29ad630"
+        },
+        {
+          "path": "workflows/create_workflows.md",
+          "sourceSha256": "b24cbf85c4358c2269352bf44002ad5a1e24174983010a836f5ead6e6c0b3958",
+          "sha256": "b24cbf85c4358c2269352bf44002ad5a1e24174983010a836f5ead6e6c0b3958"
+        },
+        {
+          "path": "workflows/edit_workflows.md",
+          "sourceSha256": "d195ef03edbb07036706659bfc899b97afd0aa6121f7d607c1d1e0cd8a47f8e8",
+          "sha256": "d195ef03edbb07036706659bfc899b97afd0aa6121f7d607c1d1e0cd8a47f8e8"
+        }
+      ]
+    },
+    {
+      "name": "template-creator",
+      "originalFolder": "template-creator",
+      "source": "C:/Users/surya/.codex/plugins/cache/openai-primary-runtime/template-creator/26.1017.22136/skills/template-creator",
+      "description": "Create or update a reusable personal Codex artifact-template skill. Use when the user invokes $template-creator or asks in natural language to create a reusable template from a reference document, presentation, spreadsheet, Google Docs, Slides, or Sheets link, ImageGen or Product Design image, email, Slack message, or Site project, or explicitly asks to edit or update a passed artifact-template skill. Do not use for one-off creation from an existing template.",
+      "changes": [],
+      "files": [
+        {
+          "path": "agents/openai.yaml",
+          "sourceSha256": "d98af7dcec7cb30c53b5de0e914d92a8d0de0b250328f272754bdaa3038e6e44",
+          "sha256": "d98af7dcec7cb30c53b5de0e914d92a8d0de0b250328f272754bdaa3038e6e44"
+        },
+        {
+          "path": "assets/site-preview.png",
+          "sourceSha256": "0f644a80c9832957d40fb50ba72fc13a75c4f7f6085f59aaa62fdd5f361ae871",
+          "sha256": "0f644a80c9832957d40fb50ba72fc13a75c4f7f6085f59aaa62fdd5f361ae871"
+        },
+        {
+          "path": "host/export-google-workspace-file.mjs",
+          "sourceSha256": "e3f569243d0a7243e2e9579d26e24d95315dd7a69f70f06fa6fcb027f07f12e9",
+          "sha256": "e3f569243d0a7243e2e9579d26e24d95315dd7a69f70f06fa6fcb027f07f12e9"
+        },
+        {
+          "path": "host/google-workspace-export-stdin-receiver.mjs",
+          "sourceSha256": "d4dbac9ee213eb3b8cd6ac656af0268f1fb826f2020967dc0a6e4dd8c4d9a111",
+          "sha256": "d4dbac9ee213eb3b8cd6ac656af0268f1fb826f2020967dc0a6e4dd8c4d9a111"
+        },
+        {
+          "path": "scripts/create-template-skill.mjs",
+          "sourceSha256": "5bb6f574c46ccffbbad39405414b43a04d49360be3421ee58a4acfd2373659d2",
+          "sha256": "5bb6f574c46ccffbbad39405414b43a04d49360be3421ee58a4acfd2373659d2"
+        },
+        {
+          "path": "SKILL.md",
+          "sourceSha256": "244bfef01d3e17c6013952ccf34621a90ddfee9c7828058245c3c46f51114944",
+          "sha256": "244bfef01d3e17c6013952ccf34621a90ddfee9c7828058245c3c46f51114944"
+        }
+      ]
+    },
+    {
+      "name": "imagegen",
+      "originalFolder": "imagegen",
+      "source": "C:/Users/surya/.codex/skills/.system/imagegen",
+      "description": "Generate or edit raster images when the task benefits from AI-created bitmap visuals such as photos, illustrations, textures, sprites, mockups, or transparent-background cutouts. Use when Codex should create a brand-new image, transform an existing image, or derive visual variants from references, and the output should be a bitmap asset rather than repo-native code or vector. Do not use when the task is better handled by editing existing SVG/vector/code-native assets, extending an established icon or logo system, or building the visual directly in HTML/CSS/canvas.",
+      "changes": [],
+      "files": [
+        {
+          "path": "agents/openai.yaml",
+          "sourceSha256": "1797be4076717806df54aa9331c07ac8eebe32c69f32132d5858712b05406146",
+          "sha256": "1797be4076717806df54aa9331c07ac8eebe32c69f32132d5858712b05406146"
+        },
+        {
+          "path": "assets/imagegen-small.svg",
+          "sourceSha256": "087c1632a3b8a2ed4d6218952e7ba7ae2221a979f84233667ed2c587998784da",
+          "sha256": "087c1632a3b8a2ed4d6218952e7ba7ae2221a979f84233667ed2c587998784da"
+        },
+        {
+          "path": "assets/imagegen.png",
+          "sourceSha256": "95952f644064eb9e890f98d8db07216347186526e4c41ad66d3420629eb86e20",
+          "sha256": "95952f644064eb9e890f98d8db07216347186526e4c41ad66d3420629eb86e20"
+        },
+        {
+          "path": "LICENSE.txt",
+          "sourceSha256": "44e03f7e263eb3ad256440c1eeab5e49168baff5a78ecef9a5447261cf3a91bc",
+          "sha256": "44e03f7e263eb3ad256440c1eeab5e49168baff5a78ecef9a5447261cf3a91bc"
+        },
+        {
+          "path": "references/cli.md",
+          "sourceSha256": "29dc8c1e3e5d9a20aee587fedb46a464552b6ec118d93bbd90c8d86e30502c8c",
+          "sha256": "29dc8c1e3e5d9a20aee587fedb46a464552b6ec118d93bbd90c8d86e30502c8c"
+        },
+        {
+          "path": "references/codex-network.md",
+          "sourceSha256": "cba3b4d24d30f38adf8021b6e9b49ec5261a9e45e7df31047ec451c916c99b0a",
+          "sha256": "cba3b4d24d30f38adf8021b6e9b49ec5261a9e45e7df31047ec451c916c99b0a"
+        },
+        {
+          "path": "references/image-api.md",
+          "sourceSha256": "695909437b792aff171477dba127476a11235c220beb06533cce7c1495a042c8",
+          "sha256": "695909437b792aff171477dba127476a11235c220beb06533cce7c1495a042c8"
+        },
+        {
+          "path": "references/prompting.md",
+          "sourceSha256": "d957a45cb24fe2cf1a85858674fc533f15a5f4621355f559a13a93168999c2dd",
+          "sha256": "d957a45cb24fe2cf1a85858674fc533f15a5f4621355f559a13a93168999c2dd"
+        },
+        {
+          "path": "references/sample-prompts.md",
+          "sourceSha256": "76cc8a2988efb6e844a99ff9908b2b11cc07467510fc909002abcc0ee3f0701b",
+          "sha256": "76cc8a2988efb6e844a99ff9908b2b11cc07467510fc909002abcc0ee3f0701b"
+        },
+        {
+          "path": "scripts/image_gen.py",
+          "sourceSha256": "3666b807de3f0a1d0a4a767b886d612c0b8f71025c500bba6693d1c6995a0873",
+          "sha256": "3666b807de3f0a1d0a4a767b886d612c0b8f71025c500bba6693d1c6995a0873"
+        },
+        {
+          "path": "scripts/remove_chroma_key.py",
+          "sourceSha256": "fa2989807052b857bed08f7fee0caa2502b54c46afc0a6f28cd706c25f636630",
+          "sha256": "fa2989807052b857bed08f7fee0caa2502b54c46afc0a6f28cd706c25f636630"
+        },
+        {
+          "path": "SKILL.md",
+          "sourceSha256": "706d4d96e1d5c9e6023fe3ccabba1bb34b364024d344fd25b8515ec7d28fe3c4",
+          "sha256": "706d4d96e1d5c9e6023fe3ccabba1bb34b364024d344fd25b8515ec7d28fe3c4"
+        }
+      ]
+    },
+    {
+      "name": "openai-docs",
+      "originalFolder": "openai-docs",
+      "source": "C:/Users/surya/.codex/skills/.system/openai-docs",
+      "description": "Use for Codex models/pricing, scheduled tasks, skills, settings, setup, troubleshooting, customization, automations, and self-knowledge—including 'you,' 'your,' 'this app,' or 'this coding agent' when they refer to Codex—and for OpenAI APIs/products and ChatGPT Work. Also use for model choice/migration, prompting, SDKs, Responses, Realtime, agents, evals, and Chat/Work/Codex comparisons. Do not use for generic app/software tasks that merely mention Codex.",
+      "changes": [],
+      "files": [
+        {
+          "path": "agents/openai.yaml",
+          "sourceSha256": "0dd6c5ffa81a09782fd24cfa9fe1ec5c9633c90500b166ae18a462e613e876be",
+          "sha256": "0dd6c5ffa81a09782fd24cfa9fe1ec5c9633c90500b166ae18a462e613e876be"
+        },
+        {
+          "path": "assets/openai-small.svg",
+          "sourceSha256": "85ef0a2cde497872edec1525f1d538ccc42b33ff47acdbb88499a1631a4bdb21",
+          "sha256": "85ef0a2cde497872edec1525f1d538ccc42b33ff47acdbb88499a1631a4bdb21"
+        },
+        {
+          "path": "assets/openai.png",
+          "sourceSha256": "156cc84d7332bfe95b310350bd470b690d22aa33d65340cc6c2e06022946194c",
+          "sha256": "156cc84d7332bfe95b310350bd470b690d22aa33d65340cc6c2e06022946194c"
+        },
+        {
+          "path": "LICENSE.txt",
+          "sourceSha256": "44e03f7e263eb3ad256440c1eeab5e49168baff5a78ecef9a5447261cf3a91bc",
+          "sha256": "44e03f7e263eb3ad256440c1eeab5e49168baff5a78ecef9a5447261cf3a91bc"
+        },
+        {
+          "path": "references/codex-self-knowledge.md",
+          "sourceSha256": "f945bf2a7cea6892d7a11ac38fb18b744fefd6d273654a8410c4c79e9f647fbe",
+          "sha256": "f945bf2a7cea6892d7a11ac38fb18b744fefd6d273654a8410c4c79e9f647fbe"
+        },
+        {
+          "path": "references/latest-model.md",
+          "sourceSha256": "66303f714cd51408fcd6eaa81acef1769cbeb6af844883fef2847926fe324fe4",
+          "sha256": "66303f714cd51408fcd6eaa81acef1769cbeb6af844883fef2847926fe324fe4"
+        },
+        {
+          "path": "references/mcp-diagnostics.md",
+          "sourceSha256": "e9df2b2f8faa28930db4a2937cdb3665b4548ac958e80a8601a5dd0da1e6fad0",
+          "sha256": "e9df2b2f8faa28930db4a2937cdb3665b4548ac958e80a8601a5dd0da1e6fad0"
+        },
+        {
+          "path": "references/model-migration.md",
+          "sourceSha256": "3c08623b8870ef5e38fc16b945f4b8f231e00f61deb422e68575703d97a3a5ad",
+          "sha256": "3c08623b8870ef5e38fc16b945f4b8f231e00f61deb422e68575703d97a3a5ad"
+        },
+        {
+          "path": "references/model-selection.md",
+          "sourceSha256": "ce020100a28004500c927abcd57cff154c5c360eb72d918ef7d72492e2484cce",
+          "sha256": "ce020100a28004500c927abcd57cff154c5c360eb72d918ef7d72492e2484cce"
+        },
+        {
+          "path": "references/official-docs.md",
+          "sourceSha256": "b2301d72b8092be5f5727d8d1cbc75740887d836f4f13b469f40c1db16b39fe3",
+          "sha256": "b2301d72b8092be5f5727d8d1cbc75740887d836f4f13b469f40c1db16b39fe3"
+        },
+        {
+          "path": "references/prompting-guide.md",
+          "sourceSha256": "69517cde6c3bac945100a9da946d65c9effdd145d7600dead41f8adc1c1a7e38",
+          "sha256": "69517cde6c3bac945100a9da946d65c9effdd145d7600dead41f8adc1c1a7e38"
+        },
+        {
+          "path": "references/upgrade-guide.md",
+          "sourceSha256": "3ec7763f8adab0e2d35d752cc762f1382726108e166bbf10dbe9d38608d3fc5a",
+          "sha256": "3ec7763f8adab0e2d35d752cc762f1382726108e166bbf10dbe9d38608d3fc5a"
+        },
+        {
+          "path": "references/upgrading-to-gpt-6-astra.md",
+          "sourceSha256": "789fcaf0999f56cebf801d0f6e6bdfe347dcfb5eff3d9a40ff815c15336f8699",
+          "sha256": "789fcaf0999f56cebf801d0f6e6bdfe347dcfb5eff3d9a40ff815c15336f8699"
+        },
+        {
+          "path": "scripts/fetch-codex-manual.mjs",
+          "sourceSha256": "d29c536eb9a8971be60beb7145b7697e929593ed8da58014b4081434c11efdc4",
+          "sha256": "d29c536eb9a8971be60beb7145b7697e929593ed8da58014b4081434c11efdc4"
+        },
+        {
+          "path": "scripts/resolve-latest-model-info",
+          "sourceSha256": "8f5006efa15c034ede29821b627d7b86c43f7dfaab422d335f45b9be8d04e2d5",
+          "sha256": "8f5006efa15c034ede29821b627d7b86c43f7dfaab422d335f45b9be8d04e2d5"
+        },
+        {
+          "path": "scripts/resolve-latest-model-info.cjs",
+          "sourceSha256": "8febe1acc3269662fb258090001a6848591070aa23a9633a89022433661aea0c",
+          "sha256": "8febe1acc3269662fb258090001a6848591070aa23a9633a89022433661aea0c"
+        },
+        {
+          "path": "SKILL.md",
+          "sourceSha256": "8ce8021101bcea594ff92ee6cfd8ca7641a49ee66d7bc6070555f1a33fc239d9",
+          "sha256": "8ce8021101bcea594ff92ee6cfd8ca7641a49ee66d7bc6070555f1a33fc239d9"
+        }
+      ]
+    },
+    {
+      "name": "review-agent",
+      "originalFolder": "review-agent",
+      "source": "C:/Users/surya/.codex/skills/.system/review-agent",
+      "description": "Perform a read-only, defect-first review of a specified code change and return every actionable finding. Use when another agent delegates review of uncommitted changes, a base-branch diff, a commit, or custom review instructions.",
+      "changes": [],
+      "files": [
+        {
+          "path": "agents/openai.yaml",
+          "sourceSha256": "579774dde24f21ee57d5cb63f69c2fce0da04b81538c636a0e0dd37dc836c811",
+          "sha256": "579774dde24f21ee57d5cb63f69c2fce0da04b81538c636a0e0dd37dc836c811"
+        },
+        {
+          "path": "SKILL.md",
+          "sourceSha256": "bb46315f6bc4b7051c05f807d19b1689b20418ac6c42590406d805c10fa2fd1a",
+          "sha256": "bb46315f6bc4b7051c05f807d19b1689b20418ac6c42590406d805c10fa2fd1a"
+        }
+      ]
+    },
+    {
+      "name": "codex-skill-creator",
+      "originalFolder": "skill-creator",
+      "source": "C:/Users/surya/.codex/skills/.system/skill-creator",
+      "description": "Create or update a Codex skill with appropriately scoped instructions and any needed supporting resources.",
+      "changes": [
+        "Normalized frontmatter name to the destination folder."
+      ],
+      "files": [
+        {
+          "path": "agents/openai.yaml",
+          "sourceSha256": "b750627cdd588fdbb5b46e854d3384d1a504fad3b8ed73ca5d7ead3804df78b6",
+          "sha256": "b750627cdd588fdbb5b46e854d3384d1a504fad3b8ed73ca5d7ead3804df78b6"
+        },
+        {
+          "path": "assets/skill-creator-small.svg",
+          "sourceSha256": "edb19a0c59f9a1b5253b9af6d2f9f03cac27b2fe6a0275ebccbbdbff07891a1a",
+          "sha256": "edb19a0c59f9a1b5253b9af6d2f9f03cac27b2fe6a0275ebccbbdbff07891a1a"
+        },
+        {
+          "path": "assets/skill-creator.png",
+          "sourceSha256": "a4024b0306ddb05847e1012879d37aaf1e658205199da596f5145ed7a88d9162",
+          "sha256": "a4024b0306ddb05847e1012879d37aaf1e658205199da596f5145ed7a88d9162"
+        },
+        {
+          "path": "license.txt",
+          "sourceSha256": "3ddf9be5c28fe27dad143a5dc76eea25222ad1dd68934a047064e56ed2fa40c5",
+          "sha256": "3ddf9be5c28fe27dad143a5dc76eea25222ad1dd68934a047064e56ed2fa40c5"
+        },
+        {
+          "path": "references/openai_yaml.md",
+          "sourceSha256": "7039d465b05342cbacf861f08d20192ab1eeee112bc5d8ff0fb66234756887a9",
+          "sha256": "7039d465b05342cbacf861f08d20192ab1eeee112bc5d8ff0fb66234756887a9"
+        },
+        {
+          "path": "scripts/generate_openai_yaml.py",
+          "sourceSha256": "30c73f1ea7d47dbab2b231bb92c5bf9026f1ad14ba8e3b3a4a544092c4d24ebe",
+          "sha256": "30c73f1ea7d47dbab2b231bb92c5bf9026f1ad14ba8e3b3a4a544092c4d24ebe"
+        },
+        {
+          "path": "scripts/init_skill.py",
+          "sourceSha256": "74dfa9361a93bee6932d6cbb332ed19ac26a27ba3800e69fb07ba7512c1025f9",
+          "sha256": "74dfa9361a93bee6932d6cbb332ed19ac26a27ba3800e69fb07ba7512c1025f9"
+        },
+        {
+          "path": "scripts/quick_validate.py",
+          "sourceSha256": "6068513d924ed3559e186dfcdead7439129828dcf402167fd925c06dffbf2806",
+          "sha256": "6068513d924ed3559e186dfcdead7439129828dcf402167fd925c06dffbf2806"
+        },
+        {
+          "path": "SKILL.md",
+          "sourceSha256": "cccd291077ec57c6f50ca6529f0f3fb93212da09473effb2fcec808e81b21288",
+          "sha256": "19d3c9071586189876990b9cc79d90c3b4b6d3e442d7d4513f2c33ebe0f8682f"
+        }
+      ]
+    },
+    {
+      "name": "skill-installer",
+      "originalFolder": "skill-installer",
+      "source": "C:/Users/surya/.codex/skills/.system/skill-installer",
+      "description": "Install Codex skills into $CODEX_HOME/skills from a curated list or a GitHub repo path. Use when a user asks to list installable skills, install a curated skill, or install a skill from another repo (including private repos).",
+      "changes": [],
+      "files": [
+        {
+          "path": "agents/openai.yaml",
+          "sourceSha256": "bd64b4d6893138706b3e3540f266ab809ccdcd08375652ae9f9d1e029fe50d02",
+          "sha256": "bd64b4d6893138706b3e3540f266ab809ccdcd08375652ae9f9d1e029fe50d02"
+        },
+        {
+          "path": "assets/skill-installer-small.svg",
+          "sourceSha256": "099e5a4b5e5f0f918a8de0d2059f0a86211da623dbb75f86f13dc9f7c08c778d",
+          "sha256": "099e5a4b5e5f0f918a8de0d2059f0a86211da623dbb75f86f13dc9f7c08c778d"
+        },
+        {
+          "path": "assets/skill-installer.png",
+          "sourceSha256": "d0a230b1a79b71b858b7c215a0fbb0768d6459c14ea4ef80c61592629bf0e605",
+          "sha256": "d0a230b1a79b71b858b7c215a0fbb0768d6459c14ea4ef80c61592629bf0e605"
+        },
+        {
+          "path": "LICENSE.txt",
+          "sourceSha256": "3ddf9be5c28fe27dad143a5dc76eea25222ad1dd68934a047064e56ed2fa40c5",
+          "sha256": "3ddf9be5c28fe27dad143a5dc76eea25222ad1dd68934a047064e56ed2fa40c5"
+        },
+        {
+          "path": "scripts/github_utils.py",
+          "sourceSha256": "2f9702afb9f0da740181fa4a3214f663e460f80cd5cea2e7dcaab00ad269082e",
+          "sha256": "2f9702afb9f0da740181fa4a3214f663e460f80cd5cea2e7dcaab00ad269082e"
+        },
+        {
+          "path": "scripts/install-skill-from-github.py",
+          "sourceSha256": "110cc7e4e395c2c9ba070d47db7d21be5164591c35015ae364fc9c9905b08de8",
+          "sha256": "110cc7e4e395c2c9ba070d47db7d21be5164591c35015ae364fc9c9905b08de8"
+        },
+        {
+          "path": "scripts/list-skills.py",
+          "sourceSha256": "2cd6eecbaf9be7c86e80a14d7042f95d6abb83b6baee5f17dd075fa7a71c83de",
+          "sha256": "2cd6eecbaf9be7c86e80a14d7042f95d6abb83b6baee5f17dd075fa7a71c83de"
+        },
+        {
+          "path": "SKILL.md",
+          "sourceSha256": "2892d8b2fb11631132118f340aed80ae17e59d5a571fc2c4f4a4a7e73f139d52",
+          "sha256": "2892d8b2fb11631132118f340aed80ae17e59d5a571fc2c4f4a4a7e73f139d52"
+        }
+      ]
+    }
+  ]
+}

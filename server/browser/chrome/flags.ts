@@ -4,6 +4,8 @@
 
 import { userInfo } from "node:os";
 
+import { credentialStoreFlags, gateChromeFlags } from "../egress/gate.ts";
+
 export type BrowserMode = "headless" | "window";
 export type HostKind = "desktop" | "server" | "container";
 
@@ -20,8 +22,32 @@ export interface ScreenSpec {
 /** Servers declare a display the way Xvfb's -screen does. */
 export const SERVER_SCREEN: ScreenSpec = { width: 1920, height: 1080, deviceScaleFactor: 1 };
 
-/** A 1280x720 page on macOS and Linux, where new headless reserves 143 px of window chrome; the driver fits other platforms' windows. */
+/** New headless reserves this much of a window's height on macOS and Linux; the driver fits other platforms' windows. */
+const HEADLESS_CHROME_HEIGHT = 143;
+
+/** A 1280x720 page on macOS and Linux. */
 export const WINDOW_SIZE = "1280,863";
+
+/**
+ * The most a headless window adds to its page, measured on 153 and 155: --window-size=1280,863 shows a 1280x720 page on
+ * macOS and Linux and a 1264x712 one on Windows in Google Chrome's first tab, which carries a 56 px bar the others lack.
+ */
+function windowFrame(platform: NodeJS.Platform): { width: number; height: number } {
+  return platform === "win32" ? { width: 16, height: 151 } : { width: 0, height: HEADLESS_CHROME_HEIGHT };
+}
+
+/** The largest page a headless window can show on `screen`: no real window is larger than its screen. */
+export function pageLimit(screen: ScreenSpec, platform: NodeJS.Platform = process.platform): { width: number; height: number } {
+  const frame = windowFrame(platform);
+  return { width: screen.width - frame.width, height: screen.height - frame.height };
+}
+
+/** `page`, scaled down to fit `limit` with its shape kept, so a viewer that scales it back up is still filled edge to edge. */
+export function fitPage(page: { width: number; height: number }, limit: { width: number; height: number } | null): { width: number; height: number } {
+  if (!limit || (page.width <= limit.width && page.height <= limit.height)) return page;
+  const scale = Math.min(limit.width / page.width, limit.height / page.height);
+  return { width: Math.min(limit.width, Math.floor(page.width * scale + 1e-6)), height: Math.min(limit.height, Math.floor(page.height * scale + 1e-6)) };
+}
 
 export interface ChromeFlagsInput {
   userDataDir: string;
@@ -33,8 +59,10 @@ export interface ChromeFlagsInput {
   /** The display pages see; headless only (a window has the real one). */
   screen?: ScreenSpec | null;
   locale?: string | null;
-  /** The egress gate, e.g. socks5://127.0.0.1:41234. */
-  proxyServer?: string | null;
+  /** The port of this browser's egress gate on 127.0.0.1. */
+  egressPort?: number | null;
+  /** The page size the window opens at; the driver fits it exactly once a tab runs. */
+  viewport?: { width: number; height: number } | null;
   /** False only when an operator explicitly turned Chrome's sandbox off. */
   sandbox?: boolean;
   /** Null when session restore reopens the profile's tabs. */
@@ -44,7 +72,6 @@ export interface ChromeFlagsInput {
 }
 
 const LOCALE = /^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$/;
-const LOCAL_PROXY = /^socks5:\/\/(?:127\.0\.0\.1|\[::1\]):\d{1,5}$/;
 
 /** Headless takes the display in device pixels: --screen-info={3024x1964 devicePixelRatio=2 colorDepth=30} is a 1512x982 Retina screen. */
 export function screenInfo(screen: ScreenSpec): string {
@@ -68,7 +95,7 @@ export function chromeArgs(input: ChromeFlagsInput): string[] {
     "--no-first-run",
     "--no-default-browser-check",
     "--disable-blink-features=AutomationControlled",
-    `--window-size=${WINDOW_SIZE}`,
+    `--window-size=${input.viewport ? `${Math.round(input.viewport.width)},${Math.round(input.viewport.height) + HEADLESS_CHROME_HEIGHT}` : WINDOW_SIZE}`,
   ];
   if (headless && input.userAgent) {
     if (/[\r\n\0]/.test(input.userAgent)) throw new Error("The user agent holds a line break.");
@@ -77,13 +104,15 @@ export function chromeArgs(input: ChromeFlagsInput): string[] {
   if (headless) args.push(`--screen-info=${screenInfo(input.screen ?? SERVER_SCREEN)}`);
   else if (input.windowPosition) args.push(`--window-position=${Math.round(input.windowPosition.x)},${Math.round(input.windowPosition.y)}`);
   if (input.locale && LOCALE.test(input.locale)) args.push(`--lang=${input.locale}`);
-  if (input.proxyServer) {
-    if (!LOCAL_PROXY.test(input.proxyServer)) throw new Error("The browser only goes through OpenMausBot's own local gate.");
-    args.push(`--proxy-server=${input.proxyServer}`, "--proxy-bypass-list=<-loopback>", "--force-webrtc-ip-handling-policy=disable_non_proxied_udp");
+  if (input.egressPort !== undefined && input.egressPort !== null) {
+    if (!Number.isInteger(input.egressPort) || input.egressPort < 1 || input.egressPort > 65_535) throw new Error("The browser only goes through OpenMausBot's own local gate.");
+    args.push(...gateChromeFlags(input.egressPort, platform));
+  } else {
+    args.push(...credentialStoreFlags(platform));
   }
-  if (platform === "darwin") args.push("--use-mock-keychain");
-  if (platform === "linux") args.push("--password-store=basic");
-  if (headless) args.push("--mute-audio");
+  // Chrome for Testing 155 keeps a --top-chrome-webui renderer for the omnibox popups and the WebUI reload button, which
+  // headless never shows: about 50 MB per browser.
+  if (headless) args.push("--mute-audio", "--disable-features=WebUIOmniboxPopup,WebUIOmniboxAimPopup,WebUIReloadButton");
   if (input.host !== "desktop") args.push("--disk-cache-size=52428800");
   if (input.host === "container") args.push("--disable-dev-shm-usage");
   if (input.sandbox === false) args.push("--no-sandbox");

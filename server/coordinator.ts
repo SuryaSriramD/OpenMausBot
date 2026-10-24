@@ -3,6 +3,22 @@ import type { WorkOrigin } from "./peer-provenance.ts";
 import type { LegacyThreadResolver } from "./runtime/import-legacy.ts";
 import type { Assignment, EnvelopeNames, Level, Limits, Mode, Origin, Outcome, Owner, Reply, Requester, StatusView, TurnEvidence } from "./runtime/types.ts";
 
+/** One coordinate_bots call, as the internal route hands it to the server. */
+export type CoordinateBotsCall = {
+  groupId?: string;
+  botIds: string[];
+  message: string;
+  reason?: string;
+  rework: boolean;
+  thread: "standing" | "new";
+  reply: "resume" | "none";
+  consult: boolean;
+  inMyFolder?: boolean;
+  doneWhen?: string;
+  title?: string;
+  projectId?: string;
+};
+
 export type { LegacyThreadResolver };
 
 export type HandoffStatus = "source" | "queued" | "running" | "waiting" | "resume" | "completed" | "failed" | "cancelled";
@@ -58,6 +74,9 @@ export interface HostTurnResult {
   evidence?: TurnEvidence;
   cap?: { note: string; handoffPath?: string };
   cards?: { question: string; ids: string[] };
+  /** The host's stall watchdog stopped the turn, including a room turn a stall ended during setup, before it had an
+   * outcome: it failed as `stalled`, not as a provider error. */
+  stalled?: boolean;
 }
 
 export interface HandoffOpener {
@@ -141,6 +160,8 @@ export interface Coordinator {
   activeDirect(threadId: string): boolean;
   assignerOf(threadId: string): HandoffView | undefined;
   outstandingDirect(threadId: string): HandoffView[];
+  /** Direct conversations whose turn waits on teammates: an open handoff it made that owes a reply, or a root parked to resume with no question for the person. */
+  awaitingTeammateThreads(): Set<string>;
   liveEdges(): LiveHandoffEdge[];
   stopAwaitingDirect(threadId: string, reason?: string): HandoffView[];
   /** The next start goes on with this thread's turn, so a shutdown's "cut" line would be false. */

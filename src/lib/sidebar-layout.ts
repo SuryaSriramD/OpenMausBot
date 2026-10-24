@@ -1,5 +1,7 @@
 import type { GroupGoalRunCardData } from "../../shared/group-goal-run";
 import type { ConnectorCardData } from "../../shared/wire";
+import type { DefaultBotFields } from "../../shared/default-bot";
+import { hiddenFromSidebar } from "./default-bot";
 
 export const PINNED_SECTION_ID = "builtin:pinned";
 export const CHANNELS_SECTION_ID = "builtin:channels";
@@ -26,7 +28,7 @@ const GOAL_RUN_PREVIEW_LABEL = {
   failed: "Failed",
 } satisfies Record<GroupGoalRunCardData["status"], string>;
 
-export type SidebarBot = {
+export type SidebarBot = DefaultBotFields & {
   id: string;
   chiefOfStaff?: boolean;
   section?: string;
@@ -105,10 +107,10 @@ export function pinnedCircleThreadListVisible(
 
 export function partitionSidebarBots<T extends SidebarBot>(
   bots: T[],
-  options?: { universalPins?: boolean },
+  options?: { universalPins?: boolean; viewerEmail?: string | null; welcoming?: string | null },
 ) {
   const universalPins = options?.universalPins === true;
-  const visible = bots.filter((bot) => !bot.hidden);
+  const visible = bots.filter((bot) => !bot.hidden && !hiddenFromSidebar(bot, options?.viewerEmail) && bot.id !== options?.welcoming);
   const pinnedBots = visible.filter((bot) => Boolean(bot.pinned) && (universalPins || !bot.chiefOfStaff));
   const pinnedIds = new Set(pinnedBots.map((bot) => bot.id));
   const unsectionedChief = visible.find((bot) => bot.chiefOfStaff && !bot.section && !pinnedIds.has(bot.id)) ?? null;
@@ -158,6 +160,21 @@ export function orderedSidebarSections(
     }
   }
   return result;
+}
+
+export const SIMPLE_FIXED_SECTION_IDS: readonly SidebarSectionId[] = [PINNED_SECTION_ID, BOTS_SECTION_ID];
+
+export function simpleSidebarSections(ids: SidebarSectionId[]): SidebarSectionId[] {
+  return [
+    ...SIMPLE_FIXED_SECTION_IDS.filter((id) => ids.includes(id)),
+    ...ids.filter((id) => !SIMPLE_FIXED_SECTION_IDS.includes(id)),
+  ];
+}
+
+export function keepFixedSectionSlots(fullOrder: SidebarSectionId[], simpleOrder: SidebarSectionId[]): SidebarSectionId[] {
+  const moved = simpleOrder.filter((id) => !SIMPLE_FIXED_SECTION_IDS.includes(id));
+  let next = 0;
+  return fullOrder.map((id) => (SIMPLE_FIXED_SECTION_IDS.includes(id) ? id : moved[next++] ?? id));
 }
 
 export function moveSection(

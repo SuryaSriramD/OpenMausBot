@@ -1,7 +1,8 @@
 import { userInfo } from "node:os";
 import { describe, expect, it } from "vitest";
 
-import { accountHome, chromeArgs, chromeEnv, screenInfo, SERVER_SCREEN } from "./flags.ts";
+import { gateChromeFlags } from "../egress/gate.ts";
+import { accountHome, chromeArgs, chromeEnv, fitPage, pageLimit, screenInfo, SERVER_SCREEN } from "./flags.ts";
 
 const UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36";
 
@@ -26,8 +27,9 @@ describe("Chrome's command line", () => {
     expect(headless).toContain("--screen-info={3024x1964 devicePixelRatio=2 colorDepth=30}");
     expect(headless).toContain("--headless=new");
     expect(headless).toContain("--mute-audio");
+    expect(headless.filter((arg) => arg.startsWith("--disable-features="))).toEqual(["--disable-features=WebUIOmniboxPopup,WebUIOmniboxAimPopup,WebUIReloadButton"]);
     const window = chromeArgs({ userDataDir: "/p", mode: "window", host: "desktop", platform: "darwin", userAgent: UA });
-    expect(window.some((arg) => /^--(headless|user-agent|screen-info|mute-audio)/.test(arg))).toBe(false);
+    expect(window.some((arg) => /^--(headless|user-agent|screen-info|mute-audio|disable-features)/.test(arg))).toBe(false);
     expect(window).toContain("--window-size=1280,863");
   });
 
@@ -39,10 +41,28 @@ describe("Chrome's command line", () => {
     expect(server).not.toContain("--use-mock-keychain");
   });
 
-  it("goes only through OMB's own local gate, with WebRTC kept on it", () => {
-    const gated = chromeArgs({ userDataDir: "/p", mode: "headless", host: "desktop", proxyServer: "socks5://127.0.0.1:41234" });
+  it("goes only through OMB's own local gate, with the gate's own flags and WebRTC kept on it", () => {
+    const gated = chromeArgs({ userDataDir: "/p", mode: "headless", host: "desktop", platform: "darwin", egressPort: 41234 });
+    expect(gated).toEqual(expect.arrayContaining(gateChromeFlags(41234, "darwin")));
     expect(gated).toEqual(expect.arrayContaining(["--proxy-server=socks5://127.0.0.1:41234", "--proxy-bypass-list=<-loopback>", "--force-webrtc-ip-handling-policy=disable_non_proxied_udp"]));
-    expect(() => chromeArgs({ userDataDir: "/p", mode: "headless", host: "desktop", proxyServer: "http://proxy.example:8080" })).toThrow(/local gate/);
+    expect(gated.filter((arg) => arg === "--use-mock-keychain")).toHaveLength(1);
+    expect(() => chromeArgs({ userDataDir: "/p", mode: "headless", host: "desktop", egressPort: 0 })).toThrow(/local gate/);
+    expect(() => chromeArgs({ userDataDir: "/p", mode: "headless", host: "desktop", egressPort: 1.5 })).toThrow(/local gate/);
+  });
+
+  it("opens the window at the page size asked for", () => {
+    expect(chromeArgs({ userDataDir: "/p", mode: "headless", host: "desktop", viewport: { width: 1280, height: 800 } })).toContain("--window-size=1280,943");
+  });
+
+  it("keeps a headless window within its screen, and a page that must shrink keeps its shape", () => {
+    expect(pageLimit({ width: 1512, height: 982, deviceScaleFactor: 2 }, "darwin")).toEqual({ width: 1512, height: 839 });
+    expect(pageLimit(SERVER_SCREEN, "linux")).toEqual({ width: 1920, height: 937 });
+    expect(pageLimit(SERVER_SCREEN, "win32")).toEqual({ width: 1904, height: 929 });
+    expect(fitPage({ width: 1280, height: 800 }, { width: 1512, height: 839 })).toEqual({ width: 1280, height: 800 });
+    expect(fitPage({ width: 1600, height: 1000 }, { width: 1512, height: 839 })).toEqual({ width: 1342, height: 839 });
+    expect(fitPage({ width: 1280, height: 800 }, { width: 1440, height: 757 })).toEqual({ width: 1211, height: 757 });
+    expect(fitPage({ width: 3000, height: 800 }, { width: 1512, height: 839 })).toEqual({ width: 1512, height: 403 });
+    expect(fitPage({ width: 1600, height: 1000 }, null)).toEqual({ width: 1600, height: 1000 });
   });
 
   it("turns the sandbox off only on an explicit opt-out, and reopens restored tabs without a start page", () => {

@@ -1,6 +1,7 @@
 /** Canonical runtime-event shapes, as they ride the live wire and the
  * inspector log. */
 import type { AskQuestion } from "./ask-question.ts";
+import type { TurnProgressFields } from "./turn-progress.ts";
 
 export type DriverKind = string;
 export type InstanceId = string;
@@ -107,6 +108,9 @@ export type RuntimeEvent = RuntimeEventBase &
         input?: string;
       }
     | { type: "item.updated"; itemType: "tool" | "reasoning"; tokens?: number | null }
+    /** What the engine is doing right now (a tool call being written or run), for the chat's status line. Live only:
+     * the bus coalesces it and never writes it to the event log; nothing stores it. */
+    | Omit<TurnProgressFields, "itemId">
     | { type: "item.completed"; itemType: "tool"; ok: boolean; output?: string }
     | { type: "item.completed"; itemType: "assistant_text"; text: string }
     /** Provider-generated raster bytes, folded into the private attachment
@@ -165,12 +169,18 @@ export type RuntimeEvent = RuntimeEventBase &
          * whole prompt, cache reads included — and the window's size when the
          * driver knows it. The figure that predicts the next message's cost. */
         contextTokens?: number; contextWindow?: number;
+        /** The part of `output` spent reasoning, where the engine reports it. A per-call report carries the call's own
+         * message id in `itemId`, repeated on every frame of that call. */
+        reasoning?: number;
       }
     // `setup`: fixed by installing or configuring something, not by retrying.
     // `terminal`: the complete turn failed, not a transient error.
     // `claudeUpdate`: this Claude Code is too old for the model.
     // `trialCredit`: the trial's Claude credit refused the call.
-    | { type: "runtime.error"; message: string; setup?: boolean; terminal?: boolean; claudeUpdate?: boolean; trialCredit?: "used_up" | "ended" | "paused" | "too_low" }
+    // `stalled`: the engine went silent and the turn was stopped as stuck.
+    // `limitResetsAt`: epoch ms when the usage limit refusing this account resets, when the engine says.
+    | { type: "runtime.error"; message: string; setup?: boolean; terminal?: boolean; claudeUpdate?: boolean; trialCredit?: "used_up" | "ended" | "paused" | "too_low";
+        stalled?: boolean; limitResetsAt?: number }
     /** Something the person should know that did not fail the turn — for
      * example, a saved model the engine no longer offers was replaced. */
     | { type: "runtime.notice"; message: string }

@@ -2,13 +2,7 @@
 // is what the same binary reports headed. So the identity is read from the binary itself, once per version, and only that
 // token changes. The user-agent flag alone empties the high-entropy client hints, and a CDP override alone leaves
 // HeadlessChrome in service workers, so the browser gets both (Chrome 153, measured).
-import { spawn } from "node:child_process";
-import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
-import { createServer } from "node:http";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
-
-import { connectCdp, type Cdp } from "../../browser-sites.ts";
+import { existsSync } from "node:fs";
 
 export interface Brand { brand: string; version: string }
 
@@ -76,91 +70,8 @@ export function isChromeIdentity(value: unknown): value is ChromeIdentity {
   }
 }
 
-const READ_IDENTITY = `(async () => ({ href: location.href, secure: isSecureContext, userAgent: navigator.userAgent, hints: navigator.userAgentData ? await navigator.userAgentData.getHighEntropyValues(${JSON.stringify(HIGH_ENTROPY_HINTS)}) : null }))()`;
-
-async function waitFor<T>(read: () => T | null, deadline: number, what: string): Promise<T> {
-  for (;;) {
-    const value = read();
-    if (value !== null) return value;
-    if (Date.now() > deadline) throw new Error(`the browser did not ${what} in time`);
-    await new Promise((resolve) => setTimeout(resolve, 25));
-  }
-}
-
 /** agent-browser 0.37 adds --no-sandbox in these same places; a sandboxed Chrome cannot start there. */
 export function needsNoSandbox(env: NodeJS.ProcessEnv = process.env, exists: (path: string) => boolean = existsSync): boolean {
   if (process.platform !== "linux") return false;
   return exists("/.dockerenv") || exists("/run/.containerenv") || process.getuid?.() === 0 || Boolean(env.CI);
-}
-
-/** Starts the binary headless on a throwaway profile, reads its identity from a loopback page (client hints need a secure
- * context) and stops it again. `env` is the browser's: its HOME must be the person's real one, or macOS shows a "keychain
- * cannot be found" dialog. */
-export async function calibrateIdentity(executable: string, options: { timeoutMs?: number; connect?: typeof connectCdp; env?: NodeJS.ProcessEnv } = {}): Promise<ChromeIdentity> {
-  const deadline = Date.now() + (options.timeoutMs ?? 30_000);
-  const page = createServer((_request, response) => {
-    response.writeHead(200, { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" });
-    response.end("<!doctype html><title>calibration</title>");
-  });
-  await new Promise<void>((resolve, reject) => { page.once("error", reject); page.listen(0, "127.0.0.1", resolve); });
-  const url = `http://127.0.0.1:${(page.address() as { port: number }).port}/`;
-  const profile = mkdtempSync(join(tmpdir(), "omb-chrome-identity-"));
-  const args = [
-    "--headless=new", "--remote-debugging-port=0", `--user-data-dir=${profile}`, "--no-first-run", "--no-default-browser-check",
-    "--disable-background-networking", "--disable-component-update", "--disable-default-apps", "--disable-sync",
-    ...(process.platform === "darwin" ? ["--use-mock-keychain"] : process.platform === "linux" ? ["--password-store=basic"] : []),
-    ...(needsNoSandbox(options.env) ? ["--no-sandbox", "--disable-dev-shm-usage"] : []),
-    url,
-  ];
-  const chrome = spawn(executable, args, { stdio: "ignore", windowsHide: true, env: options.env ?? process.env });
-  let exited = false;
-  const started = new Promise<void>((resolve, reject) => {
-    chrome.once("error", (error) => { exited = true; reject(error); });
-    chrome.once("exit", (code, signal) => { exited = true; reject(new Error(`the browser exited (${code ?? signal}) before it answered`)); });
-    chrome.once("spawn", resolve);
-  });
-  let cdp: Cdp | null = null;
-  try {
-    await started;
-    const portFile = join(profile, "DevToolsActivePort");
-    const [port, path] = await waitFor(() => {
-      if (exited) throw new Error("the browser exited before it answered");
-      try { const lines = readFileSync(portFile, "utf8").split("\n"); return lines[1] ? lines : null; } catch { return null; }
-    }, deadline, "start");
-    cdp = await (options.connect ?? connectCdp)(`ws://127.0.0.1:${port!.trim()}${path!.trim()}`, Math.max(1_000, deadline - Date.now()));
-    const target = await waitForPage(cdp, url, deadline);
-    const { sessionId } = await cdp.send("Target.attachToTarget", { targetId: target, flatten: true }) as { sessionId: string };
-    // A tab reports the URL it is opening before that page replaces its first, blank document, which has no client hints.
-    let read: { href?: unknown; secure?: unknown; userAgent?: unknown; hints?: Record<string, unknown> | null } | undefined;
-    while (!read?.hints && Date.now() < deadline) {
-      try {
-        const answer = await cdp.send("Runtime.evaluate", { expression: READ_IDENTITY, awaitPromise: true, returnByValue: true }, sessionId) as { result?: { value?: typeof read } };
-        read = answer.result?.value;
-      } catch {}
-      if (!read?.hints) await new Promise((resolve) => setTimeout(resolve, 50));
-    }
-    if (!read?.hints) throw new Error(`the browser reported no client hints on ${String(read?.href ?? "its page")} (secure context: ${String(read?.secure ?? "unknown")})`);
-    return headedIdentity({ userAgent: read.userAgent, hints: read.hints });
-  } finally {
-    await cdp?.send("Browser.close").catch(() => undefined);
-    cdp?.close();
-    if (!exited) {
-      const gone = new Promise((resolve) => chrome.once("exit", resolve));
-      const kill = setTimeout(() => chrome.kill("SIGKILL"), 3_000);
-      await gone;
-      clearTimeout(kill);
-    }
-    page.close();
-    rmSync(profile, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
-  }
-}
-
-async function waitForPage(cdp: Cdp, url: string, deadline: number): Promise<string> {
-  for (;;) {
-    const { targetInfos } = await cdp.send("Target.getTargets") as { targetInfos?: Array<{ type?: string; url?: string; targetId?: string }> };
-    const found = targetInfos?.find((target) => target.type === "page" && target.url === url && typeof target.targetId === "string");
-    if (found) return found.targetId!;
-    if (Date.now() > deadline) throw new Error("the browser did not open its calibration page in time");
-    await new Promise((resolve) => setTimeout(resolve, 25));
-  }
 }

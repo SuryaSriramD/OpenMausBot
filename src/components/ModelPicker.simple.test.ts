@@ -110,13 +110,13 @@ function bot(effort?: EffortLevel, instanceId = "claude", model = "claude-opus-5
   };
 }
 
-function render(forBot: Bot, options: { contained?: boolean } = {}) {
+function render(forBot: Bot, options: { contained?: boolean; thread?: boolean } = {}) {
   fixture.values.length = Math.min(fixture.values.length, fixture.own);
   let tree: ReactNode = null;
   function Capture() {
     fixture.index = 0;
     tree = options.contained
-      ? ModelPicker({ bot: forBot, contained: true, label: "Default model" })
+      ? ModelPicker({ bot: forBot, contained: true, label: "Default model", ...(options.thread ? { threadId: forBot.threadId } : {}) })
       : ModelPicker({ bot: forBot, threadId: forBot.threadId });
     fixture.own = fixture.index;
     return tree;
@@ -125,7 +125,7 @@ function render(forBot: Bot, options: { contained?: boolean } = {}) {
   return { html, nodes: nodes(tree) };
 }
 
-function open(forBot: Bot, options: { contained?: boolean } = {}) {
+function open(forBot: Bot, options: { contained?: boolean; thread?: boolean } = {}) {
   const trigger = render(forBot, options).nodes.find((node) => node.props["data-tour"] === "model")!;
   (trigger.props.onClick as () => void)();
   return render(forBot, options);
@@ -162,8 +162,8 @@ describe("the model picker in Simple mode", () => {
     expect(opened.nodes.some((node) => node.type === ModelEngineRail)).toBe(false);
     expect(html).toContain("Claude");
     expect(html).toContain("Opus 5.5");
-    for (const step of ["Quick", "Balanced", "Deep", "Max"]) expect(html).toContain(`>${step}</button>`);
-    expect(html).not.toContain(">Deeper</button>");
+    for (const step of ["Low", "Medium", "High", "X-High", "Max"]) expect(html).toContain(`>${step}</button>`);
+    expect(html).not.toContain(">Quick</button>");
     expect(html).not.toContain("new chats too");
   });
 
@@ -193,10 +193,10 @@ describe("the model picker in Simple mode", () => {
     const list = region(html, "data-simple-models", "data-simple-effort-band");
     expect(list).toContain("Opus 5.5");
     expect(list).toContain("Sonnet 5.5");
-    expect(list).not.toContain(">Deep</button>");
+    expect(list).not.toContain(">High</button>");
 
     const bottom = region(html, "data-simple-effort-band");
-    expect(bottom).toContain(">Deep</button>");
+    expect(bottom).toContain(">High</button>");
     expect(bottom).not.toContain("new chats too");
     expect(bottom).toContain("Manage AI accounts");
   });
@@ -409,8 +409,8 @@ describe("the model picker in Simple mode", () => {
     expect(region(html, "data-simple-effort-band")).toContain('aria-label="Reasoning effort"');
   });
 
-  it("names the effort in plain words on the header chip", () => {
-    expect(render(bot("high")).html).toContain("· Deep");
+  it("names the effort by the provider's own level on the header chip", () => {
+    expect(render(bot("high")).html).toContain("· High");
     fixture.advanced = true;
     expect(render(bot("high")).html).toContain("· High");
   });
@@ -507,7 +507,23 @@ describe("the model picker in Simple mode", () => {
     });
   });
 
-  it("writes the real effort level behind a friendly step", () => {
+  it.each([[true, true], [false, false], [null, false]] as const)(
+    "lets the bot panel's picker, given the open thread, set the default only for the Cloud owner (owner: %s)",
+    (ownerOrAdmin, updatesDefault) => {
+      fixture.cloudHome = true;
+      fixture.ownerOrAdmin = ownerOrAdmin;
+      const simple = pane(open(bot(), { contained: true, thread: true }))!;
+      simple.props.onPick("claude-haiku-4-5-20251001");
+      expect(fixture.dispatch).toHaveBeenLastCalledWith(expect.objectContaining({
+        type: "setModel", botId: "scout", threadId: "thread-scout", updateBotDefault: updatesDefault,
+      }));
+      simple.props.effort!.onPick("max");
+      expect(fixture.dispatch).toHaveBeenLastCalledWith(expect.objectContaining({ type: "setModel", threadId: "thread-scout" }));
+      expect((fixture.dispatch as ReturnType<typeof vi.fn>).mock.lastCall![0].updateBotDefault).toBe(updatesDefault ? true : undefined);
+    },
+  );
+
+  it("writes the picked effort level", () => {
     pane(open(bot()))!.props.effort!.onPick("high");
     expect(fixture.dispatch).toHaveBeenLastCalledWith({
       type: "setModel", botId: "scout", threadId: "thread-scout", updateBotDefault: true,
@@ -515,8 +531,8 @@ describe("the model picker in Simple mode", () => {
     });
   });
 
-  it("keeps an unusual level the bot already uses visible", () => {
-    expect(pane(open(bot("xhigh")))!.props.effort!.levels).toContain("xhigh");
+  it("offers every level the engine reports, none hidden", () => {
+    expect(pane(open(bot("xhigh")))!.props.effort!.levels).toEqual(["low", "medium", "high", "xhigh", "max"]);
   });
 
   it("sends a provider that needs sign-in to the full picker's setup", () => {

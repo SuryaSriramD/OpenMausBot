@@ -3,7 +3,7 @@ import { createPortal } from "react-dom";
 import { ChevronRight } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { useMenuMotion } from "./MenuMotion";
-import { usePopoverDismiss } from "@/hooks/use-popover-dismiss";
+import { popoverClosesOnKey, usePopoverDismiss } from "@/hooks/use-popover-dismiss";
 
 export interface SidebarMenuItem {
   key: string;
@@ -153,6 +153,9 @@ function MenuRows({
   );
 }
 
+const closesOnEscape = (event: ReactKeyboardEvent) =>
+  popoverClosesOnKey({ key: event.key, defaultPrevented: event.defaultPrevented, isComposing: event.nativeEvent.isComposing });
+
 export function SidebarPopoverMenu({
   items,
   ariaLabel,
@@ -220,15 +223,15 @@ export function SidebarPopoverMenu({
     contains: (target: unknown) =>
       [rootRef.current, menuRef.current, subRef.current].some((node) => node?.contains(target as Node)),
   });
-  usePopoverDismiss(open, anchored ? insideRef : rootRef, () => close(anchored));
+  usePopoverDismiss(open, insideRef, () => close(anchored));
 
   useLayoutEffect(() => {
-    if (!anchored || !motion.shown) return;
+    if (!motion.shown) return;
     const place = () => {
       const trigger = triggerRef.current, menu = menuRef.current;
       if (!trigger || !menu) return;
       const viewport = { width: window.innerWidth, height: window.innerHeight };
-      setPosition(anchoredMenuPosition(trigger.getBoundingClientRect(), { width: menu.offsetWidth, height: menu.offsetHeight }, viewport, isRtl(trigger)));
+      if (anchored) setPosition(anchoredMenuPosition(trigger.getBoundingClientRect(), { width: menu.offsetWidth, height: menu.offsetHeight }, viewport, isRtl(trigger)));
       const sub = subRef.current, row = subRowRef.current;
       if (sub && row) {
         setSubPosition(submenuPosition(menu.getBoundingClientRect(), row.getBoundingClientRect(), { width: sub.offsetWidth, height: sub.offsetHeight }, viewport, isRtl(trigger)));
@@ -296,6 +299,12 @@ export function SidebarPopoverMenu({
       event.preventDefault();
       event.stopPropagation();
       closeSub(true);
+    } else if (!inSubmenu && closesOnEscape(event)) {
+      // The menu, not the panel or dialog around it, owns this Escape: an anchored sheet's keys bubble through the
+      // portal to the trigger's ancestors before the window ever sees them.
+      event.preventDefault();
+      event.stopPropagation();
+      close(true);
     } else if (event.key === "Tab" && anchored) {
       event.preventDefault();
       close(true);
@@ -357,8 +366,8 @@ export function SidebarPopoverMenu({
       data-sidebar-popover-submenu
       onKeyDown={(event) => onMenuKey(event, true)}
       onPointerEnter={() => subTimer.current && clearTimeout(subTimer.current)}
-      style={{ position: "fixed", left: subPosition?.left ?? 0, top: subPosition?.top ?? 0, minWidth: 220, width: "max-content", maxWidth: `min(${ANCHORED_MENU_WIDTH + 40}px, calc(100vw - ${EDGE_MARGIN * 2}px))`, visibility: subPosition ? undefined : "hidden" }}
-      className={cn(sheetClass, "z-[61] animate-pop-in")}
+      style={{ position: "fixed", left: subPosition?.left ?? 0, top: subPosition?.top ?? 0, minWidth: 220, width: "max-content", maxWidth: `min(${ANCHORED_MENU_WIDTH + 40}px, calc(100vw - ${EDGE_MARGIN * 2}px))`, maxHeight: `calc(100vh - ${EDGE_MARGIN * 2}px)`, visibility: subPosition ? undefined : "hidden" }}
+      className={cn(sheetClass, "z-[61] animate-pop-in overflow-y-auto")}
     >
       <MenuRows
         items={openItem.submenu}
@@ -380,7 +389,7 @@ export function SidebarPopoverMenu({
       onFocus={() => openOnHover && setOpen(true)}
       onBlur={(event) => {
         if (pinned) return;
-        if (!event.relatedTarget || !rootRef.current?.contains(event.relatedTarget as Node)) setOpen(false);
+        if (!event.relatedTarget || !insideRef.current.contains(event.relatedTarget)) setOpen(false);
       }}
     >
       <button
@@ -402,6 +411,13 @@ export function SidebarPopoverMenu({
           }
         }}
         onKeyDown={(event) => {
+          if (open && closesOnEscape(event)) {
+            // A menu opened with the mouse leaves focus here; Escape closes it before anything around it.
+            event.preventDefault();
+            event.stopPropagation();
+            close(true);
+            return;
+          }
           if (!anchored || open || (event.key !== "ArrowUp" && event.key !== "ArrowDown")) return;
           event.preventDefault();
           focusFirst.current = true;
@@ -415,7 +431,7 @@ export function SidebarPopoverMenu({
 
       {anchored
         ? typeof document !== "undefined" && sheet ? createPortal(<>{sheet}{subSheet}</>, document.body) : null
-        : sheet}
+        : <>{sheet}{typeof document !== "undefined" && subSheet ? createPortal(subSheet, document.body) : null}</>}
     </div>
   );
 }

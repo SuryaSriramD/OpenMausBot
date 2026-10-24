@@ -22,6 +22,7 @@ import {
   resolveAgentBrowserBinary,
 } from "../../server/browser-engine.ts";
 import { fixtureApi, mountPreview, type MountedPreview } from "./preview-fixture.ts";
+import { credentialStoreFlags } from "../../server/browser/egress/gate.ts";
 
 const ROOT = fileURLToPath(new URL("../..", import.meta.url));
 /** Gitignored, persistent: the binary and its Chrome download once per checkout. */
@@ -31,9 +32,10 @@ export const UI_MUTATING = new Set(["click", "type", "press", "flag", "eval"]);
 
 const ENTRIES = {
   threads: { entry: "/scripts/testing/threads-preview.tsx", route: "/__threads.html", title: "Isolated OpenMaus Chat" },
+  dictation: { entry: "/scripts/testing/dictation-preview.tsx", route: "/__dictation.html", title: "Isolated dictation verification" },
   settings: { entry: "/src/testing/bot-settings.tsx", route: "/__bot-settings.html", title: "Isolated Bot Settings" },
 } as const satisfies Record<string, Parameters<typeof mountPreview>[1]>;
-const FAKE_MODES = ["happy", "exit-early", "hang", "malformed", "stream", "not-logged-in", "slow", "background-result"];
+const FAKE_MODES = ["happy", "exit-early", "hang", "malformed", "stream", "not-logged-in", "slow", "slow-write", "background-result"];
 const SEEDED_BOT = "Pepper";
 const PLATFORM_ENV = ["SYSTEMROOT", "WINDIR", "COMSPEC", "PATHEXT", "LANG", "LC_ALL", "TZ"];
 // Where `agent-browser install` unpacks Chrome for Testing below `$HOME/.agent-browser/browsers/chrome-<version>/`.
@@ -77,6 +79,7 @@ export function sessionEnv(handle: SessionEnv, parentEnv: NodeJS.ProcessEnv = pr
     AGENT_BROWSER_SESSION: handle.session,
     AGENT_BROWSER_HEADLESS: "1",
     AGENT_BROWSER_NO_WEBMCP: "1",
+    AGENT_BROWSER_ARGS: credentialStoreFlags().join("\n"),
   };
   for (const [key, value] of Object.entries(parentEnv)) {
     if (value && PLATFORM_ENV.includes(key.toUpperCase())) env[key.toUpperCase()] = value;
@@ -460,6 +463,8 @@ export async function launchUi(
     checkpoint();
     const api = fixtureApi(fixture.info.url);
     await api("PATCH", "/api/config", { language: "en" });
+    const { bots } = await api("GET", "/api/bots") as { bots: Array<{ id: string; defaultBot?: object }> };
+    for (const bot of bots.filter((bot) => bot.defaultBot)) await api("PATCH", `/api/bots/${bot.id}`, { welcomed: true });
     const created = await runControlOmb(["new-bot", "--name", SEEDED_BOT, "--url", fixture.info.url]) as { bot: { id: string } };
     checkpoint();
     // stdout carries the handle and nothing else; Vite's port and dependency

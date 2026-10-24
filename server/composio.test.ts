@@ -1,12 +1,14 @@
 import { createServer, type Server } from "node:http";
-import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { AppConfig } from "./config.ts";
 import {
+  CURATED_SLUGS,
   applyManagedBrokerMessage,
   authorizeService,
   connectedServiceSlugs,
   connectedServices,
+  connectedServicesInventory,
   connectionMode,
   connectionStatus,
   listConnectorTools,
@@ -22,14 +24,20 @@ import {
   trustedSessionMcpUrl,
   validateConnectorGrants,
 } from "./composio.ts";
+import { forgetProjectAuthConfigs } from "./composio-project.ts";
 import {
   CONNECTOR_ALLOWED_TOOLS_ENV,
   CONNECTOR_SERVICE_SLUGS_ENV,
   parseConnectorServiceSlugsEnv,
 } from "./connector-advertisement.ts";
 import type { ConnectorToolGrant } from "../shared/wire.ts";
+import { CURATED_CONNECTOR_SLUGS } from "../shared/connector-curated.ts";
 
 let api: Server;
+it("lists exactly the curated apps product analytics may name, in the same order", () => {
+  expect(CURATED_SLUGS).toEqual([...CURATED_CONNECTOR_SLUGS]);
+});
+
 it("only sends Session MCP credentials over HTTPS or loopback HTTP", () => {
   const old = process.env.OMB_COMPOSIO_API;
   try {
@@ -399,6 +407,9 @@ afterAll(async () => {
 });
 
 describe.sequential("Composio Sessions", () => {
+  // Fixtures change the project's auth configs from test to test; production reads them at most once a minute.
+  beforeEach(() => forgetProjectAuthConfigs());
+
   it("rejects broker URL components and invalid tokens from the environment", () => {
     process.env.OMB_COMPOSIO_BROKER_TOKEN = "a".repeat(64);
     try {
@@ -1117,7 +1128,9 @@ describe.sequential("Composio Sessions", () => {
     };
     connectedAccountsUnavailable = true;
     try {
-      await expect(connectedServices(cfg)).resolves.toMatchObject({
+      const inventory = await connectedServicesInventory(cfg);
+      expect(inventory.complete).toBe(false);
+      expect(inventory.services).toMatchObject({
         github: {
           connected: true,
           status: "ACTIVE",

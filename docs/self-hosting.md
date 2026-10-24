@@ -6,8 +6,9 @@ The npm CLI supports a managed public tunnel, Tailscale, or your own proxy.
 
 > **Security first:** by default a self-hosted server trusts loopback as its
 > owner — any process that can reach `127.0.0.1:8799` has full control,
-> including the shell your bots can use. **Never expose that port directly
-> and never bind it to a public interface.** Reach it through an SSH tunnel, a
+> including the shell your bots can use. A browser is the exception: even on
+> this machine it signs in once (see [A browser signs in](#a-browser-signs-in)).
+> **Never expose that port directly and never bind it to a public interface.** Reach it through an SSH tunnel, a
 > private network you trust, or an authenticated remote path below. Requests
 > through the managed tunnel or a correctly configured proxy require a paired
 > session. If several people use one server, read
@@ -35,6 +36,9 @@ Runs fully on a server:
   (`npx openmausbot browser install`, or nothing to do in the Docker image,
   which ships it): each bot gets its own isolated, persistent session.
   Watching it live from the app is the next step (docs/plans/browser-engine.md).
+  It reaches the public internet and the dev servers a bot starts itself,
+  not this server's network or other services unless `browserEngine.egress.allow`
+  lists them ([what a bot's browser can reach](browser-packaging.md#what-a-bots-browser-can-reach)).
 
 Desktop-only for now (needs the Mac/Linux app):
 
@@ -91,8 +95,11 @@ is present. Three ways to make the server reachable from elsewhere:
   that address. The first run downloads `cloudflared` (pinned version and
   digest) into the data dir. Only traffic through the tunnel reaches the
   server, and it still has to pair: the tunnel lands on a separate listener
-  the server treats as "through a proxy", never as the owner. `npx openmausbot
-  logout` releases the address. The account credentials live in
+  the server treats as "through a proxy", never as the owner. That listener
+  also gzips JSON replies of 1 KB or more when the client accepts gzip, since
+  the hop to Cloudflare runs on this machine's upload uncompressed; the
+  loopback port never compresses. `npx openmausbot logout` releases the
+  address. The account credentials live in
   `~/.openmausbot/tunnel-account.json` (mode 0600).
   Starting it from a fleet or a container, where nobody can type an emailed
   code? Set `OMB_INSTALLATION_CREDENTIAL` to the installation credential the
@@ -443,33 +450,16 @@ access**, choose read-only folders and optionally allow edits. Unrestricted
 terminal and screen/app control are separate opt-ins, confirmed in a native
 dialog. They can access information outside the selected folders. Share only
 with a workspace you trust; its bots and AI providers may receive shared content.
-Folder transfers are limited to 256 KiB per file and do not follow links or
-delete files. Local screen control also needs OS permissions and a supported
+A folder read takes a file of up to 2 MiB and a write at most 256 KiB;
+transfers do not follow links or delete files. Local screen control also needs OS permissions and a supported
 desktop driver. Microphone access is not included.
 
-**Bring this computer's bots and chats.** When the server you just connected
-is empty, its page shows **Bring your bots and chats from this computer**
-with **Copy** and **Not now**; **Copy** takes you to this computer's
-**Settings → Servers → Copy this computer here** for that server, where you
-start it (a server's own page never starts a copy itself). Any time later, that
-button on the server's row replaces what the server has (backed up on the
-server first; **Swap {server} back** puts it back; copying again replaces that
-backup, and the panel says so). On the server's own page, **Settings → Backups
-→ Import from this computer** leads to the same place. No file, no password: the app uploads the encrypted workspace
-backup directly, continues where a dropped connection left it, and the server
-restarts itself to install it. API keys, engine sign-ins and paired devices
-stay where they are on both sides; routines arrive paused. The desktop app must
-be paired with an owner code (not `--client`), and a server whose email sign-in
-lets someone besides you in (a member, a second admin or a whole `@domain`
-added with `openmausbot access add`) never receives one; your own address
-alone is fine. Behind a proxy, allow uploads of at least 1 MB
-(nginx: `client_max_body_size 64m`); smaller parts are tried before the copy
-says so. How each
-way of running the server restarts itself: `openmausbot serve` and
-`service install` start it again in the same process, the Docker and Podman
-images run `server-launcher.js`, which does the same inside the container; a
-server started any other way installs the copy at its next start. Details:
-[docs/copy-workspace.md](copy-workspace.md).
+**Bring this computer's bots and chats.** Export a backup from this computer in
+**Settings → Backups → Export backup**, then import it on the server in
+**Settings → Backups → Import backup**. API keys, engine sign-ins and paired
+devices stay where they are on both sides; routines arrive paused. An older
+desktop app's **Copy this computer here** is answered with "Update OpenMausBot
+to bring your bots here by itself."
 
 Only conversations you start yourself on that server can use what you share;
 other people's bots, routines and webhooks there cannot. Keys and sign-in
@@ -485,8 +475,8 @@ bots or conversations. If sign-out cannot reach the server, the app warns you;
 revoke its session there when reachable again, or if the device is gone.
 
 What this changes about the trust model: the server still binds loopback
-and still trusts loopback as the owner. A **paired session** is the second
-way in: a bearer token or the cookie, same-origin only, with a scope (`admin`
+and still trusts programs on loopback as the owner, though never a browser
+(below). A **paired session** is the second way in: a bearer token or the cookie, same-origin only, with a scope (`admin`
 by default, `--client` for a device that may chat but not change settings or
 pair others). Five bad codes from one address lock that address out for ten
 minutes. Over plain HTTP (a LAN address without TLS) the cookie is not
@@ -508,12 +498,41 @@ address of its own:
 
 ```sh
 ssh -L 8799:localhost:8799 you@your-server
-# then open http://localhost:8799 — loopback, so no pairing needed
+# then run `openmausbot pair` on the server and open the "this computer:" link it prints
 ```
 
-(With `OMB_LOOPBACK_TRUST=service`, below, a tunnel is loopback without a
-session: the page asks you to sign in or pair first, because it no longer
-makes you the owner.)
+The browser signs in once through the tunnel, like any browser on the server
+itself.
+
+### A browser signs in
+
+A browser never gets loopback trust, on any server: a request that carries
+the `Sec-Fetch-Site` or `Sec-Fetch-Dest` header (every browser sends them to a
+loopback address, and a page cannot remove them), or a WebSocket handshake
+with an `Origin`, needs a session: a web page is not the person who owns the
+server, even when it runs on the same machine. Programs are unaffected: the
+CLI, scripts, `curl` and the companion send neither header.
+
+So the first time you open the web UI in a browser on the server's own
+machine, it shows the sign-in page. `openmausbot serve` and `openmausbot pair`
+print a link for it:
+
+```
+this computer: http://127.0.0.1:8799/pair#code=XXXX-XXXX-XXXX
+```
+
+Open it and choose **Connect** (or type the code on the sign-in page); the browser
+keeps its session cookie from then on. `openmausbot` (the guided start) prints
+the same link when it opens the browser. The desktop app is unaffected:
+its window adds the app's own per-launch owner header to every request and
+WebSocket it sends to its server, and no other Electron session may reach the
+server at all.
+
+For development, `pnpm dev:server` sets `OMB_DEV_TRUST_LOCAL_BROWSER=1`, so a
+browser on Vite's dev page (`pnpm dev`) is the owner as before. The server
+honours it only when it runs from source with owner trust, logs a warning, and
+ignores it in a build, the desktop app, a hosted workspace and MausBot Cloud.
+Run `OMB_DEV_TRUST_LOCAL_BROWSER=0 pnpm dev:server` to try the sign-in.
 
 ### Loopback trust: owner or service
 
@@ -699,7 +718,7 @@ alone.
   its bots allow** (`PATCH /api/groups/:id` with `{"resetAudience": true}`),
   which resets the floor to what the room's current bots allow and is
   recorded in the admin activity log.
-- **Teams.** A team (sidebar section) is listed to a user only when it
+- **Departments.** A department (sidebar section) is listed to a user only when it
   holds a bot or room they can see.
 - **Bots working together.** A bot reaches a teammate (`coordinate_bots`,
   its roster and `list_bots`, @mentions, a Chief's team) only when exactly
@@ -730,6 +749,15 @@ On the Workspaces screen, creating a client workspace shows the same kind of
 link for that workspace's admin, so a client gets one address, one workspace
 and one link.
 
+## Attachment storage
+
+Files people attach, and pictures a bot shows inline, live in the
+`attachments` folder of the data directory. Nothing there is deleted, since
+old messages still point at it, so the server stops taking new files once the
+folder holds 512 MB. A team fills that sooner: set
+`OMB_ATTACHMENTS_MAX_BYTES` in the server's environment and restart, for
+example `OMB_ATTACHMENTS_MAX_BYTES=4294967296` for 4 GB.
+
 ## Putting a proxy in front
 
 Any reverse proxy works, given three things:
@@ -752,9 +780,11 @@ is the reference implementation.
 
 ## Opening a desktop from another device
 
-In a paired admin browser, **Open live desktop** uses the same address as
-OpenMausBot for Local VMs and your own VPS. Shared, per-bot and pool Local VMs
-connect through their managed container's loopback port. VPS desktops connect
+In a paired admin browser, as in the desktop app, **Take control** turns the
+Computer panel's picture into the live desktop for Local VMs and your own VPS,
+through the same address as OpenMausBot; **Full screen** fills the window with
+the same session. Shared, per-bot and pool Local VMs connect through their
+managed container's loopback port. VPS desktops connect
 through an SSH tunnel opened by the server. Neither needs an additional public
 port or viewer origin setting. Keep Local VM VNC ports bound to loopback and
 VPS VNC ports private.
@@ -767,14 +797,13 @@ grant desktop control.
 
 An open Local VM viewer keeps that VM's idle timer active. Remote VPS viewers
 share a tunnel; it closes 30 seconds after the last viewer leaves, allowing
-reconnects during that interval. A native desktop viewer keeps its existing
-explicit-close behavior and maximum tunnel lifetime.
+reconnects during that interval. **Hand control back**, closing the panel or
+leaving the page gives the computer back to the bot.
 
 Use **Keyboard** to send text from a phone and **Clipboard** to exchange text
 with the desktop; clipboard edits sync automatically. The desktop fits the
 window, with fullscreen available when the browser supports it. Hosted Cloud
-keeps its provider-issued viewer. Local owner connections keep their direct
-viewer URLs and the packaged desktop's isolated viewer windows.
+keeps its provider-issued viewer in its own window or tab.
 
 These controls are in the web app. The native phone apps have their own
 computer viewers; use a paired browser for interactive Local VM or VPS access.
@@ -813,7 +842,7 @@ Older way, still supported, and only useful on a LAN or a tailnet: run the
 companion sidecar next to the harness and pair by its own QR. It advertises
 on your private networks (Tailscale-aware) and issues its own per-device
 credentials, which are **not** `openmausbot sessions` and are revoked from
-its own page on `127.0.0.1:8811`. It also serves phones over cleartext HTTP
+its own page at the `127.0.0.1:8811/#token=…` link it prints. It also serves phones over cleartext HTTP
 on port 8810, so do not expose it from a public server. It ships only in a
 git checkout: neither the npm package nor the Docker image contains it.
 

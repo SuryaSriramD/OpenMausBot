@@ -7,7 +7,7 @@ export const APP_PROTOCOL_VERSION = "2026-01-26";
 export const APP_EXTENSION_KEY = "io.modelcontextprotocol/ui";
 
 export const APP_LIMITS = {
-  /** show_html / update_html `html` or `jsx`, UTF-8 bytes after trimming. */
+  /** show_html `html` or `jsx`, UTF-8 bytes after trimming. */
   htmlBytes: 256 * 1024,
   title: 80,
   fallback: 1_500,
@@ -18,6 +18,8 @@ export const APP_LIMITS = {
   messageText: 4_000,
   /** ui/update-model-context text, stored per row. */
   contextText: 4_000,
+  /** The result line of an app row's "Done" note. */
+  doneText: 300,
   /** An MCP server's UI resource, decoded. */
   mcpHtmlBytes: 2 * 1024 * 1024,
   /** tools/call arguments on the rpc route. */
@@ -51,6 +53,18 @@ export interface AppContextState {
   delivered: boolean;
 }
 
+/** The last change an MCP app made from its own card: a tool the bot could call too, not read-only, that did
+ * not fail. Shown under the card, so a reopened conversation does not look as if it was never sent. */
+export interface AppDoneState {
+  /** the tool's title, else its name */
+  tool: string;
+  /** the result's plain text, one line */
+  text?: string;
+  /** an https link the result names (html_url, else url) */
+  url?: string;
+  at: number;
+}
+
 export interface AppMcpRef {
   /** the mount name in config.json mcpServers */
   server: string;
@@ -72,7 +86,7 @@ export interface AppPayload {
   /** Content id of the stored document; a new value means the frame must reload. Empty when nothing
    * could be stored (`blocked`): the row then shows only its text. */
   doc: string;
-  /** 0, bumped by update_html. */
+  /** 0, bumped each time show_html replaces the page. */
   rev: number;
   /** Content ids of the versions before `doc`, oldest first, at most APP_PAGE_VERSIONS - 1: the last one is
    * rev - 1. */
@@ -92,6 +106,7 @@ export interface AppPayload {
   /** The latest ui/update-model-context, delivered with the person's next
    * message in this thread. */
   context?: AppContextState;
+  done?: AppDoneState;
   /** Why the document could not be stored or read when the row was written
    * (`too-large`, or an MCP server that was signed out or unreachable). The
    * row is still written, with its text. */
@@ -159,7 +174,13 @@ export interface AppDocument {
   can: AppCan;
   /** Why serverTools/serverResources are off: drawn as a strip under the frame. */
   blocked?: { reason: AppBlockedReason; text: string };
+  /** Shown in a room, to everyone who can see it: view-only. `can` has message, modelContext, serverTools and
+   * serverResources off, and a bot's page reads `mausbot.room === true`. */
+  room?: true;
 }
+
+/** Why a room refuses what an app or a widget would do for the person: nobody in a room speaks for the others. */
+export const ROOM_VIEW_ONLY = "In a room, pages, apps and widgets are view-only: they cannot send messages or tell a bot what anyone sees.";
 
 /** Exactly one of `html` (wrapped when it was a fragment), `jsx` and `path` (a folder with index.html, or an .html
  * file, in the bot's own folders), none yet scrubbed of secrets. */
@@ -170,6 +191,8 @@ export interface ShowHtmlInput {
   title: string;
   height?: number;
   fallbackText?: string;
+  /** Show the page without the card frame (still in its sandboxed frame). */
+  frameless?: boolean;
 }
 
 export interface UpdateHtmlInput {
@@ -178,6 +201,8 @@ export interface UpdateHtmlInput {
   jsx?: string;
   path?: string;
   title?: string;
+  /** Change whether the page has the card frame; kept as it was when omitted. */
+  frameless?: boolean;
 }
 
 export type AppInputResult<T> = { ok: true; value: T } | { ok: false; error: string };
@@ -254,6 +279,12 @@ function checkTitle(value: unknown): AppInputResult<string> {
   return { ok: true, value: title };
 }
 
+function checkFrameless(value: unknown): AppInputResult<boolean | undefined> {
+  if (value === undefined || value === null) return { ok: true, value: undefined };
+  if (typeof value !== "boolean") return { ok: false, error: "frameless: must be true or false." };
+  return { ok: true, value };
+}
+
 export function parseShowHtmlInput(input: unknown): AppInputResult<ShowHtmlInput> {
   if (!isRecord(input)) return { ok: false, error: "show_html needs {html, jsx or path, title, height?, fallback_text?}." };
   const page = checkPage(input);
@@ -261,6 +292,9 @@ export function parseShowHtmlInput(input: unknown): AppInputResult<ShowHtmlInput
   const title = checkTitle(input.title);
   if (!title.ok) return title;
   const out: ShowHtmlInput = { ...page.value, title: title.value };
+  const frameless = checkFrameless(input.frameless);
+  if (!frameless.ok) return frameless;
+  if (frameless.value) out.frameless = true;
   if (input.height !== undefined && input.height !== null) {
     if (typeof input.height !== "number" || !Number.isFinite(input.height)) return { ok: false, error: "height: must be a number of pixels, 80 to 720." };
     out.height = Math.round(Math.min(APP_LIMITS.heightMax, Math.max(APP_LIMITS.heightMin, input.height)));
@@ -275,13 +309,16 @@ export function parseShowHtmlInput(input: unknown): AppInputResult<ShowHtmlInput
 }
 
 export function parseUpdateHtmlInput(input: unknown): AppInputResult<UpdateHtmlInput> {
-  if (!isRecord(input)) return { ok: false, error: "update_html needs {app_id, html, jsx or path, title?}." };
+  if (!isRecord(input)) return { ok: false, error: "Replacing a page needs {app_id, html, jsx or path, title?}." };
   if (typeof input.app_id !== "string" || !/^[\w-]{1,128}$/.test(input.app_id.trim())) {
     return { ok: false, error: "app_id: is required, the id show_html returned." };
   }
   const page = checkPage(input);
   if (!page.ok) return page;
   const out: UpdateHtmlInput = { appId: input.app_id.trim(), ...page.value };
+  const frameless = checkFrameless(input.frameless);
+  if (!frameless.ok) return frameless;
+  if (frameless.value !== undefined) out.frameless = frameless.value;
   if (input.title !== undefined && input.title !== null) {
     const title = checkTitle(input.title);
     if (!title.ok) return title;
@@ -326,6 +363,27 @@ export function mcpAppFallbackText(serverTitle: string, toolTitle: string, resul
   const excerpt = clip(oneLine(texts.join(" ")), APP_LIMITS.fallbackExcerpt);
   const head = `${oneLine(serverTitle)} · ${oneLine(toolTitle)}`;
   return clip(excerpt ? `${head}\n${excerpt}` : head, APP_LIMITS.fallback);
+}
+
+const httpsLink = (value: unknown): string | undefined =>
+  typeof value === "string" && value.length <= 2_048 && /^https:\/\/[^\s"'<>]+$/.test(value) ? value : undefined;
+const namedLink = (value: unknown): string | undefined => (isRecord(value) ? httpsLink(value.html_url) ?? httpsLink(value.url) : undefined);
+
+/** A JSON text block gives only its link; plain text gives the note's line and, failing a named link, its first
+ * https link. */
+export function appDoneOf(tool: string, result: { content?: unknown; structuredContent?: unknown }, at: number): AppDoneState {
+  let url = namedLink(result.structuredContent);
+  let text: string | undefined;
+  for (const block of Array.isArray(result.content) ? result.content : []) {
+    if (!isRecord(block) || block.type !== "text" || typeof block.text !== "string") continue;
+    const raw = block.text.trim();
+    let parsed: unknown;
+    try { parsed = /^[{[]/.test(raw) ? JSON.parse(raw) : undefined; } catch { parsed = undefined; }
+    if (parsed !== undefined) { url ??= namedLink(parsed); continue; }
+    url ??= httpsLink(/https:\/\/[^\s"'<>)\]]+/.exec(raw)?.[0]);
+    text ??= clip(oneLine(raw), APP_LIMITS.doneText) || undefined;
+  }
+  return { tool, ...(text ? { text } : {}), ...(url ? { url } : {}), at };
 }
 
 export function appBlockedText(reason: AppBlockedReason, server?: string): string {

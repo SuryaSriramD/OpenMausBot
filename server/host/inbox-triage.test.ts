@@ -58,7 +58,7 @@ describe("inbox triage on the helper models", () => {
       email("c", "Bank <alerts@bank.example>", "Payment due"),
     ], ["news@shop.example"]);
     expect(picks).toEqual([
-      { id: "b", why: "Asks you to confirm the PO number, due 2026-10-30.", needsReply: true },
+      { id: "b", why: "Asks you to confirm the PO number, due 2026-10-30.", whyText: { key: "brief.inbox.askDue", params: { ask: "confirm the PO number", deadline: "2026-10-30" } }, needsReply: true },
       { id: "c", why: "", needsReply: false },
     ]);
     // Every request is one the Cloud relay accepts: the fixed fields, the fixed question, cleaned data.
@@ -135,7 +135,7 @@ describe("the brief on a non-Claude engine, sorted by the helper models", () => 
     };
     const brief = createBrief({
       store, dataDir: dir, now: () => now, hosted: false, watching: () => true, mainThread: () => store.bot(chief.id)!.threadId, threadBusy: () => false,
-      notify: () => undefined, runs: () => runs, needsYou: () => [], engineName: () => "Codex", hostTimeZone: () => "UTC", session: () => null,
+      notify: () => undefined, runs: () => runs, needsYou: () => [], engineName: () => "Codex", hostTimeZone: () => "UTC", language: () => undefined, session: () => null,
       address: () => "me@x.test", failRun: () => undefined, keep: () => undefined, items: () => null,
     });
     const checks = createRoutineChecks({

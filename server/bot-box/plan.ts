@@ -10,11 +10,14 @@
 //     sign-ins bound into it, so no other audience's transcripts are there;
 //   - put back inside that empty folder: this turn's working folder, the bot's own folder (workspaces/<bot>) and what the
 //     caller names (the turn's permission socket, a read-only file the command line points at); and, read-only, the
-//     engines OpenMausBot installed there, whole, since npm's bin links point into the prefix by relative paths;
+//     bot's own SOUL.md (bots/<bot>/SOUL.md, which it may read but never write) and the engines OpenMausBot installed
+//     there, whole, since npm's bin links point into the prefix by relative paths;
 //   - a private /proc (its own PID namespace: other turns' processes do not exist for it), /dev, /tmp and /run;
+//   - of /sys, only the machine's CPU list, read-only;
 //   - a network namespace with loopback only. Two loopback ports inside are bridged to unix sockets bound in from outside:
 //     the egress gate (every connection to the internet goes through it) and the harness gate (only /api/internal/
-//     routes of this server). Nothing else on the server's loopback is reachable.
+//     routes of this server). Nothing else on the server's loopback is reachable. A box that waits for a sign-in callback
+//     also dials out to one more socket, through which the server reaches the box's own loopback, never the other way.
 import { isAbsolute, join, relative, resolve, sep } from "node:path";
 
 export type BoxNet = "isolated" | "shared";
@@ -69,6 +72,9 @@ export interface BoxRequest {
   home?: string;
   /** Files bound read-write over their names in `home`: the team's engine sign-ins. */
   shared?: ReadonlyArray<{ source: string; target: string }>;
+  /** A host unix socket the box dials out to, so the server can reach a port the engine listens on inside the box's own
+   * network, such as a sign-in's callback. Only an isolated box has one. */
+  relay?: string;
 }
 
 export interface BoxPlan {
@@ -82,6 +88,7 @@ export interface BoxPlan {
 }
 
 export const IN_BOX_SOCKET_DIR = "/run/omb";
+export const RELAY_SOCKET_NAME = "relay";
 export const BOX_HOSTNAME = "omb-box";
 const ID = /^[A-Za-z0-9_-]{1,128}$/;
 
@@ -98,11 +105,17 @@ export function taskWorkspaceIds(cwd: string, dataDir: string): { botId: string;
   return { botId: rel[0]!, threadId: rel[1]! };
 }
 
+/** The server-owned folder holding a conversation's uploads for its boxes (server/box-attachments.ts), bound read-only. */
+export function boxUploadsDir(dataDir: string, botId: string, threadId: string): string {
+  return join(dataDir, "box-uploads", botId, threadId);
+}
+
 /** Absolute paths on the command line (`/x/y` or `--flag=/x/y`), which the engine must be able to read. */
 export function argvPaths(args: readonly string[]): string[] {
   const paths: string[] = [];
   for (const arg of args) {
-    const value = arg.startsWith("--") && arg.includes("=") ? arg.slice(arg.indexOf("=") + 1) : arg;
+    const optionValue = arg.startsWith("--") && arg.includes("=") ? arg.slice(arg.indexOf("=") + 1) : arg;
+    const value = optionValue.startsWith("@") ? optionValue.slice(1) : optionValue;
     if (isAbsolute(value) && value.length > 1 && !paths.includes(value)) paths.push(resolve(value));
   }
   return paths;
@@ -110,6 +123,10 @@ export function argvPaths(args: readonly string[]): string[] {
 
 /** Environment values that name folders the engine writes: its own config and caches. */
 export const PATH_ENV_NAMES = ["CLAUDE_CONFIG_DIR", "CODEX_HOME", "XDG_CONFIG_HOME", "XDG_DATA_HOME", "XDG_CACHE_HOME", "GROK_HOME", "OPENCODE_HOME", "HERMES_HOME", "GEMINI_HOME", "TMPDIR"] as const;
+
+/** The only part of /sys the box has: how many CPUs the machine has. Programs built with TCMalloc (Google's Antigravity
+ * runtime) read `possible` at start and stop themselves (SIGABRT, exit 134) when it is missing. */
+export const CPU_LIST_FILES = ["/sys/devices/system/cpu/possible", "/sys/devices/system/cpu/online"] as const;
 
 /** Folders the box always has its own copy of, so no setting may put the host's back. */
 const PRIVATE_INSIDE = ["/tmp", "/var/tmp", "/run", "/dev", "/proc"];
@@ -127,6 +144,7 @@ export function planBox(setup: BoxSetup, request: BoxRequest): BoxPlan {
     { kind: "ro", source: "/etc", target: "/etc" },
     { kind: "ro", source: "/opt", target: "/opt", optional: true },
     { kind: "ro", source: "/var/lib", target: "/var/lib", optional: true },
+    ...CPU_LIST_FILES.map((file): Mount => ({ kind: "ro", source: file, target: file, optional: true })),
   ];
   for (const root of setup.codeRoots) {
     const code = resolve(root);
@@ -186,8 +204,13 @@ export function planBox(setup: BoxSetup, request: BoxRequest): BoxPlan {
     const engines = resolve(root);
     mounts.push({ kind: mutate.has("engines-rw") ? "bind" : "ro", source: engines, target: engines, optional: true });
   }
+  // The person's uploads for this conversation, after every read-write line: readable, but never writable or swappable.
+  if (ids) {
+    const shown = boxUploadsDir(dataDir, ids.botId, ids.threadId);
+    mounts.push({ kind: "ro", source: shown, target: shown, optional: true });
+  }
   const readOnly = new Set<string>();
-  for (const path of [...(request.ro ?? []), ...argvPaths(request.args)]) {
+  for (const path of [...(request.ro ?? []), ...argvPaths(request.args), ...(botId && ID.test(botId) ? [join(dataDir, "bots", botId, "SOUL.md")] : [])]) {
     const full = resolve(path);
     // Code and the system are already there; a file under HOME or /tmp the command line names is put back read-only.
     if (covered(full) || readOnly.has(full)) continue;
@@ -203,6 +226,7 @@ export function planBox(setup: BoxSetup, request: BoxRequest): BoxPlan {
     options.push("--unshare-net");
     mounts.push({ kind: "dir", target: IN_BOX_SOCKET_DIR });
     for (const bridge of setup.bridges) mounts.push({ kind: "bind", source: bridge.socket, target: join(IN_BOX_SOCKET_DIR, `${bridge.name}.sock`) });
+    if (request.relay) mounts.push({ kind: "bind", source: resolve(request.relay), target: inBoxSocket(RELAY_SOCKET_NAME) });
   }
   if (cwd) options.push("--chdir", cwd);
   return { mounts, options, net, writable, botId };

@@ -1,19 +1,23 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { AppWindow, CircleAlert, Info, Loader2, RotateCw } from "lucide-react";
+import { AppWindow, CircleAlert, CircleCheck, Info, Loader2, RotateCw } from "lucide-react";
 import { cn } from "@/lib/cn";
-import { t } from "@/lib/i18n";
-import type { AppNetwork } from "../../../shared/app";
+import { intlLocale, t } from "@/lib/i18n";
+import { openExternalLink } from "@/lib/app-links";
+import type { AppDoneState, AppNetwork } from "../../../shared/app";
 import { ASK_CHIP, ASK_CHIP_IDLE, ASK_QUIET_BUTTON } from "../AskCard";
 
-export const APP_SURFACE = "w-full overflow-hidden rounded-3xl bg-composer ring-1 ring-composer-ring";
+export const APP_SURFACE = "w-full overflow-hidden rounded-2xl bg-composer ring-1 ring-composer-ring";
 const ICON_BUTTON =
   "flex size-7 shrink-0 items-center justify-center rounded-full text-ink-tertiary transition-colors hover:bg-ink/[0.07] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus disabled:opacity-40";
+
+const decimal = (value: number, digits: number) =>
+  new Intl.NumberFormat(intlLocale(), { minimumFractionDigits: digits, maximumFractionDigits: digits, useGrouping: false }).format(value);
 
 export function formatAppBytes(bytes: number): string {
   if (!Number.isFinite(bytes) || bytes < 0) return "";
   if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(bytes < 10 * 1024 ? 1 : 0)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  if (bytes < 1024 * 1024) return `${decimal(bytes / 1024, bytes < 10 * 1024 ? 1 : 0)} KB`;
+  return `${decimal(bytes / (1024 * 1024), 1)} MB`;
 }
 
 export function AppHeader({
@@ -80,7 +84,7 @@ export function AppInfo({ id, network, bytes, bordered }: { id: string; network:
   if (bytes > 0) rows.push([t("app.info.size"), formatAppBytes(bytes)]);
   rows.push([t("app.info.off"), t("app.info.offList")]);
   return (
-    <div id={id} data-app-info className={cn("rounded-2xl bg-inset px-3.5 py-3 text-[12.5px] leading-[18px]", bordered ? "mx-4 mb-3" : "mb-2")}>
+    <div id={id} data-app-info className={cn("rounded-2xl bg-inset px-3.5 py-3 text-[13px] leading-[18px]", bordered ? "mx-4 mb-3" : "mb-2")}>
       <p className="mb-2 text-ink-secondary">{t("app.info.sandbox")}</p>
       <dl className="grid grid-cols-[minmax(0,auto)_minmax(0,1fr)] gap-x-4 gap-y-1">
         {rows.map(([label, value]) => (
@@ -109,6 +113,17 @@ export function AppStrip({ text, action, bordered, tone = "warning" }: {
   );
 }
 
+/** The last change the card made itself, kept on the row: a reopened conversation shows it was sent. */
+export function AppDone({ done, bordered }: { done: AppDoneState; bordered: boolean }) {
+  return (
+    <div role="status" data-app-done className={cn("flex items-center gap-2 border-t border-ink/[0.12] py-2.5 text-[13px] leading-[18px] text-ink-secondary", bordered ? "mx-4" : "mt-2")}>
+      <CircleCheck aria-hidden="true" size={14} className="shrink-0 text-success" />
+      <span dir="auto" className="min-w-0 flex-1 break-words">{t("app.done", { tool: done.tool })}{done.text ? ` · ${done.text}` : ""}</span>
+      {done.url && <button type="button" onClick={() => openExternalLink(done.url!)} className={ASK_QUIET_BUTTON}>{t("app.doneOpen")}</button>}
+    </div>
+  );
+}
+
 /** Keeps the frame's height while no frame runs, so the transcript does not jump. */
 export function AppPlaceholder({ height, loading, open, label, children }: {
   height: number;
@@ -127,7 +142,7 @@ export function AppPlaceholder({ height, loading, open, label, children }: {
     <div data-app-placeholder className="flex w-full flex-col items-center justify-center gap-2 px-4 text-center" style={{ height }}>
       {children}
       {loading && slow && (
-        <span role="status" className="flex items-center gap-1.5 text-[12.5px] text-ink-tertiary">
+        <span role="status" className="flex items-center gap-1.5 text-[13px] text-ink-tertiary">
           <Loader2 aria-hidden="true" size={14} className="animate-spin motion-reduce:animate-none" />
           {t("app.loading")}
         </span>

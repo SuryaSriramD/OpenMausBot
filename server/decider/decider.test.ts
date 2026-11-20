@@ -295,6 +295,14 @@ describe("settings rules", () => {
     expect(deciderReady({ decider: { ...ON.decider, jobs: { roomRouting: false } } }, "roomRouting")).toBe(false);
     expect(deciderReady({ decider: { enabled: true } }, "roomRouting")).toBe(false);
   });
+
+  it("with no key yet, status keeps the provider the person chose, so OpenRouter's key field shows", () => {
+    expect(describeDecider({ decider: { provider: "openrouter" } })).toMatchObject({ provider: "openrouter", configured: false, enabled: false });
+    expect(describeDecider({ decider: { provider: "jev" } })).toMatchObject({ provider: "jev", configured: false });
+    expect(describeDecider({ decider: { provider: "off" } })).toMatchObject({ provider: "jev", configured: false });
+    // A key on file still reports the account in use, whatever was chosen.
+    expect(describeDecider({ decider: { ...ON.decider, provider: "openrouter" } })).toMatchObject({ provider: "jev", configured: true });
+  });
 });
 
 describe("Cloud Pro's included decisions", () => {
@@ -636,6 +644,16 @@ describe("OpenRouter as the provider", () => {
       expect(describeDecider(jev)).toEqual({ provider: "jev", configured: true, enabled: true, jobs: { roomRouting: true } });
       // With no key of the decider's own, the engine's OpenRouter key is the fallback.
       expect(describeDecider({ openrouter: { key: SHARED_KEY }, decider: { enabled: true } })).toMatchObject({ provider: "openrouter", configured: true, keySource: "shared" });
+    });
+
+    it("keeps an explicit Jev choice in Settings while the shared OpenRouter key stands in", () => {
+      // A person who picked Jev but has no Jev key yet must still see Jev's key field, not snap back to OpenRouter.
+      const chosen = describeDecider({ openrouter: { key: SHARED_KEY }, decider: { enabled: true, provider: "jev" } });
+      expect(chosen).toMatchObject({ provider: "openrouter", chosen: "jev", configured: true, keySource: "shared" });
+      expect(describeDecider({ openrouter: { key: SHARED_KEY }, decider: { enabled: true } })).not.toHaveProperty("chosen");
+      expect(describeDecider({ openrouter: { key: SHARED_KEY }, decider: { enabled: true, provider: "openrouter" } })).not.toHaveProperty("chosen");
+      expect(describeDecider({ openrouter: { key: SHARED_KEY }, decider: { enabled: true, provider: "jev", key: KEY } })).not.toHaveProperty("chosen");
+      expect(describeDecider({ decider: { enabled: true, provider: "jev", openrouterKey: OR_KEY } })).not.toHaveProperty("chosen");
     });
 
     it("status says which key is in use and whether a shared one is on file, never the key", () => {

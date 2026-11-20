@@ -5,11 +5,14 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { ensureDirs, NATIVE_DIR } from "../config.ts";
+import { DATA_DIR, ensureDirs, NATIVE_DIR } from "../config.ts";
 import type { ProviderInstance, RuntimeEvent } from "../contracts.ts";
 import { recordEvents, type EventRecorder } from "../testing/events.ts";
+import { publishedMessages, replyProblems } from "../harness/text-items.testkit.ts";
+import { caseTokens, LIVE_REPLY_CASES, liveReplyScripts } from "../testing/live-reply-cases.ts";
 import { removeTempDir } from "../testing/cleanup.ts";
 import { encodeInjectId, localHost } from "./local-inject.ts";
+import { piSessionDir } from "./pi-session.ts";
 import { buildMcpServers } from "./pi-mcp-servers.ts";
 import {
   applyPiLocalCatalog,
@@ -402,7 +405,7 @@ describe("PiDriver turns (fake CLI)", () => {
     expect(recorder.events.every((e) => e.turnId === turnId && e.provider === "piAgent")).toBe(true);
 
     const session = recorder.events.find((e) => e.type === "session.started")!;
-    expect((session as { sessionId: string }).sessionId).toMatch(/\/fake\/pi-session-\d+\.json/);
+    expect((session as { sessionId: string }).sessionId).toMatch(/pi-session-\d+-\d+\.json$/);
 
     const text = recorder.events.find(
       (e) => e.type === "item.completed" && (e as { itemType: string }).itemType === "assistant_text",
@@ -463,7 +466,7 @@ describe("PiDriver turns (fake CLI)", () => {
     const firstSession = recorder.events.find((e) => e.type === "session.started" && e.turnId === first.turnId) as
       | { sessionId: string }
       | undefined;
-    expect(firstSession?.sessionId).toMatch(/\/fake\/pi-session-\d+\.json/);
+    expect(firstSession?.sessionId).toMatch(/pi-session-\d+-\d+\.json$/);
 
     const second = await instance.adapter.sendTurn({
       threadId: "t-resume",
@@ -475,6 +478,59 @@ describe("PiDriver turns (fake CLI)", () => {
       | { sessionId: string }
       | undefined;
     expect(secondSession?.sessionId).toBe(firstSession?.sessionId);
+  });
+
+  it("starts conversation turns without --no-session and keeps catalog probes ephemeral", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "omb-pi-session-dir-"));
+    const dump = join(dir, "dump.jsonl");
+    await create(undefined, { FAKE_PI_DUMP: dump });
+    const { turnId } = await instance.adapter.sendTurn({ threadId: "t-pi-session-dir", text: "hi" });
+    await recorder.until((e) => e.type === "turn.completed" && e.turnId === turnId);
+    const rows = readFileSync(dump, "utf8")
+      .trim()
+      .split("\n")
+      .filter(Boolean)
+      .map((line) => JSON.parse(line) as { argv?: string[] });
+    const probes = rows.filter((row) => row.argv && !row.argv.includes("-e"));
+    const turns = rows.filter((row) => row.argv?.includes("-e"));
+    expect(probes.some((row) => row.argv!.join(" ") === "--mode rpc --no-session")).toBe(true);
+    expect(turns.length).toBeGreaterThan(0);
+    for (const row of turns) {
+      expect(row.argv).toEqual(["--mode", "rpc", "--session-dir", piSessionDir({ threadId: "t-pi-session-dir" }, "pi-test"), "-e", expect.any(String)]);
+      expect(row.argv).not.toContain("--no-session");
+    }
+    expect(piSessionDir({ threadId: "t-pi-session-dir" }, "pi-test")).toContain(join(DATA_DIR, "pi-sessions", "local"));
+  });
+
+  it("reads sessionFile from get_state when new_session omits it, then resumes with switch_session", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "omb-pi-session-state-"));
+    const dump = join(dir, "dump.jsonl");
+    await create(undefined, { FAKE_PI_DUMP: dump, FAKE_PI_SESSION_FILE_IN_STATE_ONLY: "1" });
+    const first = await instance.adapter.sendTurn({ threadId: "t-pi-state-session", text: "first" });
+    await recorder.until((e) => e.type === "turn.completed" && e.turnId === first.turnId);
+    const firstSession = recorder.events.find((e) => e.type === "session.started" && e.turnId === first.turnId) as
+      | { sessionId: string }
+      | undefined;
+    expect(firstSession?.sessionId).toMatch(/pi-session-\d+-\d+\.json$/);
+
+    const second = await instance.adapter.sendTurn({
+      threadId: "t-pi-state-session",
+      text: "second",
+      resumeCursor: firstSession!.sessionId,
+    });
+    await recorder.until((e) => e.type === "turn.completed" && e.turnId === second.turnId);
+    const secondSession = recorder.events.find((e) => e.type === "session.started" && e.turnId === second.turnId) as
+      | { sessionId: string }
+      | undefined;
+    expect(secondSession?.sessionId).toBe(firstSession?.sessionId);
+
+    const rpc = readFileSync(dump, "utf8")
+      .split("\n")
+      .filter(Boolean)
+      .map((line) => JSON.parse(line) as { rpc?: string; sessionPath?: string })
+      .filter((row) => row.rpc);
+    expect(rpc.map((row) => row.rpc)).toEqual(["new_session", "switch_session"]);
+    expect(rpc[1]?.sessionPath).toBe(firstSession?.sessionId);
   });
 
   it("delivers the full prompt once per session and rides volatile changes as notes", async () => {
@@ -538,6 +594,21 @@ describe("PiDriver turns (fake CLI)", () => {
     expect(first.message).toBe("Standing rules.\n\nMemory: likes quiet hours.\n\nfirst");
     const second = await send("second", first.cursor);
     expect(second.message).toBe("Standing rules.\n\nMemory: likes quiet hours.\n\nsecond");
+    // Each turn condensed the session once; the chat marks each one.
+    const mine = recorder.events.filter((e) => e.threadId === threadId);
+    expect(mine.filter((e) => e.type === "context.compacted")).toHaveLength(2);
+    // Text streamed before the compaction is saved ahead of the marker, not joined to later text.
+    const before = mine.findIndex((e) => e.type === "item.completed" && (e as { text?: string }).text === "before");
+    expect(before).toBeGreaterThan(-1);
+    expect(before).toBeLessThan(mine.findIndex((e) => e.type === "context.compacted"));
+  });
+
+  it("adds no condensed marker when pi's compaction fails or is skipped", async () => {
+    await create("compaction", { FAKE_PI_COMPACTION_FAILS_ONLY: "1" });
+    const threadId = "t-pi-compaction-fails-" + randomUUID();
+    const { turnId } = await instance.adapter.sendTurn({ threadId, text: "first", system: "Standing rules." });
+    await recorder.until((e) => e.type === "turn.completed" && e.turnId === turnId);
+    expect(recorder.events.filter((e) => e.type === "context.compacted" && e.threadId === threadId)).toHaveLength(0);
   });
 
   it("keeps pi alive through post-run compaction recovery and re-establishes the full prompt", async () => {
@@ -645,6 +716,8 @@ describe("PiDriver turns (fake CLI)", () => {
     expect(recorder.events.find((e) => e.type === "runtime.error")).toMatchObject({
       message: "pi prompt failed",
     });
+    const rejectedSession = recorder.events.find((event) => event.type === "session.started" && event.turnId === turnId);
+    if (rejectedSession?.type !== "session.started") throw new Error("missing rejected session");
     recorder.stop();
     await instance.dispose();
     await create(undefined, { FAKE_PI_DUMP: dump });
@@ -654,7 +727,7 @@ describe("PiDriver turns (fake CLI)", () => {
       system: "Standing rules.\n\nMemory: likes quiet hours.",
       systemStable: "Standing rules.",
       systemVolatile: "Memory: likes quiet hours.",
-      resumeCursor: "/fake/pi-session-1.json",
+      resumeCursor: rejectedSession.sessionId,
     });
     await recorder.until((e) => e.type === "turn.completed" && e.turnId === second.turnId);
     const row = readFileSync(dump, "utf8").split("\n").filter(Boolean)
@@ -929,7 +1002,29 @@ describe("PiDriver turns (fake CLI)", () => {
       .filter((e) => e.type === "item.completed" && (e as { itemType: string }).itemType === "assistant_text")
       .map((e) => (e as { text: string }).text);
     expect(texts).toEqual(["before one", "before two", "after"]);
+    expect(publishedMessages(recorder.events).map(({ streamed, completed }) => ({ streamed, completed }))).toEqual([
+      { streamed: "before one", completed: "before one" },
+      { streamed: "before two", completed: "before two" },
+      { streamed: "after", completed: "after" },
+    ]);
+    expect(new Set(publishedMessages(recorder.events).map((message) => message.itemId)).size).toBe(3);
   });
+
+  it.each(LIVE_REPLY_CASES.filter((entry) => entry.action === undefined || entry.action === "stop").map((entry) => ({ entry, name: entry.name })))(
+    "streams the $name reply with one id per message and nothing doubled, lost or glued", async ({ entry }) => {
+      const scripts = join(mkdtempSync(join(tmpdir(), "omb-pi-live-")), "scripts.json");
+      writeFileSync(scripts, JSON.stringify(liveReplyScripts()));
+      await create(undefined, { FAKE_STREAM_SCRIPT: scripts, FAKE_STREAM_CADENCE: entry.action === "stop" ? "6:5" : "7:0" });
+      const threadId = `t-live-${entry.name}`;
+      const { turnId } = await instance.adapter.sendTurn({ threadId, text: `Please answer ${entry.marker}`, model: "ollama-cloud/glm-5.2" });
+      if (entry.action === "stop") {
+        await recorder.until((e) => e.type === "content.delta" && e.turnId === turnId);
+        await instance.adapter.interruptTurn(threadId);
+      }
+      await recorder.until((e) => e.type === "turn.completed" && e.turnId === turnId, 30_000);
+      const events = recorder.events.filter((e) => e.turnId === turnId);
+      expect(replyProblems(events, caseTokens(entry), { stopped: entry.action === "stop" })).toEqual([]);
+    }, 60_000);
 
   it("brokers a permission ask through request.opened → respondToRequest", async () => {
     await create("permission");

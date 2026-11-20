@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import englishCatalog from "../src/locales/en.json" with { type: "json" };
 import { redactSecretsInText } from "../shared/redact.ts";
-import { USER_ERROR, refusalBody, userError, userErrorFields, userErrorThrown } from "./user-errors.ts";
+import { USER_ERROR, refusalBody, refusalText, userError, userErrorFields, userErrorThrown } from "./user-errors.ts";
 
 describe("user errors", () => {
   it("the catalog's server errors are exactly the ones the server sends", () => {
@@ -11,10 +11,10 @@ describe("user errors", () => {
   });
 
   it("fills in the English and keeps the key and params beside it", () => {
-    expect(userError("serverError.pair.tooMany", { seconds: 42 })).toEqual({
-      error: "too many failed pairing attempts from your address; try again in 42s",
+    expect(userError("serverError.pair.tooMany", { time: "11:19 UTC" })).toEqual({
+      error: "Too many wrong codes. Try again at 11:19 UTC.",
       errorKey: "serverError.pair.tooMany",
-      errorParams: { seconds: 42 },
+      errorParams: { time: "11:19 UTC" },
     });
     expect(userError("serverError.pair.codeWrong")).toEqual({
       error: "pairing code is wrong or has expired; create a new one on the server",
@@ -50,5 +50,13 @@ describe("user errors", () => {
     expect(userErrorFields(new Error("plain"))).toEqual({});
     const thrown = Object.assign(new Error("x"), { errorKey: "serverError.chat.busyInRoom", errorParams: { room: "Launch" } });
     expect(userErrorFields(thrown)).toEqual({ errorKey: "serverError.chat.busyInRoom", errorParams: { room: "Launch" } });
+  });
+
+  it("a guest pressing a card on someone's My Cloud is told in their own language why only the owner answers it", () => {
+    expect(refusalText(USER_ERROR["serverError.card.cloudOwnerOnly"])).toEqual({
+      error: "Only the owner of this Cloud can answer this card. Chats started by other people always ask the owner first, whatever the bot's access level.",
+      errorKey: "serverError.card.cloudOwnerOnly",
+    });
+    expect(refusalText("Only a workspace admin can review shared team memory.")).toEqual({ error: "Only a workspace admin can review shared team memory." });
   });
 });

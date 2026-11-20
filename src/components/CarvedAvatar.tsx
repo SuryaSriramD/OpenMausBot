@@ -9,7 +9,8 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from "react";
 import { MAUS_COLORS, type MausColor, type MausMotion, type MausState } from "@/lib/mascot";
-import { HALLOWEEN_BODIES, type HalloweenBody, type HalloweenBodyId } from "../../shared/halloween-bodies";
+import { avatarMarks, type AvatarKind } from "@/lib/avatar-marks";
+import { CARVED_BODIES, type CarvedBody, type CarvedBodyId } from "../../shared/carved-bodies";
 import type { CursorAvatarHandle } from "./CursorAvatar";
 import { mascotClock, usePrefersReducedMotion } from "./mascot-clock";
 import { frameFloorMs, nextFrameAt } from "./mascot-motion";
@@ -43,7 +44,7 @@ export type CarvedGeometry = {
 const r2 = (n: number) => Math.round(n * 100) / 100;
 
 /** Every attribute the face needs for a pose. */
-export function carvedGeometry(body: HalloweenBody, p: CarvedPose): CarvedGeometry {
+export function carvedGeometry(body: CarvedBody, p: CarvedPose): CarvedGeometry {
   const e = body.eyes;
   const ax = Math.abs(p.gx);
   const lean = -p.gx * 9;
@@ -135,7 +136,7 @@ export function vivid(hex: string): string {
   return `#${[ch(h + 1 / 3), ch(h), ch(h - 1 / 3)].map((v) => Math.round(v * 255).toString(16).padStart(2, "0")).join("")}`;
 }
 
-export function carvedFills(body: HalloweenBody, color: MausColor): { body: string; accent: string } {
+export function carvedFills(body: CarvedBody, color: MausColor): { body: string; accent: string } {
   const accent = vivid(MAUS_COLORS[color] ?? MAUS_COLORS.green);
   if (body.paint === "bone") return { body: body.bone ?? "#f1ede6", accent };
   if (body.paint === "pale") return { body: mix(MAUS_COLORS[color] ?? MAUS_COLORS.green, "#ffffff", 0.86), accent };
@@ -143,7 +144,7 @@ export function carvedFills(body: HalloweenBody, color: MausColor): { body: stri
 }
 
 export type CarvedAvatarProps = {
-  body: HalloweenBodyId;
+  body: CarvedBodyId;
   color: MausColor;
   faceColor?: MascotFaceColor | null;
   size?: number;
@@ -154,13 +155,14 @@ export type CarvedAvatarProps = {
   trackPointer?: boolean;
   animated?: boolean;
   label?: string;
+  kind?: AvatarKind;
 };
 
 function CarvedAvatarComponent(
-  { body: bodyId, color, faceColor, size = 44, state = "idle", motion = "none", motionKey = 0, gaze, trackPointer = true, animated = true, label }: CarvedAvatarProps,
+  { body: bodyId, color, faceColor, size = 44, state = "idle", motion = "none", motionKey = 0, gaze, trackPointer = true, animated = true, label, kind }: CarvedAvatarProps,
   ref: React.Ref<CursorAvatarHandle>,
 ) {
-  const body = HALLOWEEN_BODIES[bodyId];
+  const body = CARVED_BODIES[bodyId];
   const faceInk = mascotFaceInk(faceColor);
   const uid = useId().replace(/:/g, "");
   const reduced = usePrefersReducedMotion();
@@ -268,8 +270,25 @@ function CarvedAvatarComponent(
 
   const fills = carvedFills(body, color);
   const resolve = (fill: string) => (fill === "body" ? fills.body : fill === "accent" ? fills.accent : fill);
+  const cutFace = !faceInk;
+  const ink = faceInk ?? "black";
+  const face = (
+    <>
+      <g clipPath={`url(#carved-${uid})`}>
+        {initial.eyes.map((rect, i) => <rect key={i} ref={eyes[i]} {...rect} fill={ink} />)}
+      </g>
+      {body.eyes.mouth && (
+        <g>
+          <path ref={smile} d={initial.smile.d} transform={initial.smile.transform} opacity={initial.smile.opacity}
+            fill="none" stroke={ink} strokeWidth={body.eyes.w * 0.36} strokeLinecap="round" />
+          <ellipse ref={open} {...initial.open} fill={ink} />
+        </g>
+      )}
+    </>
+  );
   return (
     <span
+      {...avatarMarks(kind, "mascot")}
       className="inline-flex shrink-0"
       onPointerMove={trackPointer && live ? onPointerMove : undefined}
       onPointerLeave={trackPointer && live ? onPointerLeave : undefined}
@@ -286,19 +305,18 @@ function CarvedAvatarComponent(
       >
         <defs>
           <clipPath id={`carved-${uid}`}><path d={body.clip} /></clipPath>
+          {cutFace && (
+            <mask id={`carved-face-${uid}`} maskUnits="userSpaceOnUse" x="-300" y="-300" width="900" height="900">
+              <rect x="-300" y="-300" width="900" height="900" fill="white" />
+              {face}
+            </mask>
+          )}
         </defs>
         <g ref={group} transform={initial.body}>
-          {body.parts.map((part, i) => <path key={i} d={part.d} fill={resolve(part.fill)} />)}
-          <g clipPath={`url(#carved-${uid})`}>
-            {initial.eyes.map((rect, i) => <rect key={i} ref={eyes[i]} {...rect} fill={faceInk ?? body.eyes.ink} />)}
+          <g mask={cutFace ? `url(#carved-face-${uid})` : undefined}>
+            {body.parts.map((part, i) => <path key={i} d={part.d} fill={resolve(part.fill)} />)}
           </g>
-          {body.eyes.mouth && (
-            <g>
-              <path ref={smile} d={initial.smile.d} transform={initial.smile.transform} opacity={initial.smile.opacity}
-                fill="none" stroke={faceInk ?? body.eyes.mouthInk} strokeWidth={body.eyes.w * 0.36} strokeLinecap="round" />
-              <ellipse ref={open} {...initial.open} fill={faceInk ?? body.eyes.mouthInk} />
-            </g>
-          )}
+          {!cutFace && face}
         </g>
       </svg>
     </span>

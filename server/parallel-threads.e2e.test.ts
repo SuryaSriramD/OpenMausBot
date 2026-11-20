@@ -13,6 +13,7 @@ import { CONTROL_BUSY } from "./control-client.ts";
 import { BROWSER_HANDED_OVER, browserBusyText } from "./host/browser-seats.ts";
 import { removeTempDir, waitForExit } from "./testing/cleanup.ts";
 import { freePortBlock } from "./testing/ports.ts";
+import { isTitleCall } from "./testing/title-call.ts";
 
 const SERVER_DIR = dirname(fileURLToPath(import.meta.url));
 const HOST = "omb-t-0123456789ab.fly.dev";
@@ -80,6 +81,7 @@ await import(${JSON.stringify(pathToFileURL(join(SERVER_DIR, "testing", "fake-ac
       req.on("data", (chunk) => { raw += chunk; });
       req.on("end", () => {
         const body = JSON.parse(raw) as { messages?: { role: string; content: unknown }[]; stream?: boolean };
+        if (isTitleCall(body)) { res.writeHead(500).end("{}"); return; }
         const last = JSON.stringify(body.messages?.findLast((m) => m.role === "user")?.content ?? "");
         const entry = { thread: last, release: () => {
           res.writeHead(200, { "content-type": "application/json" });
@@ -454,11 +456,13 @@ describe("a Starter Cloud", () => {
     await whenStarted(a.threads[0]!);
     await send(f, b.botId, b.threads[0]!, "Ben's own job");
     await whenStarted(b.threads[0]!);
-    await send(f, c.botId, c.threads[0]!, "Cyd's own job");
-    await whenStarted(c.threads[0]!);
     const toBen = await startThread(a.threads[0]!, "For Ben", b.botId);
     expect(toBen.status, JSON.stringify(toBen.body)).toBeLessThan(300);
     await whenStarted(await ownThread(b.botId, "For Ben"));
+    // Starter runs two turns at once, so Cyd's own job takes the place Ben's leaves.
+    f.finish(b.threads[0]!);
+    await send(f, c.botId, c.threads[0]!, "Cyd's own job");
+    await whenStarted(c.threads[0]!);
     // From a third bot: Ben asking Ada back while Ada waits on Ben would be refused as a loop (crossed-handoffs.e2e).
     const toAda = await startThread(c.threads[0]!, "For Ada", a.botId);
     expect(toAda.status, JSON.stringify(toAda.body)).toBeLessThan(300);

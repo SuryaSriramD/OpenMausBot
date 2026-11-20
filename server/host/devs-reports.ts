@@ -21,6 +21,7 @@ import { versionAtLeast, type BugReportStatus } from "../../shared/devs-report-s
 import { failedTurnCause } from "../../shared/failed-turn.ts";
 import type { ResolvedSender } from "../../shared/wire.ts";
 import { splitTranscriptCitations } from "../../src/lib/citations.ts";
+import { PASTED_TEXT_CLOSE, PASTED_TEXT_OPEN } from "../../src/lib/composer-attachments.ts";
 import { writeFileAtomic } from "../atomic.ts";
 import { startDueTimer } from "../due-timer.ts";
 import type { ProviderSnapshot } from "../contracts.ts";
@@ -32,6 +33,7 @@ import { personKey } from "../person-key.ts";
 import type { RecentLog } from "../recent-log.ts";
 import { PASS } from "../routes/table.ts";
 import { serverLine, type LineLanguage } from "../server-lines.ts";
+import { cloudComputerCounters } from "../cloud-computer-counters.ts";
 import type { PublicSession } from "../sessions.ts";
 import type { BotRecord, Message, Store, StoreChange } from "../store.ts";
 import { droppedLine, fullLine, laterLine, notYetLine, refusedLine, sentLine } from "./devs-report-words.ts";
@@ -109,6 +111,8 @@ export interface DevsReportsDeps {
   /** The language a line for this person is written in; absent, the one set on this server. */
   lineLanguage?: LineLanguage;
   recentLog: RecentLog;
+  /** Timing lines for these conversations and bots: numbers, fixed codes and opaque ids only. */
+  performance?(filter: { threadIds: readonly string[]; botIds: readonly string[] }): string[];
   send(payload: DevsReportPayload): Promise<SendOutcome>;
   /** Asks the MausBot team about reports this app sent (devs-report-send.ts `askReportStatus`); null: no answer this time. */
   askStatus(question: ReportStatusQuestion): Promise<ReportStatusAnswer | null>;
@@ -147,10 +151,31 @@ function ownWords(message: string): string[] {
   return [display, ...citations.map((citation) => citation.comment ?? "")];
 }
 
+/** The message without the blocks the composer wraps around text the person pasted in (composeMessage): like a
+ * quote, a @devs inside a paste is theirs to read, not a tag they typed. One pass over the lines; a block ends at its
+ * first closing line, as the transcript reads it, and an opening line with no closing line after it stays as text. */
+function withoutPastes(message: string): string {
+  const lines = message.split("\n");
+  const kept: string[] = [];
+  let open = -1;
+  lines.forEach((line, index) => {
+    const bare = line.endsWith("\r") ? line.slice(0, -1) : line;
+    if (open < 0) {
+      if (PASTED_TEXT_OPEN.test(bare)) open = index;
+      else kept.push(line);
+    } else if (PASTED_TEXT_CLOSE.test(bare)) open = -1;
+  });
+  return (open >= 0 ? kept.concat(lines.slice(open)) : kept).join("\n");
+}
+
 /** Rides on the turn that answers a @devs message. */
 const TURN_NOTE = "\n\n[From OpenMausBot, not the person: this message tags @devs, so it is a bug report for the MausBot team, OpenMausBot's developers. Call report_bug once, first: what the person says went wrong; what you saw yourself in this conversation (errors, failed tools, stuck steps), or that you saw nothing unusual; and steps to reproduce. Leave out passwords, keys, tokens and file contents; OpenMausBot adds the app's own diagnostics. Then tell the person, word for word, the line report_bug returns, and help with the problem if you can.]";
 
 const iso = (at: number) => new Date(at).toISOString();
+/** The report goes out even when the timings fail: their lines, or one saying they are missing. */
+function performanceLines(read: NonNullable<DevsReportsDeps["performance"]>, threadId: string, botIds: string[]): string[] {
+  try { return read({ threadIds: [threadId], botIds }); } catch { return ["## Performance", "(timings unavailable)"]; }
+}
 const firstLine = (text: string | undefined) => (text ?? "").split("\n").map((line) => line.trim()).find(Boolean) ?? "";
 
 /** What went wrong in this conversation lately, as rows the server wrote: failed turns, failed tools, stops, notices. */
@@ -330,7 +355,8 @@ export function createDevsReports(deps: DevsReportsDeps) {
       threadId: entry.threadId, messageId: entry.messageId, ...(groupId ? { groupId } : {}), where, message: entry.text, words: entry.words,
       bots: bots.map((bot) => reported(bot, entry.threadId)),
       ...("bot" in author ? { summary: { by: author.bot.name, text: author.summary } } : { noSummary: author.why }),
-      problems: conversationProblems(store.activePath(entry.threadId)), log: deps.recentLog(), contactEmail: contact,
+      problems: conversationProblems(store.activePath(entry.threadId)), log: deps.recentLog(), cloudComputers: cloudComputerCounters.lines(), contactEmail: contact,
+      ...(deps.performance ? { performance: performanceLines(deps.performance, entry.threadId, bots.map((bot) => bot.id)) } : {}),
     }, secrets());
     return { payload, ...(contact ? { contact } : {}) };
   }
@@ -445,10 +471,11 @@ export function createDevsReports(deps: DevsReportsDeps) {
   function personWrote(threadId: string, line: Message): void {
     if (seen.has(line.id) || !line.text || now() - line.at > FRESH_MS) return;
     if (!line.sendId && deps.automated(threadId)) return;
-    const own = ownWords(line.text);
-    if (!own.some((part) => tagsDevs(part))) return;
+    const typed = ownWords(withoutPastes(line.text));
+    if (!typed.some((part) => tagsDevs(part))) return;
     const names = namesBeforeDevs();
-    if (!own.some((part) => tagsDevs(part, names))) return;
+    if (!typed.some((part) => tagsDevs(part, names))) return;
+    const own = ownWords(line.text);
     seen.add(line.id);
     if (seen.size > 1_000) seen.delete(seen.values().next().value!);
     if (waiting.length >= MAX_WAITING) return notice(threadId, { ok: false, line: fullLine(MAX_OUTBOX, languageFor(line.sender?.id)), marker: "" });
@@ -462,7 +489,7 @@ export function createDevsReports(deps: DevsReportsDeps) {
   const unsubscribe = store.onChange((change: StoreChange) => {
     if (change.type === "message") {
       const line = change.message;
-      if (line.role === "user" && line.kind === "text" && !line.peerAsk && !line.aside) personWrote(change.threadId, line);
+      if (line.role === "user" && line.kind === "text" && !line.peerAsk && !line.aside && line.via !== "api") personWrote(change.threadId, line);
     } else if (change.type === "thread.deleted") {
       const before = waiting.length + tracked.length;
       waiting = waiting.filter((entry) => entry.threadId !== change.threadId);

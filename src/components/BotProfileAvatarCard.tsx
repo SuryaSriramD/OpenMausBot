@@ -12,13 +12,12 @@ import {
 } from "@/lib/mascot";
 import { BOT_AVATAR_CROPS } from "../../shared/bot-avatar";
 import { MASCOT_BODY_IDS } from "../../shared/mascot-bodies";
-import { HALLOWEEN_BODY_IDS } from "../../shared/halloween-bodies";
-import type { BotBodyId } from "../../shared/bot-body";
+import { FESTIVAL_IDS, FESTIVALS, type BotBodyId } from "../../shared/bot-body";
 import { BotAvatar, MausAvatar } from "./Avatar";
 import { AvatarImageGenerator } from "./AvatarImageGenerator";
 import { AvatarFraming, OrganizationAvatarIcons, RESET_MASCOT_PATCH, useAvatarImage, type AvatarPatch } from "./avatar-editing";
 import { t } from "@/lib/i18n";
-import { bodyName, colorName, expressionName } from "@/lib/mascot-names";
+import { bodyName, colorName, expressionName, festivalName } from "@/lib/mascot-names";
 import { MascotFaceColorPicker } from "./MascotFaceColorPicker";
 
 export function BotProfileAvatarCard({
@@ -142,29 +141,33 @@ export function BotProfileAvatarCard({
                 </button>
               ))}
             </div>
+          </>
+        )}
 
-            <div className="mb-2 mt-4 text-[12px] font-medium uppercase tracking-[0.08em] text-ink-secondary">
-              {t("botIdentity.color")}
-            </div>
-            <div className="flex flex-wrap gap-2.5">
-              {MAUS_COLOR_NAMES.map((color) => (
-                <button
-                  key={color}
-                  type="button"
-                  disabled={busy}
-                  aria-pressed={bot.color === color}
-                  onClick={() => onPatch({ color })}
-                  className={cn(
-                    "size-10 rounded-full border-2 border-transparent transition-transform hover:scale-110 disabled:opacity-50",
-                    bot.color === color && "ring-2 ring-accent-border ring-offset-2 ring-offset-card",
-                  )}
-                  style={{ background: colorSwatch(color) }}
-                  title={t(MAUS_COLOR_LABEL[color])}
-                  aria-label={t("mascot.useColor", { color: colorName(color) })}
-                />
-              ))}
-            </div>
+        <div className="mb-2 mt-4 text-[12px] font-medium uppercase tracking-[0.08em] text-ink-secondary">
+          {t("botIdentity.color")}
+        </div>
+        <div className="flex flex-wrap gap-2.5">
+          {MAUS_COLOR_NAMES.map((color) => (
+            <button
+              key={color}
+              type="button"
+              disabled={busy}
+              aria-pressed={bot.color === color}
+              onClick={() => onPatch({ color })}
+              className={cn(
+                "size-10 rounded-full border-2 border-transparent transition-transform hover:scale-110 disabled:opacity-50",
+                bot.color === color && "ring-2 ring-accent-border ring-offset-2 ring-offset-card",
+              )}
+              style={{ background: colorSwatch(color) }}
+              title={t(MAUS_COLOR_LABEL[color])}
+              aria-label={t("mascot.useColor", { color: colorName(color) })}
+            />
+          ))}
+        </div>
 
+        {crop === "mascot" && (
+          <>
             <div className="mb-2 mt-4 text-[12px] font-medium uppercase tracking-[0.08em] text-ink-secondary">
               {t("botIdentity.body")}
             </div>
@@ -173,14 +176,18 @@ export function BotProfileAvatarCard({
                 <BodyButton key={id} id={id} name={bodyName(id)} bot={bot} busy={busy} onPatch={onPatch} />
               ))}
             </div>
-            <div className="mb-2 mt-4 text-[12px] font-medium uppercase tracking-[0.08em] text-ink-secondary">
-              {t("botPanel.avatar.halloween")}
-            </div>
-            <div className="grid grid-cols-5 gap-1.5" data-halloween-bodies>
-              {HALLOWEEN_BODY_IDS.map((id) => (
-                <BodyButton key={id} id={id} name={bodyName(id)} bot={bot} busy={busy} onPatch={onPatch} />
-              ))}
-            </div>
+            {FESTIVAL_IDS.map((festival) => (
+              <div key={festival}>
+                <div className="mb-2 mt-4 text-[12px] font-medium uppercase tracking-[0.08em] text-ink-secondary">
+                  {festivalName(festival)}
+                </div>
+                <div className="grid grid-cols-5 gap-1.5" data-festival-bodies={festival}>
+                  {FESTIVALS[festival].bodies.map((id) => (
+                    <BodyButton key={id} id={id} name={bodyName(id)} bot={bot} busy={busy} onPatch={onPatch} />
+                  ))}
+                </div>
+              </div>
+            ))}
           </>
         )}
 

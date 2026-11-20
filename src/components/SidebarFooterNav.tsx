@@ -1,4 +1,4 @@
-import { FolderOpen, Globe, Puzzle, UsersRound, Zap } from "lucide-react";
+import { AppWindow, FolderOpen, FolderTree, Globe, Puzzle, Rocket, UsersRound, Zap } from "lucide-react";
 import { useMemo, type ReactNode } from "react";
 
 import { useAppTriggers } from "@/lib/app-triggers";
@@ -80,7 +80,7 @@ export function SidebarAppsButton() {
         state.pluginsOpen ? "bg-raised text-accent" : "text-ink-secondary hover:bg-raised/50 hover:text-ink",
       )}
     >
-      <Puzzle size={18} />
+      <Puzzle size={16} />
     </button>
   );
 }
@@ -173,6 +173,24 @@ export function SidebarFooterNav({
         />
       )}
       {filesRow}
+      <NavRow
+        id="published-apps"
+        label={t("sidebar.nav.publishedApps")}
+        iconsOnly={iconsOnly || toolbar}
+        active={state.activeView === "published-apps"}
+        icon={(active) => <Rocket size={iconSize} className={tone(active)} />}
+        onClick={() => dispatch({ type: "showPublishedApps" })}
+      />
+      {state.config?.team && (
+        <NavRow
+          id="team-files"
+          label={t("sidebar.nav.teamFiles")}
+          iconsOnly={iconsOnly || toolbar}
+          active={state.activeView === "team-files"}
+          icon={(active) => <FolderTree size={iconSize} className={tone(active)} />}
+          onClick={() => dispatch({ type: "showTeamFiles" })}
+        />
+      )}
       {advanced && webPanels.map((panel) => (
         <NavRow
           key={panel.id}
@@ -180,7 +198,7 @@ export function SidebarFooterNav({
           label={panel.name}
           iconsOnly={iconsOnly || toolbar}
           active={state.activeView === "web-panel" && state.webPanelId === panel.id}
-          icon={(active) => <Globe size={iconSize} className={tone(active)} />}
+          icon={(active) => (panel.page ? <AppWindow size={iconSize} className={tone(active)} /> : <Globe size={iconSize} className={tone(active)} />)}
           onClick={() => dispatch({ type: "showWebPanel", id: panel.id })}
         />
       ))}

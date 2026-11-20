@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { Component, lazy, Suspense, useEffect, useRef, useState, type ReactNode } from "react";
 import { Check, Code2, Download, ExternalLink, Eye, LoaderCircle, RotateCcw } from "lucide-react";
 import { requestMessageFile, useLocalFileSave, type MessageAttachmentContext } from "./AttachmentPreview";
 import { TableDialog } from "./RichTable";
@@ -14,6 +14,27 @@ export function isHtmlFile(name: string): boolean {
   return /\.html?$/i.test(name);
 }
 
+export function isMarkdownFile(name: string): boolean {
+  return /\.(md|markdown)$/i.test(name);
+}
+
+// Lazy, so the chat's Markdown renderer (which uses this file's chips) is not imported back into it.
+const MarkdownFileContent = lazy(() => import("./MarkdownFilePreview"));
+
+// React 19 caches a rejected lazy import until the page reloads; without a boundary it would replace the whole message.
+class MarkdownPreviewBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
+  state = { failed: false };
+
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+
+  render() {
+    if (!this.state.failed) return this.props.children;
+    return <div className="p-8 text-center text-sm"><p role="alert" className="mb-3 text-ink-secondary">{t("markdown.loadFailed")}</p><button type="button" className="rounded-lg border border-hairline px-3 py-2 hover:bg-raised" onClick={() => location.reload()}>{t("page.broken.reload")}</button></div>;
+  }
+}
+
 /** Security: `<base target="_blank">` turns every link into a popup, which the empty sandbox blocks, so the frame never navigates. */
 export function htmlPreviewDocument(source: string): string {
   return `<meta http-equiv="Content-Security-Policy" content="${HTML_PREVIEW_CSP}"><base target="_blank">${source}`;
@@ -26,19 +47,27 @@ export function htmlBrowserBridge(): ((source: string, name: string) => Promise<
   return ogb?.remoteClient?.active ? undefined : ogb?.openHtmlInBrowser;
 }
 
-/** The page preview dialog for an HTML file in a message, opened by the eye button or by the file's name. */
+/** The preview dialog for an HTML or Markdown file in a message, opened by the eye button or by the file's name. */
 export function useHtmlPreview(path: string, name: string, message?: MessageAttachmentContext) {
   const [open, setOpen] = useState(false);
   const opener = useRef<HTMLElement | null>(null);
-  const html = message !== undefined && (isHtmlFile(name) || isHtmlFile(path));
+  const kind = message === undefined ? null
+    : isHtmlFile(name) || isHtmlFile(path) ? "html"
+      : isMarkdownFile(name) || isMarkdownFile(path) ? "markdown" : null;
+  const key = message ? `${message.threadId}:${message.messageId}:${path}` : "";
   return {
-    html,
+    opens: kind !== null,
+    label: t(kind === "markdown" ? "markdown.preview" : "html.preview", { name }),
     show: (event: { currentTarget: HTMLElement }) => {
       opener.current = event.currentTarget;
       setOpen(true);
     },
-    dialog: html && open && message
-      ? <TableDialog title={name} returnFocus={opener.current} onClose={() => setOpen(false)}><HtmlFileContent key={`${message.threadId}:${message.messageId}:${path}`} path={path} name={name} message={message} /></TableDialog>
+    dialog: kind && open && message
+      ? <TableDialog title={name} returnFocus={opener.current} onClose={() => setOpen(false)}>
+        {kind === "html"
+          ? <HtmlFileContent key={key} path={path} name={name} message={message} />
+          : <MarkdownPreviewBoundary><Suspense fallback={<div role="status" className="flex items-center justify-center gap-2 p-12 text-sm text-ink-secondary"><LoaderCircle size={16} className="animate-spin" />{t("markdown.loading")}</div>}><MarkdownFileContent key={key} path={path} name={name} message={message} /></Suspense></MarkdownPreviewBoundary>}
+      </TableDialog>
       : null,
   };
 }
@@ -46,14 +75,14 @@ export function useHtmlPreview(path: string, name: string, message?: MessageAtta
 export function HtmlFileButton({ path, name, message }: { path: string; name: string; message: MessageAttachmentContext }) {
   const preview = useHtmlPreview(path, name, message);
   return <>
-    <button type="button" className="table-action" title={t("html.preview", { name })} aria-label={t("html.preview", { name })} onClick={preview.show}><Eye size={14} /></button>
+    <button type="button" className="table-action" title={preview.label} aria-label={preview.label} onClick={preview.show}><Eye size={14} /></button>
     {preview.dialog}
   </>;
 }
 
-/** A file chip's name button: an HTML file's name opens its preview, any other file's name saves it. */
+/** A file chip's name button: an HTML or Markdown file's name opens its preview, any other file's name saves it. */
 export function chipNameAction(preview: ReturnType<typeof useHtmlPreview>, save: ReturnType<typeof useLocalFileSave>, name: string, retryable: boolean) {
-  if (preview.html) return { onClick: preview.show, disabled: false, "aria-label": t("html.preview", { name }) };
+  if (preview.opens) return { onClick: preview.show, disabled: false, "aria-label": preview.label };
   return { onClick: () => void save.save(), disabled: save.state === "saving", "aria-label": retryable ? t("attach.retrySaveAria", { name }) : t("attach.saveAria", { name }) };
 }
 
@@ -88,7 +117,7 @@ export function OpenInBrowserButton({ source, name, onError }: { source: string;
 function HtmlFileContent({ path, name, message }: { path: string; name: string; message: MessageAttachmentContext }) {
   const [attempt, setAttempt] = useState(0);
   const [source, setSource] = useState<string | null>(null);
-  const [error, setError] = useState<"size" | "load" | null>(null);
+  const [error, setError] = useState<"size" | "load" | { reason: string } | null>(null);
   const [showSource, setShowSource] = useState(false);
   const [openFailed, setOpenFailed] = useState("");
   const save = useLocalFileSave(path, name, message);
@@ -97,17 +126,22 @@ function HtmlFileContent({ path, name, message }: { path: string; name: string; 
     setError(null);
     setSource(null);
     void (async () => {
+      let answered = false;
       try {
         const response = await requestMessageFile(path, message, controller.signal);
+        answered = true;
         const text = await readTableResponse(response, controller.signal, HTML_PREVIEW_MAX_BYTES);
         if (!controller.signal.aborted) setSource(text);
       } catch (reason) {
-        if (!controller.signal.aborted) setError(reason instanceof Error && reason.message === "size" ? "size" : "load");
+        if (controller.signal.aborted) return;
+        // A refusal from the server says why; only a request that got no answer (TypeError) is the connection.
+        if (!answered && reason instanceof Error && !(reason instanceof TypeError)) setError({ reason: reason.message });
+        else setError(reason instanceof Error && reason.message === "size" ? "size" : "load");
       }
     })();
     return () => controller.abort();
   }, [path, message.threadId, message.messageId, attempt]);
-  if (error) return <div className="p-8 text-center text-sm"><p role="alert" className="mb-3 text-ink-secondary">{t(error === "size" ? "html.tooLarge" : "html.loadFailed")}</p><button type="button" className="rounded-lg border border-hairline px-3 py-2 hover:bg-raised" onClick={() => setAttempt(attempt + 1)}>{t("chat.retry")}</button></div>;
+  if (error) return <div className="p-8 text-center text-sm"><p role="alert" className="mb-3 text-ink-secondary">{typeof error === "object" ? t("html.refused", { reason: error.reason }) : t(error === "size" ? "html.tooLarge" : "html.loadFailed")}</p><button type="button" className="rounded-lg border border-hairline px-3 py-2 hover:bg-raised" onClick={() => setAttempt(attempt + 1)}>{t("chat.retry")}</button></div>;
   if (source === null) return <div role="status" className="flex items-center justify-center gap-2 p-12 text-sm text-ink-secondary"><LoaderCircle size={16} className="animate-spin" />{t("html.loading")}</div>;
   return <div className="flex flex-col gap-2">
     <div className="flex items-center justify-end gap-1">

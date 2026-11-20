@@ -8,9 +8,22 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import readline from "node:readline";
+import { chromeDataDirs, DEVTOOLS_FILE, parseDevtoolsActivePort } from "./device-chrome.mjs";
+import { DESKTOP_PORTS } from "./desktop-ports.mjs";
 import { commandPath } from "./shell-path.mjs";
 
 export const LENT_MCP_ACTIONS = new Set(["mcp_tools", "mcp_call"]);
+/** Where a tools/call's `_meta` says which bot and conversation made it, as the Cloud says: a hint for the MCP server,
+ * never proof of identity (`verified: false`). */
+export const CALLER_META = "openmausbot/caller";
+const callerMeta = caller => caller ? { _meta: { [CALLER_META]: { botId: caller.botId, threadId: caller.threadId, verified: false } } } : {};
+const callerId = value => typeof value === "string" && value.length > 0 && value.length <= 128;
+/** A job's MCP server, only on an MCP action, and its caller, only on a tool call: passed on as a hint, never trusted. */
+export function validLentMcpJob({ action, server, caller }) {
+  const validCaller = caller === undefined || (action === "mcp_call" && Boolean(caller) && typeof caller === "object" &&
+    !Array.isArray(caller) && Object.keys(caller).length === 2 && callerId(caller.botId) && callerId(caller.threadId));
+  return (LENT_MCP_ACTIONS.has(action) ? validLentMcpServer(server) : server === undefined) && validCaller;
+}
 const NAME = /^[a-z][a-z0-9_-]{0,31}$/;
 const ENV_NAME = /^[A-Za-z_][A-Za-z0-9_]{0,255}$/;
 const HEADER_NAME = /^[!#$%&'*+.^_`|~0-9A-Za-z-]{1,256}$/;
@@ -24,6 +37,9 @@ const IDLE_MS = 10 * 60_000;
 const RESULT_LIMIT = 3_900_000;
 const MAX_PAGES = 10;
 const PROTOCOL = "2025-03-26";
+/** Security: a port under 1024 is a system service's, and this computer's own OpenMausBot server and Chrome's DevTools
+ * take commands from any local caller, so a lent address on one of them would hand a Cloud's bot this computer. */
+const OWN_PORT = "Only an MCP server on its own port (1024 or higher) at this computer's address can be reached, never this computer's own OpenMausBot or Chrome ports";
 
 /** What a lent server inherits from this app: where things live, never a key. */
 const INHERITED = ["HOME", "USERPROFILE", "USER", "LOGNAME", "SHELL", "LANG", "TMPDIR", "TEMP", "TMP", "PATHEXT", "SystemRoot", "SystemDrive", "windir", "ComSpec", "APPDATA", "LOCALAPPDATA", "ProgramData"];
@@ -51,13 +67,21 @@ export function isLoopbackAddress(url) {
 }
 
 /** Why this computer won't run `server` for this grant, or null. A command server starts a program here, which only a
- * lent terminal allows; a URL server must be at this computer's own loopback address. */
+ * lent terminal allows; a URL server must be at this computer's own loopback address on an explicit port of 1024 or
+ * higher, and `createLentMcp` refuses this computer's own ports as it calls. */
 export function lentMcpRefusal(grant, server) {
   if (!grant?.cloud) return "MCP servers run here only for the person's own Clouds";
   if ("command" in server) return grant.terminal === true ? null : "Running commands is not enabled for this server";
   if (!isLoopbackAddress(server.url)) return "Only an MCP server at this computer's own address (127.0.0.1, localhost or ::1) can be reached";
   if (server.type === "sse") return "This MCP server uses the older SSE transport, which lending doesn't carry yet";
+  if (Number(new URL(server.url).port) < 1024) return OWN_PORT;
   return null;
+}
+
+/** This computer's own ports: its OpenMausBot servers', and Chrome's DevTools port while Chrome is running. */
+export async function ownPorts({ serverPorts = [], dirs = chromeDataDirs({ platform: process.platform, home: os.homedir(), localAppData: process.env.LOCALAPPDATA }), readFile = fs.promises.readFile } = {}) {
+  const chrome = await Promise.all(dirs.map(dir => readFile(path.join(dir, DEVTOOLS_FILE), "utf8").then(parseDevtoolsActivePort, () => null)));
+  return [...DESKTOP_PORTS, ...serverPorts, ...chrome.flatMap(found => (found ? [found.port] : []))];
 }
 
 /** This computer's own OpenMausBot installs, by the environment id each keeps in its data folder. */
@@ -229,7 +253,7 @@ function httpClient(server, { fetch: fetchImpl }) {
 
 /** The servers one lent Cloud keeps here, each started once and kept between calls; a change to one starts it anew, and
  * one unused for ten minutes is stopped. */
-export function createLentMcp({ environment = async () => ({ ...inheritedEnvironment(), PATH: await commandPath() }), home = os.homedir(), fetch: fetchImpl = globalThis.fetch } = {}) {
+export function createLentMcp({ environment = async () => ({ ...inheritedEnvironment(), PATH: await commandPath() }), home = os.homedir(), fetch: fetchImpl = globalThis.fetch, ports = ownPorts } = {}) {
   const running = new Map();
   const stop = name => {
     const live = running.get(name);
@@ -272,6 +296,7 @@ export function createLentMcp({ environment = async () => ({ ...inheritedEnviron
   return {
     async call(operation, signal) {
       const { server } = operation;
+      if ("url" in server && (await ports()).includes(Number(new URL(server.url).port))) throw failure(OWN_PORT);
       if (operation.action === "mcp_tools") {
         return use(server, signal, async client => {
           const tools = [];
@@ -286,7 +311,8 @@ export function createLentMcp({ environment = async () => ({ ...inheritedEnviron
         });
       }
       if (typeof operation.tool_name !== "string" || !operation.tool_name) throw failure("Name the tool to call");
-      return use(server, signal, client => client.request("tools/call", { name: operation.tool_name, arguments: operation.arguments ?? {} }, signal, CALL_MS));
+      const meta = callerMeta(operation.caller);
+      return use(server, signal, client => client.request("tools/call", { name: operation.tool_name, arguments: operation.arguments ?? {}, ...meta }, signal, CALL_MS));
     },
     /** Resolves once every server it started has exited, or after five seconds. */
     close: () => Promise.all([...running.keys()].map(stop)).then(() => {}),

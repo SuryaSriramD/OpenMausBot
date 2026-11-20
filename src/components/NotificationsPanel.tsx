@@ -9,6 +9,7 @@ import type { LocaleKey } from "@/locales";
 import { BotAvatar, type BotAvatarProps } from "./Avatar";
 import { threadUpdatedLabel } from "./SidebarThreadRow";
 import type { NotificationLogEntry, NotifyKind } from "../../shared/notification";
+import { plainPreviewText } from "../../shared/plain-preview";
 import { Select } from "./Select";
 
 const KIND_LOOK: Record<NotifyKind, { Icon: LucideIcon; className: string; status: LocaleKey }> = {
@@ -79,7 +80,7 @@ export function NotificationBell({ bar }: { bar?: string }) {
       aria-pressed={state.notificationsOpen}
       className={cn("relative", bar ?? "flex size-8 items-center justify-center rounded-md text-ink-secondary hover:bg-raised hover:text-ink", bar && state.notificationsOpen && "text-accent hover:text-accent")}
     >
-      <Bell size={bar ? 15 : 17} strokeWidth={bar ? 1.75 : undefined} aria-hidden="true" />
+      <Bell size={bar ? 15 : 17} aria-hidden="true" />
       {unread > 0 && (
         <span className={cn("absolute flex items-center justify-center rounded-full bg-accent font-semibold text-accent-ink", bar ? "-right-1 -top-0.5 h-[13px] min-w-[13px] px-0.5 text-[9px]" : "-right-0.5 -top-0.5 h-[15px] min-w-[15px] px-1 text-[10px]")}>
           {unread > 99 ? "99+" : unread}
@@ -244,7 +245,7 @@ function NotificationRow({ entry, title, now, bot, threadName, onOpen }: { entry
           )}
           <span className={cn("shrink-0 text-[11px] font-medium", className)}>{t(status)}</span>
         </span>
-        {entry.body && <span className="mt-0.5 block truncate text-[12px] text-ink-secondary">{entry.body}</span>}
+        {entry.body && <span className="mt-0.5 block truncate text-[12px] text-ink-secondary">{plainPreviewText(entry.body)}</span>}
         <span className="mt-0.5 block text-[11px] text-ink-tertiary">{threadUpdatedLabel(entry.at, now)}</span>
       </span>
     </button>

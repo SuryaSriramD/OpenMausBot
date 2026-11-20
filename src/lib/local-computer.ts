@@ -25,6 +25,7 @@ export function localComputerSelectable({
   if (!providerSupportsLocal) return false;
   if (capabilities.localComputer.available) return true;
   if (pageOnRemoteServer(capabilities)) return false;
+  if (capabilities.localComputer.reasonCode === "macos-version-unsupported") return false;
   return capabilities.host.platform === "darwin" || capabilities.host.platform === "win32";
 }
 
@@ -42,11 +43,13 @@ export function localComputerDisabledReason({
   if (capabilities.host.platform === "linux") {
     if (capabilities.localComputer.reasonCode === "linux-wayland-seat-safety-blocked") return t("computer.problem.localWaylandBlocked");
     if (capabilities.localComputer.reasonCode === "wayland-compositor-unsupported") return t("computer.problem.localWaylandDesktop");
+    if (capabilities.localComputer.reasonCode === "linux-hyprland-plugin-required") return t("computer.problem.localHyprlandPlugin");
     if (!capabilities.localComputer.enabled) return t("computer.problem.localTurnOn");
     return capabilities.localComputer.message ?? t("computer.problem.localNotReady");
   }
   if (capabilities.host.label === "Browser") return t("computer.problem.localNeedsApp");
   if (capabilities.host.platform === "win32") return t("computer.problem.localWindows");
+  if (capabilities.localComputer.reasonCode === "macos-version-unsupported") return t("computer.problem.localMacTooOld");
   return t("computer.problem.localMac");
 }
 

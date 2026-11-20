@@ -3,11 +3,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { fromMarkdown } from "mdast-util-from-markdown";
 import { ChevronDown, ChevronUp, Download, Film, LoaderCircle, Music, Play, X } from "lucide-react";
-import { attachmentBasename, FILE_MAX_BYTES, type TranscriptFileAttachment, type TranscriptImageAttachment } from "@/lib/composer-attachments";
+import { attachmentBasename, PREVIEW_MAX_BYTES, type TranscriptFileAttachment, type TranscriptImageAttachment } from "@/lib/composer-attachments";
 import { cn } from "@/lib/cn";
 import { t } from "@/lib/i18n";
 import { windowsPathDestinations } from "../../shared/markdown-windows-paths";
-import { localFilePath } from "./ChatMarkdown";
+import { decodedLinkPath, localFilePath } from "./ChatMarkdown";
 import {
   AttachedFileChip,
   AttachmentPreviewDialog,
@@ -34,8 +34,7 @@ type MarkdownNode = {
 export function fileIdentity(path: string): string {
   // Presentation deduplication only, never an authorization check.
   if (/^file:\/\//i.test(path)) return localFilePath(path) ?? path;
-  try { return decodeURIComponent(path.split(/[?#]/, 1)[0]!); }
-  catch { return path; }
+  return decodedLinkPath(path);
 }
 
 export function collectMessageFiles(text: string, existingPaths: readonly string[] = []): GalleryFile[] {
@@ -167,12 +166,14 @@ async function withStallRetry<T>(
   }
 }
 
+const VIDEO_MIMES = ["video/mp4", "video/webm", "video/quicktime", "video/x-m4v"];
+
 /** Security: the server's MIME is required as well as the filename, so arbitrary bytes never become UI. */
 export function loadMessageVideo(
   file: GalleryFile,
   message: MessageAttachmentContext,
   signal: AbortSignal,
-): Promise<Blob> {
+): Promise<Blob | string> {
   return withStallRetry(signal, t("attach.videoUnavailable"), (attempt, progress) => readMessageVideo(file, message, attempt, progress));
 }
 
@@ -181,18 +182,19 @@ async function readMessageVideo(
   message: MessageAttachmentContext,
   signal: AbortSignal,
   progress: () => void,
-): Promise<Blob> {
-  const response = await requestMessageFile(file.path, message, signal);
+): Promise<Blob | string> {
+  const response = await requestMessageFile(file.path, message, signal, { mediaLink: true });
   progress();
+  if (response.headers.get("x-openmausbot-media") === "1") return messageMediaLink(await response.json().catch(() => null), message, VIDEO_MIMES, t("attach.videoUnavailable"));
   const mime = response.headers.get("content-type")?.split(";", 1)[0]?.trim().toLowerCase();
-  if (!mime || !["video/mp4", "video/webm", "video/quicktime", "video/x-m4v"].includes(mime)) {
+  if (!mime || !VIDEO_MIMES.includes(mime)) {
     await response.body?.cancel();
     throw new Error(t("attach.videoUnavailable"));
   }
   const declared = Number(response.headers.get("content-length"));
-  if (declared > FILE_MAX_BYTES) {
+  if (declared > PREVIEW_MAX_BYTES) {
     await response.body?.cancel();
-    throw new Error(t("attach.fileTooLarge"));
+    throw previewTooLarge(declared);
   }
   // Keep this bounded even if a reverse proxy omits Content-Length.
   const reader = response.body?.getReader();
@@ -205,7 +207,8 @@ async function readMessageVideo(
       const { value, done } = await reader.read();
       if (done) break;
       size += value.byteLength;
-      if (size > FILE_MAX_BYTES) throw new Error(t("attach.fileTooLarge"));
+      // Bytes read so far are not the file size, so this says only the preview limit; still no Retry.
+      if (size > PREVIEW_MAX_BYTES) throw Object.assign(new Error(t("attach.fileTooLarge")), { code: "file_too_large" });
       chunks.push(new Uint8Array(value));
       progress();
     }
@@ -216,17 +219,39 @@ async function readMessageVideo(
   return new Blob(chunks, { type: mime });
 }
 
+/** Security: only this message's own file route, never a URL the response could point anywhere else. */
+function messageMediaLink(body: unknown, message: MessageAttachmentContext, mimes: readonly string[], unavailable: string): string {
+  const { url, mime } = (body ?? {}) as { url?: unknown; mime?: unknown };
+  const route = `/api/threads/${encodeURIComponent(message.threadId)}/messages/${encodeURIComponent(message.messageId)}/file?media=`;
+  if (typeof url !== "string" || !url.startsWith(route) || !/^[\w-]+$/.test(url.slice(route.length))
+    || typeof mime !== "string" || !mimes.includes(mime)) {
+    throw new Error(unavailable);
+  }
+  return url;
+}
+
+function megabytes(bytes: number): string {
+  return `${Math.ceil(bytes / (1024 * 102.4)) / 10} MB`;
+}
+
+/** Only the inline player reads the whole file into memory; the download below still saves it. */
+export function previewTooLarge(bytes: number): Error {
+  const message = t("attach.previewTooLarge", { size: megabytes(bytes), limit: megabytes(PREVIEW_MAX_BYTES) });
+  return Object.assign(new Error(message), { code: "file_too_large" });
+}
+
 function VideoAttachment({ file, message }: { file: GalleryFile; message: MessageAttachmentContext }) {
   const [preview, setPreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [tooLarge, setTooLarge] = useState(false);
   const request = useRef<AbortController | null>(null);
   const playButton = useRef<HTMLButtonElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   useEffect(() => () => request.current?.abort(), []);
   useEffect(() => {
     if (preview) videoRef.current?.focus();
-    return () => { if (preview) URL.revokeObjectURL(preview); };
+    return () => { if (preview?.startsWith("blob:")) URL.revokeObjectURL(preview); };
   }, [preview]);
 
   const load = async () => {
@@ -237,10 +262,13 @@ function VideoAttachment({ file, message }: { file: GalleryFile; message: Messag
     setError("");
     setPreview(null);
     try {
-      const blob = await loadMessageVideo(file, message, controller.signal);
-      if (!controller.signal.aborted) setPreview(URL.createObjectURL(blob));
+      const source = await loadMessageVideo(file, message, controller.signal);
+      if (!controller.signal.aborted) setPreview(typeof source === "string" ? source : URL.createObjectURL(source));
     } catch (reason) {
-      if (!controller.signal.aborted) setError(reason instanceof Error ? reason.message : t("attach.videoUnavailable"));
+      if (!controller.signal.aborted) {
+        setError(reason instanceof Error ? reason.message : t("attach.videoUnavailable"));
+        setTooLarge((reason as { code?: unknown } | null)?.code === "file_too_large");
+      }
     } finally {
       if (!controller.signal.aborted) setLoading(false);
       if (request.current === controller) request.current = null;
@@ -252,13 +280,23 @@ function VideoAttachment({ file, message }: { file: GalleryFile; message: Messag
     setLoading(false);
     setPreview(null);
     setError("");
+    setTooLarge(false);
     requestAnimationFrame(() => playButton.current?.focus());
   };
 
   return (
     <div className="min-w-0 overflow-hidden rounded-xl border border-hairline/40 bg-inset/40">
       <div className="relative flex aspect-[4/3] items-center justify-center bg-inset">
-        {preview && !error ? (
+        {preview && error ? (
+          <div className="flex size-full flex-col items-center justify-center gap-2 p-3 text-center">
+            <Film size={24} className="text-ink-tertiary" aria-hidden="true" />
+            <p role="alert" className="text-[12px] text-ink-secondary">{error}</p>
+            <a href={preview} download={file.name} aria-label={t("attach.downloadAria", { name: file.name })}
+              className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[13px] text-accent-text hover:bg-ink/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus">
+              <Download size={14} aria-hidden="true" />{t("attach.download")}
+            </a>
+          </div>
+        ) : preview ? (
           <video
             ref={videoRef}
             src={preview}
@@ -274,14 +312,14 @@ function VideoAttachment({ file, message }: { file: GalleryFile; message: Messag
           <button
             ref={playButton}
             type="button"
-            disabled={loading}
+            disabled={loading || tooLarge}
             onClick={() => void load()}
             aria-label={t("attach.previewVideo", { name: file.name })}
-            className="flex size-full flex-col items-center justify-center gap-2 p-3 text-center text-ink-secondary transition-colors hover:bg-raised/60 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent/60 disabled:cursor-wait disabled:hover:bg-transparent"
+            className={`flex size-full flex-col items-center justify-center gap-2 p-3 text-center text-ink-secondary transition-colors hover:bg-raised/60 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent/60 ${tooLarge ? "disabled:cursor-default" : "disabled:cursor-wait"} disabled:hover:bg-transparent`}
           >
             {loading ? <LoaderCircle size={24} className="animate-spin" /> : <Play size={24} />}
-            <span className="text-[12px]">{loading ? t("attach.videoLoading") : error ? t("chat.retry") : t("attach.loadVideo")}</span>
-            {!error && !loading && <span className="text-[11px]">{t("attach.videoHint")}</span>}
+            <span className="text-[12px]">{loading ? t("attach.videoLoading") : error && !tooLarge ? t("chat.retry") : t("attach.loadVideo")}</span>
+            {!error && !loading && <span className="text-[11px]">{t("attach.videoHintStreams")}</span>}
           </button>
         )}
         {(preview || loading || error) && (
@@ -291,7 +329,7 @@ function VideoAttachment({ file, message }: { file: GalleryFile; message: Messag
         )}
         {!preview && !loading && <Film size={13} className="pointer-events-none absolute left-2 top-2 text-ink-secondary/50" />}
       </div>
-      {error && <p role="alert" className="px-3 py-2 text-[11px] text-danger">{error}</p>}
+      {error && !preview && <p role="alert" className="px-3 py-2 text-[11px] text-danger">{error}</p>}
       <AttachedFileChip file={file} linked={file.linked} message={message} className="max-w-none rounded-none border-0 border-t border-hairline/30 bg-transparent" />
     </div>
   );
@@ -303,7 +341,7 @@ export function loadMessageAudio(
   file: GalleryFile,
   message: MessageAttachmentContext,
   signal: AbortSignal,
-): Promise<Blob> {
+): Promise<Blob | string> {
   return withStallRetry(signal, t("attach.audioUnavailable"), (attempt, progress) => readMessageAudio(file, message, attempt, progress));
 }
 
@@ -312,16 +350,21 @@ async function readMessageAudio(
   message: MessageAttachmentContext,
   signal: AbortSignal,
   progress: () => void,
-): Promise<Blob> {
-  const response = await requestMessageFile(file.path, message, signal);
+): Promise<Blob | string> {
+  // A server that links only videos answers 415; it still sends the bytes to a plain request.
+  const response = await requestMessageFile(file.path, message, signal, { mediaLink: true }).catch((reason: unknown) => {
+    if ((reason as { status?: unknown } | null)?.status !== 415) throw reason;
+    return requestMessageFile(file.path, message, signal);
+  });
   progress();
+  if (response.headers.get("x-openmausbot-media") === "1") return messageMediaLink(await response.json().catch(() => null), message, AUDIO_MIMES, t("attach.audioUnavailable"));
   const mime = response.headers.get("content-type")?.split(";", 1)[0]?.trim().toLowerCase();
   if (!mime || !AUDIO_MIMES.includes(mime)) {
     await response.body?.cancel();
     throw new Error(t("attach.audioUnavailable"));
   }
   const declared = Number(response.headers.get("content-length"));
-  if (declared > FILE_MAX_BYTES) {
+  if (declared > PREVIEW_MAX_BYTES) {
     await response.body?.cancel();
     throw new Error(t("attach.fileTooLarge"));
   }
@@ -335,7 +378,7 @@ async function readMessageAudio(
       const { value, done } = await reader.read();
       if (done) break;
       size += value.byteLength;
-      if (size > FILE_MAX_BYTES) throw new Error(t("attach.fileTooLarge"));
+      if (size > PREVIEW_MAX_BYTES) throw new Error(t("attach.fileTooLarge"));
       chunks.push(new Uint8Array(value));
       progress();
     }
@@ -352,7 +395,7 @@ function AudioAttachment({ file, message }: { file: GalleryFile; message: Messag
   const [error, setError] = useState("");
   const request = useRef<AbortController | null>(null);
   useEffect(() => () => request.current?.abort(), []);
-  useEffect(() => () => { if (src) URL.revokeObjectURL(src); }, [src]);
+  useEffect(() => () => { if (src?.startsWith("blob:")) URL.revokeObjectURL(src); }, [src]);
 
   const load = async () => {
     if (request.current) return;
@@ -361,8 +404,8 @@ function AudioAttachment({ file, message }: { file: GalleryFile; message: Messag
     setLoading(true);
     setError("");
     try {
-      const blob = await loadMessageAudio(file, message, controller.signal);
-      if (!controller.signal.aborted) setSrc(URL.createObjectURL(blob));
+      const source = await loadMessageAudio(file, message, controller.signal);
+      if (!controller.signal.aborted) setSrc(typeof source === "string" ? source : URL.createObjectURL(source));
     } catch (reason) {
       if (!controller.signal.aborted) setError(reason instanceof Error ? reason.message : t("attach.audioUnavailable"));
     } finally {

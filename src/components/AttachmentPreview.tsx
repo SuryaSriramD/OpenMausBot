@@ -33,9 +33,11 @@ import {
 } from "@/lib/composer-attachments";
 import { cn } from "@/lib/cn";
 import { t } from "@/lib/i18n";
+import { serverErrorText } from "@/lib/server-error";
+import { CopyImageButton } from "./CopyImageButton";
 import { FilePreviewButton } from "./FilePreviewButton";
 import { chipNameAction, SaveIconButton, useHtmlPreview } from "./HtmlFilePreview";
-import { ImageLoading } from "./ImageLoading";
+import { ImageLoading } from "./ImageLoading"; import { openLinkedFolder } from "./RevealOriginalMenu";
 
 export interface PreviewImage {
   src: string;
@@ -222,20 +224,20 @@ export async function requestMessageFile(
   filePath: string,
   message: MessageAttachmentContext,
   signal: AbortSignal,
-  folder?: { entry?: string; list?: boolean },
+  options?: { entry?: string; list?: boolean; mediaLink?: boolean },
 ): Promise<Response> {
   const response = await fetch(`/api/threads/${encodeURIComponent(message.threadId)}/messages/${encodeURIComponent(message.messageId)}/file`, {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({
       path: filePath,
-      ...(folder?.entry !== undefined ? { entry: folder.entry } : folder?.list ? { listFolder: true } : {}),
+      ...(options?.entry !== undefined ? { entry: options.entry } : options?.list ? { listFolder: true } : options?.mediaLink ? { media: true } : {}),
     }),
     signal,
   });
   if (!response.ok) {
     const body = await response.json().catch(() => null) as { error?: string; code?: string } | null;
-    throw Object.assign(new Error(body?.error ?? t("attach.downloadFailed")), { code: body?.code });
+    throw Object.assign(new Error(serverErrorText(body, body?.error ?? t("attach.downloadFailed"))), { code: body?.code, status: response.status });
   }
   return response;
 }
@@ -251,7 +253,7 @@ export function useLocalFileSave(filePath: string, name?: string, message?: Mess
   const [folder, setFolder] = useState<MessageFolderListing | null>(null);
   const [reason, setReason] = useState("");
   const [savedTo, setSavedTo] = useState("");
-  const [outsideWorkspace, setOutsideWorkspace] = useState(false);
+  const [failureCode, setFailureCode] = useState<unknown>(undefined);
   const resetTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const request = useRef<AbortController | null>(null);
   const saving = useRef(false);
@@ -272,7 +274,7 @@ export function useLocalFileSave(filePath: string, name?: string, message?: Mess
     saving.current = false;
     setReason("");
     setSavedTo("");
-    setOutsideWorkspace(false);
+    setFailureCode(undefined);
     setFolder(null);
     setState("idle");
   }, [filePath, entry, message?.messageId, message?.threadId]);
@@ -290,7 +292,7 @@ export function useLocalFileSave(filePath: string, name?: string, message?: Mess
       resetTimer.current = null;
     }
     setReason("");
-    setOutsideWorkspace(false);
+    setFailureCode(undefined);
     setState("saving");
     request.current?.abort();
     const controller = new AbortController();
@@ -300,8 +302,8 @@ export function useLocalFileSave(filePath: string, name?: string, message?: Mess
       if (response.headers.get("x-openmausbot-folder") === "1") {
         const listing = await response.json() as MessageFolderListing;
         if (!mounted.current || controller.signal.aborted) return;
-        setFolder(listing);
         setState("idle");
+        if (!(await openLinkedFolder(filePath)) && !controller.signal.aborted) setFolder(listing); // Security: only a path this message's route just authorized reaches the desktop bridge.
         return;
       }
       const blob = await response.blob();
@@ -338,7 +340,7 @@ export function useLocalFileSave(filePath: string, name?: string, message?: Mess
     } catch (error) {
       if (!mounted.current || controller.signal.aborted) return;
       setReason(error instanceof Error ? error.message : t("attach.saveFailed"));
-      setOutsideWorkspace((error as { code?: unknown } | null)?.code === "outside_workspace");
+      setFailureCode((error as { code?: unknown } | null)?.code);
       setState("failed");
     } finally {
       if (request.current === controller) {
@@ -348,7 +350,8 @@ export function useLocalFileSave(filePath: string, name?: string, message?: Mess
     }
   }, [filePath, entry, message?.messageId, message?.threadId, name]);
 
-  return { state, reason, savedTo, outsideWorkspace, folder, save };
+  const outsideWorkspace = failureCode === "outside_workspace"; // Retrying can't move a file into the folder or make it smaller.
+  return { state, reason, savedTo, outsideWorkspace, retryable: state === "failed" && !outsideWorkspace && failureCode !== "file_too_large", folder, save };
 }
 
 export function saveFailureText(save: { reason: string; outsideWorkspace: boolean }): string {
@@ -559,13 +562,11 @@ export function AttachmentPreviewDialog({
             </div>
           </div>
           <div className="flex shrink-0 items-center gap-1">
+            <CopyImageButton key={current.src} src={current.src} name={current.name} />
             {current.downloadUrl && (
               <a
                 href={current.downloadUrl}
-                download={current.downloadName ?? canonicalDownloadFilename({
-                  fallback: current.name,
-                  source: current.downloadUrl,
-                })}
+                download={current.downloadName ?? canonicalDownloadFilename({ fallback: current.name, source: current.downloadUrl })}
                 className="flex size-9 items-center justify-center rounded-lg text-white/65 hover:bg-white/10 hover:text-white"
                 aria-label={t("attach.downloadAria", { name: current.name })}
                 title={t("attach.download")}
@@ -900,7 +901,6 @@ export function AttachedFileChip({ file, message, linked = false, compact = fals
   const save = useLocalFileSave(file.path, file.name, message);
   const preview = useHtmlPreview(file.path, file.name, message);
   const failed = save.state === "failed";
-  const retryable = failed && !save.outsideWorkspace;
   if (compact) return <CompactFileChip file={file} message={message} linked={linked} save={save} preview={preview} className={className} />;
   if (!message || (!file.private && !linked)) {
     return (
@@ -919,22 +919,22 @@ export function AttachedFileChip({ file, message, linked = false, compact = fals
       <div className="flex items-center pe-1">
         <button
           type="button"
-          {...chipNameAction(preview, save, file.name, retryable)}
+          {...chipNameAction(preview, save, file.name, save.retryable)}
           className="flex min-h-10 min-w-0 flex-1 items-center gap-2 px-2.5 py-2 text-left transition-colors hover:bg-raised/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent/60 disabled:cursor-wait disabled:hover:bg-transparent"
         >
           <FileText size={14} className="shrink-0" aria-hidden="true" />
           <span className="min-w-0 flex-1 truncate text-ink">{file.name}</span>
-          {preview.html ? <Eye size={13} className="shrink-0" /> : save.state === "saving" ? (
+          {preview.opens ? <Eye size={13} className="shrink-0" /> : save.state === "saving" ? (
             <LoaderCircle size={13} className="shrink-0 animate-spin" />
           ) : save.state === "saved" ? (
             <Check size={13} className="shrink-0 text-success" />
           ) : failed ? (
-            retryable && <RotateCcw size={13} className="shrink-0 text-danger" />
+            save.retryable && <RotateCcw size={13} className="shrink-0 text-danger" />
           ) : (
             <Download size={13} className="shrink-0" />
           )}
         </button>
-        {preview.html ? <SaveIconButton name={file.name} save={save} retryable={retryable} /> : <FilePreviewButton path={file.path} name={file.name} message={message} />}
+        {preview.opens ? <SaveIconButton name={file.name} save={save} retryable={save.retryable} /> : <FilePreviewButton path={file.path} name={file.name} message={message} />}
         {preview.dialog}
       </div>
       {save.state !== "idle" && (
@@ -972,12 +972,11 @@ function CompactFileChip({ file, message, linked, save, preview, className }: {
   className?: string;
 }) {
   const failed = save.state === "failed";
-  const retryable = failed && !save.outsideWorkspace;
   const name = <span dir="auto" className="min-w-0 truncate text-ink [unicode-bidi:isolate]">{file.name}</span>;
   if (!message || (!file.private && !linked)) {
     return (
       <span title={t("attach.legacyFile", { name: file.name })} className={cn(FILE_CHIP, "gap-1.5 px-2.5", className)}>
-        <FileText size={14} strokeWidth={1.75} className="shrink-0" aria-hidden="true" />
+        <FileText size={14} className="shrink-0" aria-hidden="true" />
         {name}
         <span className="shrink-0 text-[12px]">{t("attach.unavailable")}</span>
       </span>
@@ -991,22 +990,22 @@ function CompactFileChip({ file, message, linked, save, preview, className }: {
       >
         <button
           type="button"
-          {...chipNameAction(preview, save, file.name, retryable)}
+          {...chipNameAction(preview, save, file.name, save.retryable)}
           className="inline-flex h-7 min-w-0 items-center gap-1.5 rounded-full ps-2.5 pe-2 transition-colors hover:bg-ink/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus disabled:cursor-wait"
         >
-          <FileText size={14} strokeWidth={1.75} className="shrink-0" aria-hidden="true" />
+          <FileText size={14} className="shrink-0" aria-hidden="true" />
           {name}
-          {preview.html ? <Eye size={13} strokeWidth={1.75} className="shrink-0" aria-hidden="true" /> : save.state === "saving" ? (
+          {preview.opens ? <Eye size={13} className="shrink-0" aria-hidden="true" /> : save.state === "saving" ? (
             <LoaderCircle size={13} className="shrink-0 animate-spin" aria-hidden="true" />
           ) : save.state === "saved" ? (
             <Check size={13} className="shrink-0 text-success" aria-hidden="true" />
           ) : failed ? (
-            retryable && <RotateCcw size={13} className="shrink-0 text-danger" aria-hidden="true" />
+            save.retryable && <RotateCcw size={13} className="shrink-0 text-danger" aria-hidden="true" />
           ) : (
-            <Download size={13} strokeWidth={1.75} className="shrink-0" aria-hidden="true" />
+            <Download size={13} className="shrink-0" aria-hidden="true" />
           )}
         </button>
-        {preview.html ? <SaveIconButton name={file.name} save={save} retryable={retryable} /> : <FilePreviewButton path={file.path} name={file.name} message={message} />}
+        {preview.opens ? <SaveIconButton name={file.name} save={save} retryable={save.retryable} /> : <FilePreviewButton path={file.path} name={file.name} message={message} />}
         {preview.dialog}
       </span>
       {save.state !== "idle" && save.state !== "saved" && (

@@ -105,6 +105,28 @@ describe("a provider refusing a tool's schema", () => {
   });
 });
 
+describe("a text-only model sent an image", () => {
+  /** Z.ai GLM's session/prompt refusal as acpRpcError words it, reported from a chat with an image read into the conversation. */
+  const GLM = "Internal error: messages.content.type is invalid, allowed values: ['text'] (session/prompt, service: session, provider.invalid-request)";
+
+  it("says in plain words that the model reads text only, keeping the words that class it an invalid request", () => {
+    const plain = engineFailureMessage("OpenCode", GLM);
+    expect(plain).toBe("OpenCode refused this turn as an invalid request because this model reads text only and this conversation carries an image — one attached in chat or read by a tool — so every message fails the same way. "
+      + "Switch this bot to a model that can see images, or start a new conversation.");
+    expect(engineFailureKind(GLM)).toBe("image_content");
+    expect(engineFailure("OpenCode", GLM)!.text).toEqual({ key: "chat.notice.imageContent", params: { provider: "OpenCode" } });
+    expect([reason(GLM), reason(plain!)]).toEqual(["unknown", "invalid_request"]);
+    expect(classifyError({ text: plain! }).transient).toBe(false);
+  });
+
+  it("reads the words behind an HTTP status too, so the chat runtime keeps them plain", () => {
+    expect(engineFailureKind("Z.ai HTTP 400: messages.content.type is invalid, allowed values: ['text']")).toBe("image_content");
+    expect(plainFailureMessage("Z.ai", "Z.ai HTTP 400: messages.content.type is invalid, allowed values: ['text']"))
+      .toBe(engineFailureMessage("Z.ai", "Z.ai HTTP 400: messages.content.type is invalid, allowed values: ['text']"));
+    expect(engineFailureKind("Mistral HTTP 400: content is too long")).toBe("refused");
+  });
+});
+
 describe("errorReplyFailure", () => {
   const NOW = Date.parse("2026-10-27T06:12:46Z");
   const anthropic = (status: number, type: string, message: string) =>
@@ -269,5 +291,61 @@ describe("a model the engine has no route to", () => {
     expect(engineFailureKind(raw("x/y"))).toBe("model_no_route");
     expect(engineFailureKind("Internal error: Cannot connect to API: ECONNREFUSED (session/prompt, service: session, APIError)")).toBeNull();
     expect(classifyError({ text: "Internal error: OpenCode service failure (session/prompt)" }).reason).toBe("unknown");
+  });
+});
+
+describe("classifyError reads an explicit HTTP status before body text", () => {
+  it.each([
+    ["OpenAI HTTP 409: max 500 tokens", { transient: false, reason: "invalid_request" }],
+    ["(status 409 Conflict): max 500 tokens", { transient: false, reason: "invalid_request" }],
+    ["API Error: 409 Conflict", { transient: false, reason: "invalid_request" }],
+    ["API Error: 503: proxy said HTTP 409 for backend", { transient: true, reason: "server_error" }],
+    ["Internal error: API Error: 503: proxy said HTTP 409 for backend", { transient: true, reason: "server_error" }],
+    ["API Error: 409: backend said HTTP 503 for this call", { transient: false, reason: "invalid_request" }],
+    // A nested terminal status must not shadow a transient failure the same string reports in a
+    // later clause: a CLI stderr tail, or a chained cause (messageOf joins it after "Error: ").
+    ["API Error: 410: resource gone\nHTTP 503 Service Unavailable", { transient: true, reason: "server_error" }],
+    ["API Error: 410: resource gone\nHTTP 429: too many requests", { transient: true, reason: "rate_limited" }],
+    ["API Error: 410: resource gone Error: HTTP 503 Service Unavailable", { transient: true, reason: "server_error" }],
+    ["API Error: 410: resource gone\nxAI HTTP 503 Service Unavailable", { transient: true, reason: "server_error" }],
+    ["API Error: 410: resource gone\nHTTP 529: overloaded", { transient: true, reason: "overloaded" }],
+    // A later 5xx report keeps the overloaded reason when the detail sits inside the
+    // status parentheses or on the line after the report.
+    ["API Error: 410: resource gone\n(status 503 overloaded)", { transient: true, reason: "overloaded" }],
+    ["API Error: 410: resource gone\nHTTP 503 Service Unavailable\noverloaded: capacity exceeded", { transient: true, reason: "overloaded" }],
+    // Many quoted statuses on one line still leave the later report's verdict alone.
+    ["API Error: 410: resource gone" + " quoted HTTP 409".repeat(50) + " Error: HTTP 503 Service Unavailable", { transient: true, reason: "server_error" }],
+    // ...but a status quoted inside the same clause stays nested, even on a later line.
+    ["API Error: 410: resource gone\nDetails: the backend returned HTTP 503", { transient: false, reason: "invalid_request" }],
+    ["API Error: 410: resource gone Error: proxy said HTTP 503", { transient: false, reason: "invalid_request" }],
+    ["API Error: 410: resource gone\nOpenAI HTTP 409: conflict", { transient: false, reason: "invalid_request" }],
+    ["xAI HTTP 429: too many requests", { transient: true, reason: "rate_limited" }],
+    ["(status 503 Service Unavailable)", { transient: true, reason: "server_error" }],
+    ["(status 529) overloaded", { transient: true, reason: "overloaded" }],
+    ["HTTP 408: request timed out", { transient: true, reason: "timeout" }],
+    ["Upstream returned 401 Unauthorized", { transient: false, reason: "auth" }],
+    ["Upstream returned 402 Payment Required: exceeded your quota", { transient: false, reason: "quota" }],
+  ])("classifies %s", (message, expected) => {
+    expect(classifyError({ text: message })).toEqual(expected);
+  });
+
+  it("retries a 409 from OpenAI and not from any other provider", () => {
+    expect(classifyError({ text: "API Error: 409 Conflict" }, { openAi: true }))
+      .toEqual({ transient: true, reason: "server_error" });
+    expect(classifyError({ text: "OpenAI HTTP 409: conflict with the current resource state" }, { openAi: true }))
+      .toEqual({ transient: true, reason: "server_error" });
+    expect(classifyError({ text: "API Error: 410: resource gone\nOpenAI HTTP 409: conflict" }, { openAi: true }))
+      .toEqual({ transient: true, reason: "server_error" });
+    expect(classifyError({ text: "API Error: 410: resource gone\nxAI HTTP 409: conflict" }, { openAi: true }))
+      .toEqual({ transient: true, reason: "server_error" });
+    expect(classifyError({ text: "API Error: 409 Conflict" }))
+      .toEqual({ transient: false, reason: "invalid_request" });
+    expect(classifyError({ text: "OpenAI HTTP 409: max 500 tokens" }))
+      .toEqual({ transient: false, reason: "invalid_request" });
+  });
+
+  it("reads the outer failure when an error's cause quotes a nested backend error", () => {
+    const nested = new Error("API Error: 410: resource gone", { cause: new Error("HTTP 503 Service Unavailable") });
+    expect(classifyError(nested)).toEqual({ transient: true, reason: "server_error" });
   });
 });
